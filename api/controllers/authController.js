@@ -15,7 +15,6 @@ export const register = async (req, res) => {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
@@ -38,7 +37,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
-    // Check password
+    // Check passsword
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ msg: "Invalid credentials" });
