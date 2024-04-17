@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
 import authRoute from "./routes/authRoute.js";
+import livreurRoute from "./routes/livreurRoute.js";
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ app.use("/api/auth", authRoute);
 
 //routes
 app.use("/api/user", userRoute);
+
+//routes
+app.use("/api/livreur", livreurRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
