@@ -21,7 +21,7 @@ export const register = async (req, res) => {
     const newUser = new User({ fname, lname, email, password: hashedPassword });
     await newUser.save();
 
-    res.status(201).json({ msg: "User created successfully" });
+    res.status(201).json({ msg: "User authenticated successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
