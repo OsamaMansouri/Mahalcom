@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema(
       type: Date,
     },
     stockId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
     },
   },
   { timestamps: true }
