@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
+import stockRoute from "./routes/stockRoute.js";
+import productRoute from "./routes/productRoute.js";
 import authRoute from "./routes/authRoute.js";
 import livreurRoute from "./routes/livreurRoute.js";
 
@@ -35,6 +37,8 @@ app.use("/api/auth", authRoute);
 
 //routes
 app.use("/api/user", userRoute);
+app.use("/api/stock", stockRoute);
+app.use("/api/product", productRoute);
 
 //routes
 app.use("/api/livreur", livreurRoute);
