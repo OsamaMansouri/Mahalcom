@@ -37,15 +37,15 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/stock", stockRoute);
 
-// app.all("*", (req, res) => {
-//   res.status(404);
-//   //if (req.accepts("html")) {
-//   //res.sendFile(path.join(__dirname, "views", "404.html"));
-//   //}
+app.all("*", (req, res) => {
+  res.status(404);
+  //if (req.accepts("html")) {
+  //res.sendFile(path.join(__dirname, "views", "404.html"));
+  //}
 
-//   if (req.accepts("json")) {
-//     res.json({ message: "404 Not Found" });
-//   } else {
-//     res.type("txt").send("404 Not Found");
-//   }
-// });
+  if (req.accepts("json")) {
+    res.json({ message: "404 Not Found" });
+  } else {
+    res.type("txt").send("404 Not Found");
+  }
+});

@@ -5,10 +5,10 @@ import { authenticateToken } from "../middleware/auth.js";
 const router = express.Router();
 
 // stock routes
-router.post("/create", create);
-router.get("/getall",  getAll);
-router.get("/:id",  getById);
-router.put("/update/:id",  updatestock);
-router.delete("/delete/:id",  deletestock);
+router.post("/create",authenticateToken, create);
+router.get("/getall",authenticateToken,  getAll);
+router.get("/:id",authenticateToken,  getById);
+router.put("/update/:id",authenticateToken,  updatestock);
+router.delete("/delete/:id",authenticateToken,  deletestock);
 
 export default router;
