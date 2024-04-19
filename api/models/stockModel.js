@@ -1,14 +1,11 @@
 import mongoose from "mongoose";
 const stockSchema = new mongoose.Schema(
   {
-    idStock: {
-      type: Number,
-    },
     idFournisseur: {
       type: Number,
     },
     quantite: {
-      type: String,
+      type: Number,
     },
     categorie: {
       type: String,

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
 import stockRoute from "./routes/stockRoute.js";
+import productRoute from "./routes/productRoute.js";
 import authRoute from "./routes/authRoute.js";
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use("/api/auth", authRoute);
 //routes
 app.use("/api/user", userRoute);
 app.use("/api/stock", stockRoute);
+app.use("/api/product", productRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
