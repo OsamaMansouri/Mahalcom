@@ -8,6 +8,7 @@ import stockRoute from "./routes/stockRoute.js";
 import productRoute from "./routes/productRoute.js";
 import authRoute from "./routes/authRoute.js";
 import livreurRoute from "./routes/livreurRoute.js";
+import invoiceRoute from "./routes/invoiceRoute.js";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/stock", stockRoute);
 app.use("/api/product", productRoute);
+app.use("/api/invoice", invoiceRoute);
 
 //routes
 app.use("/api/livreur", livreurRoute);

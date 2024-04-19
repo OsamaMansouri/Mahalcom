@@ -13,6 +13,9 @@ const productSchema = new mongoose.Schema(
     categorie: {
       type: String,
     },
+    price: {
+      type: Number,
+    },
     quantity: {
       type: Number,
     },
@@ -25,5 +28,6 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 export default mongoose.model("Product", productSchema);

@@ -3,18 +3,18 @@ import {
   create,
   getAll,
   getById,
-  updateProduct,
-  deleteProduct,
-} from "../controllers/productController.js";
+  updateInvoice,
+  deleteInvoice,
+} from "../controllers/invoiceController.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Product routes
+// Invoice routes
 router.post("/create", authenticateToken,create);
 router.get("/getall", authenticateToken,getAll);
 router.get("/:id",  authenticateToken,getById);
-router.put("/update/:id", authenticateToken,updateProduct);
-router.delete("/delete/:id", authenticateToken,deleteProduct);
+router.put("/update/:id", authenticateToken,updateInvoice);
+router.delete("/delete/:id", authenticateToken,deleteInvoice);
 
 export default router;
