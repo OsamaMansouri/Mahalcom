@@ -5,19 +5,20 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
 import authRoute from "./routes/authRoute.js";
+import orderRoute from "./routes/orderRoute.js"; 
 
 dotenv.config();
 
-//express app
+// Express app
 const app = express();
 
-//middleware
+// Middleware 
 app.use(bodyParser.json());
 app.use(cors());
 
 const PORT = process.env.PORT || 7000;
 
-//connect to db
+// Connect to MongoDB
 const URL = process.env.MONGOURL;
 mongoose
   .connect(URL)
@@ -29,18 +30,18 @@ mongoose
   })
   .catch((error) => console.log(error));
 
-//auth
+// Authentication routes
 app.use("/api/auth", authRoute);
 
-//routes
+// User routes
 app.use("/api/user", userRoute);
 
+// Order routes
+app.use("/api/order", orderRoute);
+
+// Error handling middleware
 app.all("*", (req, res) => {
   res.status(404);
-  //if (req.accepts("html")) {
-  //res.sendFile(path.join(__dirname, "views", "404.html"));
-  //}
-
   if (req.accepts("json")) {
     res.json({ message: "404 Not Found" });
   } else {
