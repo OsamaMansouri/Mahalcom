@@ -4,10 +4,11 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
+import stockRoute from "./routes/stockRoute.js";
+import productRoute from "./routes/productRoute.js";
+import orderRoute from "./routes/orderRoute.js";
 import authRoute from "./routes/authRoute.js";
-import orderRoute from "./routes/orderRoute.js"; 
-
-dotenv.config();
+dotenv.config(); 
 
 // Express app
 const app = express();
@@ -35,6 +36,12 @@ app.use("/api/auth", authRoute);
 
 // User routes
 app.use("/api/user", userRoute);
+app.use("/api/stock", stockRoute);
+app.use("/api/product", productRoute);
+app.use("/api/invoice", invoiceRoute);
+
+//routes
+app.use("/api/livreur", livreurRoute);
 
 // Order routes
 app.use("/api/order", orderRoute);
