@@ -1,12 +1,12 @@
-import User from "../models/livreurModel.js";
+import Livreur from "../models/livreurModel.js";
 
 export const create = async (req, res) => {
   try {
-    const userData = new User(req.body);
-    if (!userData) {
-      return res.status(404).json({ msg: "User data not found" });
+    const livreurData = new Livreur(req.body);
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Livreur data not found" });
     }
-    const savedData = await userData.save();
+    const savedData = await livreurData.save();
     //res.status(200).json(savedData);
 
     res.status(200).json({ msg: "Livreur created successfully" });
@@ -17,13 +17,13 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const userData = await User.find();
+    const livreurData = await Livreur.find();
 
-    if (!userData) {
+    if (!livreurData) {
       return res.status(404).json({ msg: "Livreur data not found" });
     }
 
-    res.status(200).json(userData);
+    res.status(200).json(livreurData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -32,27 +32,27 @@ export const getAll = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
+    if (!livreurData) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
 
-    res.status(200).json(userData);
+    res.status(200).json(livreurData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateLivreur = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
+    if (!livreurData) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
-    const user = await User.findByIdAndUpdate(id, req.body, {
+    const Livreur = await Livreur.findByIdAndUpdate(id, req.body, {
       new: true,
     });
 
@@ -62,15 +62,15 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteLivreur = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
+    if (!livreurData) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
-    const user = await User.findByIdAndDelete(id);
+    const Livreur = await Livreur.findByIdAndDelete(id);
 
     res.status(200).json({ msg: "Livreur deleted successfully" });
   } catch (error) {
