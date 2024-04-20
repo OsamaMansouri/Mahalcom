@@ -8,7 +8,7 @@ const invoiceSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["unpaid", "pending", "paid"],
-    default: "pending",
+    default: "unpaid",
   },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
