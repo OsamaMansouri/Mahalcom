@@ -6,7 +6,7 @@ export const create = async (req, res) => {
     if (!stockData) {
       return res.status(404).json({ msg: "stock data not found" });
     }
-    const savedData = await stockData.save(); 
+    const savedData = await stockData.save();
     //res.status(200).json(savedData);
 
     res.status(200).json({ msg: "stock created successfully" });

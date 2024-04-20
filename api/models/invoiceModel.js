@@ -1,18 +1,16 @@
 import mongoose from "mongoose";
-import Product from './productModel.js';
-
+import user from "./userModel.js";
 
 const invoiceSchema = new mongoose.Schema({
-    orderID: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-    invoiceDate: { type: Date, required: true },
-    totalAmount: { type: Number, required: true },
-    status: {
-        type: String,
-        enum: ['pending', 'paid'],
-        default: 'Pending'
-    },
-    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+  orderID: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
+  date: { type: Date, required: true },
+  totalAmount: { type: Number, required: true },
+  status: {
+    type: String,
+    enum: ["unpaid", "pending", "paid"],
+    default: "unpaid",
+  },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-
-export default mongoose.model('Invoice', invoiceSchema);
+export default mongoose.model("Invoice", invoiceSchema);
