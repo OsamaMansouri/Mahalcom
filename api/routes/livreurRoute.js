@@ -3,8 +3,8 @@ import {
   create,
   getAll,
   getById,
-  updateUser,
-  deleteUser,
+  updateLivreur,
+  deleteLivreur,
 } from "../controllers/livreurController.js";
 import { authenticateToken } from "../middleware/auth.js";
 
@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/create", authenticateToken, create);
 router.get("/getall", authenticateToken, getAll);
 router.get("/:id", authenticateToken, getById);
-router.put("/update/:id", authenticateToken, updateUser);
-router.delete("/delete/:id", authenticateToken, deleteUser);
+router.put("/update/:id", authenticateToken, updateLivreur);
+router.delete("/delete/:id", authenticateToken, deleteLivreur);
 
 export default router;

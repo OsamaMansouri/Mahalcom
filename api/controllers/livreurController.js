@@ -1,15 +1,15 @@
-import User from "../models/livreurModel.js";
+import Livreur from "../models/livreurModel.js";
 
 export const create = async (req, res) => {
   try {
-    const userData = new User(req.body);
-    if (!userData) {
-      return res.status(404).json({ msg: "User data not found" });
+    const livreurData = new Livreur(req.body);
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Données du livreur non trouvées" });
     }
-    const savedData = await userData.save();
+    const savedData = await livreurData.save();
     //res.status(200).json(savedData);
 
-    res.status(200).json({ msg: "Livreur created successfully" });
+    res.status(200).json({ msg: "Livreur créé avec succès" });
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -17,13 +17,13 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const userData = await User.find();
+    const livreurData = await Livreur.find();
 
-    if (!userData) {
-      return res.status(404).json({ msg: "Livreur data not found" });
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Données du livreur non trouvées" });
     }
 
-    res.status(200).json(userData);
+    res.status(200).json(livreurData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -32,47 +32,47 @@ export const getAll = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
-      return res.status(404).json({ msg: "Livreur not found" });
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Livreur non trouvé" });
     }
 
-    res.status(200).json(userData);
+    res.status(200).json(livreurData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateLivreur = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
-      return res.status(404).json({ msg: "Livreur not found" });
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Livreur non trouvé" });
     }
-    const user = await User.findByIdAndUpdate(id, req.body, {
+    const Livreur = await Livreur.findByIdAndUpdate(id, req.body, {
       new: true,
     });
 
-    res.status(200).json({ msg: "Livreur updated successfully" });
+    res.status(200).json({ msg: "Livreur mis à jour avec succès" });
   } catch (error) {
     res.status(500).json({ error: error });
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteLivreur = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const livreurData = await Livreur.findById(id);
 
-    if (!userData) {
-      return res.status(404).json({ msg: "Livreur not found" });
+    if (!livreurData) {
+      return res.status(404).json({ msg: "Livreur non trouvé" });
     }
-    const user = await User.findByIdAndDelete(id);
+    const Livreur = await Livreur.findByIdAndDelete(id);
 
-    res.status(200).json({ msg: "Livreur deleted successfully" });
+    res.status(200).json({ msg: "Livreur supprimé avec succès" });
   } catch (error) {
     res.status(500).json({ error: error });
   }
