@@ -1,6 +1,6 @@
 import User from "../models/userModel.js";
 
-export const create = async (req, res) => {
+export const create = async (req, res) => { 
   try {
     const userData = new User(req.body);
     if (!userData) {
@@ -55,13 +55,13 @@ export const updateUser = async (req, res) => {
     const user = await User.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-
+    
     res.status(200).json({ msg: "User updated successfully" });
   } catch (error) {
     res.status(500).json({ error: error });
   }
 };
-
+ 
 export const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;

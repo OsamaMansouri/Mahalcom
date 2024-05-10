@@ -9,7 +9,7 @@ const invoiceSchema = new mongoose.Schema({
     type: String,
     enum: ["unpaid", "pending", "paid"],
     default: "unpaid",
-  },
+  }, 
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
