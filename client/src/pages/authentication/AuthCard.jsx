@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
 
 // material-ui
 import Box from '@mui/material/Box';

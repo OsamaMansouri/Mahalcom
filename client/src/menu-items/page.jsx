@@ -1,20 +1,39 @@
 // assets
-import { LoginOutlined, ProfileOutlined } from '@ant-design/icons';
+import {
+  LoginOutlined,
+  ProfileOutlined,
+  UserOutlined,
+  TeamOutlined,
+  SolutionOutlined,
+  DollarOutlined,
+  FileDoneOutlined,
+  SkinOutlined,
+  TruckOutlined,
+  ApartmentOutlined
+} from '@ant-design/icons';
 
 // icons
 const icons = {
   LoginOutlined,
-  ProfileOutlined
+  ProfileOutlined,
+  UserOutlined,
+  TeamOutlined,
+  SolutionOutlined,
+  DollarOutlined,
+  FileDoneOutlined,
+  SkinOutlined,
+  TruckOutlined,
+  ApartmentOutlined
 };
 
 // ==============================|| MENU ITEMS - EXTRA PAGES ||============================== //
 
 const pages = {
-  id: 'authentication',
-  title: 'Authentication',
+  id: 'features',
+  title: 'Features',
   type: 'group',
   children: [
-    {
+    /*{
       id: 'login1',
       title: 'Login',
       type: 'item',
@@ -29,6 +48,63 @@ const pages = {
       url: '/register',
       icon: icons.ProfileOutlined,
       target: true
+   
+    } */
+    {
+      id: 'managers',
+      title: 'Managers',
+      type: 'item',
+      url: '/managers',
+      icon: icons.ApartmentOutlined
+    },
+    {
+      id: 'suppliers',
+      title: 'Suppliers',
+      type: 'item',
+      url: '/suppliers',
+      icon: icons.SolutionOutlined
+    },
+    {
+      id: 'clients',
+      title: 'Clients',
+      type: 'item',
+      url: '/clients',
+      icon: icons.UserOutlined
+    },
+    {
+      id: 'orders',
+      title: 'Orders',
+      type: 'item',
+      url: '/orders',
+      icon: icons.DollarOutlined
+    },
+    {
+      id: 'products',
+      title: 'Products',
+      type: 'item',
+      url: '/products',
+      icon: icons.SkinOutlined
+    },
+    {
+      id: 'deliveries',
+      title: 'Deliveries',
+      type: 'item',
+      url: '/deliveries',
+      icon: icons.TruckOutlined
+    },
+    {
+      id: 'deliverymen',
+      title: 'Delivery men',
+      type: 'item',
+      url: '/deliverymen',
+      icon: icons.TeamOutlined
+    },
+    {
+      id: 'invoices',
+      title: 'Invoices',
+      type: 'item',
+      url: '/invoices',
+      icon: icons.FileDoneOutlined
     }
   ]
 };
