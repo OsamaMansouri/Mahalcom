@@ -8,12 +8,17 @@ import Typography from '@mui/material/Typography';
 // project import
 import AuthWrapper from './AuthWrapper';
 import AuthLogin from './auth-forms/AuthLogin';
+import { Helmet } from 'react-helmet';
 
 // ================================|| LOGIN ||================================ //
 
 export default function Login() {
   return (
     <AuthWrapper>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Mahalcom - Login</title>
+      </Helmet>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
