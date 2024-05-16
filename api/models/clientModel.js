@@ -22,14 +22,14 @@ const clientSchema = new mongoose.Schema(
       required: true,
     },
     adresse: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     totalCommande: {
-        type: Number,
+      type: Number,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Client", clientSchemaSchema);
+export default mongoose.model("Client", clientSchema);
