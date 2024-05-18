@@ -7,11 +7,9 @@ export const create = async (req, res) => {
       return res.status(404).json({ msg: "User data not found" });
     }
     const savedData = await userData.save();
-    //res.status(200).json(savedData);
-
     res.status(200).json({ msg: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -65,15 +63,15 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const user = await User.findByIdAndDelete(id);
 
-    if (!userData) {
+    if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-    const user = await User.findByIdAndDelete(id);
 
     res.status(200).json({ msg: "User deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
