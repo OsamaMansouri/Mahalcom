@@ -12,6 +12,7 @@ import invoiceRoute from "./routes/invoiceRoute.js";
 import clientRoute from "./routes/clientRoute.js";
 import fournisseurRoute from "./routes/fournisseurRoute.js";
 import livraisonRoute from "./routes/livraisonRoute.js";
+import roleRoute from "./routes/roleRoute.js";
 
 dotenv.config();
 
@@ -41,12 +42,13 @@ app.use("/api/auth", authRoute);
 
 //routes
 app.use("/api/user", userRoute);
+app.use("/api/role", roleRoute);
 app.use("/api/stock", stockRoute);
 app.use("/api/product", productRoute);
 app.use("/api/invoice", invoiceRoute);
-app.use("/api/client",clientRoute);
-app.use("/api/fournisseur",fournisseurRoute);
-app.use("/api/livraison",livraisonRoute);
+app.use("/api/client", clientRoute);
+app.use("/api/fournisseur", fournisseurRoute);
+app.use("/api/livraison", livraisonRoute);
 app.use("/api/livreur", livreurRoute);
 
 app.all("*", (req, res) => {
