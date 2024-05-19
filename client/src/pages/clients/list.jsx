@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
+  CardMedia,
+  Chip,
+  Link,
   Table,
   TableBody,
   TableContainer,
@@ -15,9 +18,9 @@ import {
   Avatar,
   Typography,
   TextField,
+  InputLabel,
   Select,
   MenuItem,
-  InputLabel,
   TablePagination,
   Slide
 } from '@mui/material';
@@ -35,67 +38,42 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 // table data
-function createData(index, _id, fname, lname, email, role) {
-  return { index, _id, fname, lname, email, role };
+function createData(index, _id, fullname, address, phone, city, gender) {
+  return { index, _id, fullname, address, phone, city, gender };
 }
 
 export default function LatestOrder() {
   const [data, setData] = useState([]);
-  const [roles, setRoles] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [clientToDelete, setClientToDelete] = useState(null);
   const [openViewDialog, setOpenViewDialog] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editedUser, setEditedUser] = useState({});
+  const [editedClient, setEditedClient] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/getall`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/client/getall`, {
           headers: {
             Authorization: `${token}`
           }
         });
         const responseData = await response.json();
-        // Add unique IDs to each row and fetch role names
-        const newData = await Promise.all(
-          responseData.map(async (row, index) => {
-            const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${row.id_role}`, {
-              headers: {
-                Authorization: `${token}`
-              }
-            });
-            const roleData = await roleResponse.json();
-            return createData(index + 1, row._id, row.fname, row.lname, row.email, roleData.role_name);
-          })
+        setData(
+          responseData.map((item, index) =>
+            createData(index + 1, item._id, item.fullname, item.address, item.phone, item.city, item.gender)
+          )
         );
-        setData(newData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    const fetchRoles = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        setRoles(responseData);
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-      }
-    };
-
     fetchData();
-    fetchRoles();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -108,110 +86,100 @@ export default function LatestOrder() {
   };
 
   const handleDeleteClick = (_id) => {
-    setUserToDelete(_id);
+    setClientToDelete(_id);
     setOpenDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setUserToDelete(null);
+    setClientToDelete(null);
   };
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userToDelete}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/client/delete/${clientToDelete}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `${localStorage.getItem('token')}`,
+          Authorization: `${localStorage.getItem('token')}`, // Include the token in the Authorization header
           'Content-Type': 'application/json'
         }
       });
 
       if (response.ok) {
-        const updatedData = data.filter((user) => user._id !== userToDelete);
+        const updatedData = data.filter((client) => client._id !== clientToDelete);
         setData(updatedData);
-        toast.success('User deleted successfully', { position: 'top-right' });
+        toast.success('Client deleted successfully', { position: 'top-right' });
       } else {
-        console.error('Error deleting user:', response.statusText);
-        toast.error('Error deleting user', { position: 'top-right' });
+        console.error('Error deleting client:', response.statusText);
+        toast.error('Error deleting client', { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
-      toast.error('Error deleting user', { position: 'top-right' });
+      console.error('Error deleting client:', error);
+      toast.error('Error deleting client', { position: 'top-right' });
     }
     handleCloseDeleteDialog();
   };
 
-  const handleViewDetails = (user) => {
-    setSelectedUser(user);
+  const handleViewDetails = (client) => {
+    setSelectedClient(client);
     setOpenViewDialog(true);
   };
 
   const handleCloseViewDialog = () => {
     setOpenViewDialog(false);
-    setSelectedUser(null);
+    setSelectedClient(null);
   };
 
-  const handleEditClick = (user) => {
-    setSelectedUser(user);
-    setEditedUser({ ...user });
+  const handleEditClick = (client) => {
+    setSelectedClient(client);
+    setEditedClient({ ...client });
     setOpenEditDialog(true);
   };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
-    setSelectedUser(null);
-    setEditedUser({});
+    setSelectedClient(null);
+    setEditedClient({});
   };
 
   const handleEditSave = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update/${editedUser._id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/client/update/${editedClient._id}`, {
         method: 'PUT',
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(editedUser)
+        body: JSON.stringify(editedClient)
       });
 
       if (response.ok) {
-        const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${editedUser.id_role}`, {
-          headers: {
-            Authorization: `${localStorage.getItem('token')}`
-          }
-        });
-        const roleData = await roleResponse.json();
-        const updatedData = data.map((user) => (user._id === editedUser._id ? { ...editedUser, role: roleData.role_name } : user));
+        const updatedData = data.map((client) => (client._id === editedClient._id ? { ...editedClient } : client));
         setData(updatedData);
         setOpenEditDialog(false);
-        toast.success('User updated successfully', { position: 'top-right' });
+        toast.success('Client updated successfully', { position: 'top-right' });
       } else {
-        console.error('Error updating user:', response.statusText);
-        toast.error('Error updating user', { position: 'top-right' });
+        console.error('Error updating client:', response.statusText);
+        toast.error('Error updating client', { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Error updating user:', error);
-      toast.error('Error updating user', { position: 'top-right' });
+      console.error('Error updating client:', error);
+      toast.error('Error updating client', { position: 'top-right' });
     }
   };
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    setEditedUser((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleRoleChange = (e) => {
-    setEditedUser((prev) => ({ ...prev, id_role: e.target.value }));
+    setEditedClient((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <MainCard
-      title="List of users"
+      title="List of Clients"
       content={false}
       secondary={
-        <Button component={RouterLink} to="/add-user" variant="contained" startIcon={<PlusOutlined />}>
-          Add User
+        <Button component={RouterLink} to="/add-client" variant="contained" startIcon={<PlusOutlined />}>
+          Add Client
         </Button>
       }
     >
@@ -220,10 +188,11 @@ export default function LatestOrder() {
           <TableHead>
             <TableRow>
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
-              <TableCell>First Name</TableCell>
-              <TableCell>Last Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
+              <TableCell>Full Name</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Gender</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>Address</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -231,10 +200,11 @@ export default function LatestOrder() {
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow hover key={row._id}>
                 <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
-                <TableCell>{row.fname}</TableCell>
-                <TableCell>{row.lname}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.role || 'N/A'}</TableCell>
+                <TableCell>{row.fullname}</TableCell>
+                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.gender}</TableCell>
+                <TableCell>{row.city || '-'}</TableCell>
+                <TableCell>{row.address}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
                     <IconButton color="success" size="large" onClick={() => handleEditClick(row)}>
@@ -270,8 +240,8 @@ export default function LatestOrder() {
         keepMounted
         TransitionComponent={PopupTransition}
         maxWidth="xs"
-        aria-labelledby="delete-user-title"
-        aria-describedby="delete-user-description"
+        aria-labelledby="delete-client-title"
+        aria-describedby="delete-client-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
@@ -282,7 +252,6 @@ export default function LatestOrder() {
               <Typography variant="h4" align="center">
                 Are you sure you want to delete?
               </Typography>
-              <Typography align="center">By deleting the user, all tasks assigned to that user will also be deleted.</Typography>
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
@@ -304,21 +273,20 @@ export default function LatestOrder() {
         keepMounted
         TransitionComponent={PopupTransition}
         maxWidth="md"
-        aria-labelledby="view-user-title"
-        aria-describedby="view-user-description"
+        aria-labelledby="view-client-title"
+        aria-describedby="view-client-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
             <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              {selectedUser && selectedUser.fname.charAt(0).toUpperCase()}
+              {selectedClient && selectedClient.fullname.charAt(0).toUpperCase()}
             </Avatar>
             <Stack spacing={2}>
               <Typography variant="h4" align="center">
-                {selectedUser ? `${selectedUser.fname} ${selectedUser.lname}` : ''}
+                {selectedClient ? `${selectedClient.fullname}` : ''}
               </Typography>
-              <Typography align="center">Email: {selectedUser ? selectedUser.email : ''}</Typography>
-              <Typography align="center">Role: {selectedUser ? selectedUser.role : 'N/A'}</Typography>
-              <Typography align="center">ID: {selectedUser ? selectedUser.index : ''}</Typography>
+              <Typography align="center">Phone: {selectedClient ? selectedClient.phone : ''}</Typography>
+              <Typography align="center">Address: {selectedClient ? selectedClient.address : ''}</Typography>
               {/* Additional details can be displayed here */}
             </Stack>
 
@@ -339,24 +307,28 @@ export default function LatestOrder() {
         TransitionComponent={PopupTransition}
         fullWidth
         maxWidth="md" // Adjusted width
-        aria-labelledby="edit-user-details-title"
-        aria-describedby="edit-user-details-description"
+        aria-labelledby="edit-client-details-title"
+        aria-describedby="edit-client-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
             <Typography variant="h4" align="center">
-              Edit User Details
+              Edit Client Details
             </Typography>
-            <TextField name="fname" label="First Name" value={editedUser.fname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="lname" label="Last Name" value={editedUser.lname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="email" label="Email" value={editedUser.email || ''} onChange={handleFieldChange} fullWidth />
-            <InputLabel id="role-label">Role</InputLabel>
-            <Select labelId="role-label" name="id_role" value={editedUser.id_role || ''} onChange={handleRoleChange} fullWidth>
-              {roles.map((role) => (
-                <MenuItem key={role._id} value={role._id}>
-                  {role.role_name}
-                </MenuItem>
-              ))}
+            <TextField name="fullname" label="Full Name" value={editedClient.fullname || ''} onChange={handleFieldChange} fullWidth />
+            <TextField name="phone" label="Phone" value={editedClient.phone || ''} onChange={handleFieldChange} fullWidth />
+            <TextField name="address" label="Address" value={editedClient.address || ''} onChange={handleFieldChange} fullWidth />
+            <InputLabel id="gender-label">Gender</InputLabel>
+            <Select
+              labelId="gender-label"
+              name="gender"
+              label="Gender"
+              value={editedClient.gender || ''}
+              onChange={handleFieldChange}
+              fullWidth
+            >
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
             </Select>
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
