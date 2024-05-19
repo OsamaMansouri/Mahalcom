@@ -31,6 +31,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { EditOutlined } from '@ant-design/icons';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -207,8 +208,8 @@ export default function LatestOrder() {
                 <TableCell>{row.address}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="success" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlinedIcon />
+                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
                     </IconButton>
                     <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />

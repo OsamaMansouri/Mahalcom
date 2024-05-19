@@ -19,7 +19,8 @@ import {
   MenuItem,
   InputLabel,
   TablePagination,
-  Slide
+  Slide,
+  Chip
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -28,6 +29,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { EditOutlined } from '@ant-design/icons';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -223,8 +225,9 @@ export default function LatestOrder() {
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
+              <TableCell>Email</TableCell>
+
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -234,12 +237,21 @@ export default function LatestOrder() {
                 <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
                 <TableCell>{row.fname}</TableCell>
                 <TableCell>{row.lname}</TableCell>
+                <TableCell>
+                  {(() => {
+                    if (row.role === 'manager') {
+                      return <Chip color="success" label={row.role || 'N/A'} size="small" />;
+                    } else {
+                      return <Chip color="primary" label={row.role || 'N/A'} size="small" />;
+                    }
+                  })()}
+                </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.role || 'N/A'}</TableCell>
+
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="success" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlinedIcon />
+                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
                     </IconButton>
                     <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
