@@ -35,8 +35,8 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 // table data
-function createData(index, _id, fname, lname, email, role) {
-  return { index, _id, fname, lname, email, role };
+function createData(index, _id, fname, lname, email, role, id_role) {
+  return { index, _id, fname, lname, email, role, id_role };
 }
 
 export default function LatestOrder() {
@@ -70,7 +70,7 @@ export default function LatestOrder() {
               }
             });
             const roleData = await roleResponse.json();
-            return createData(index + 1, row._id, row.fname, row.lname, row.email, roleData.role_name);
+            return createData(index + 1, row._id, row.fname, row.lname, row.email, roleData.role_name, row.id_role);
           })
         );
         setData(newData);
@@ -153,8 +153,9 @@ export default function LatestOrder() {
   };
 
   const handleEditClick = (user) => {
+    console.log('Editing user:', user); // Debugging log
     setSelectedUser(user);
-    setEditedUser({ ...user });
+    setEditedUser(user);
     setOpenEditDialog(true);
   };
 
