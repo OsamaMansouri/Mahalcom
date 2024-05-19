@@ -19,7 +19,7 @@ const AddUser = () => {
     // Fetch roles from the backend
     const fetchRoles = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/role/getall'); // Update this to your actual endpoint
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`); // Update this to your actual endpoint
         const data = await response.json();
         if (Array.isArray(data)) {
           setRoles(data); // Assuming data is an array of roles
@@ -56,7 +56,7 @@ const AddUser = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch('http://localhost:8000/api/user/create', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

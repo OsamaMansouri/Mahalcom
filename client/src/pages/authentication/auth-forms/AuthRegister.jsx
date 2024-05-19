@@ -41,7 +41,7 @@ export default function AuthRegister() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/role/getall');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`);
         setRoles(response.data);
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -70,7 +70,7 @@ export default function AuthRegister() {
   const handleSubmit = async (values) => {
     console.log('Submitting form with values:', values); // Debugging statement
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', values);
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`, values);
       toast.success(response.data.msg, { position: 'top-right' });
       window.location.href = '/login'; // Redirect to login page
     } catch (error) {
