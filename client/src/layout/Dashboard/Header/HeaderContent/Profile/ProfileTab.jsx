@@ -27,7 +27,7 @@ export default function ProfileTab() {
   const handleLogout = async () => {
     try {
       // Call the logout endpoint
-      await axios.post('http://localhost:8000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
 
       window.location.href = '/login'; // or navigate programmatically using react-router-dom
