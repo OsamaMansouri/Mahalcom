@@ -8,6 +8,8 @@ import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
 const Clients = Loadable(lazy(() => import('pages/clients/list')));
+const AddClient = Loadable(lazy(() => import('pages/clients/add')));
+
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -43,6 +45,10 @@ const MainRoutes = {
     {
       path: 'clients',
       element: <Clients />
+    },
+    {
+      path: 'add-client',
+      element: <AddClient />
     },
     {
       path: 'color',
