@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Stack from '@mui/material/Stack';
+import {
+  CardMedia,
+  Chip,
+  Link,
+  Table,
+  TableBody,
+  TableContainer,
+  TableCell,
+  TableHead,
+  TableRow,
+  Stack,
+  IconButton,
+  Button,
+  Dialog,
+  DialogContent,
+  Avatar,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  TablePagination,
+  Slide
+} from '@mui/material';
 import MainCard from 'components/MainCard';
-import IconButton from 'components/@extended/IconButton';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import TablePagination from '@mui/material/TablePagination';
-import Slide from '@mui/material/Slide'; // Import Slide for custom transition
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
@@ -39,6 +44,7 @@ function createData(_id, fname, lname, email, role) {
 
 export default function LatestOrder() {
   const [data, setData] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -52,7 +58,7 @@ export default function LatestOrder() {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:8000/api/user/getall', {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/getall`, {
           headers: {
             Authorization: `${token}`
           }
@@ -61,7 +67,7 @@ export default function LatestOrder() {
         // Add unique IDs to each row and fetch role names
         const newData = await Promise.all(
           responseData.map(async (row) => {
-            const roleResponse = await fetch(`http://localhost:8000/api/role/${row.id_role}`, {
+            const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${row.id_role}`, {
               headers: {
                 Authorization: `${token}`
               }
@@ -76,7 +82,23 @@ export default function LatestOrder() {
       }
     };
 
+    const fetchRoles = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`, {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        const responseData = await response.json();
+        setRoles(responseData);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+
     fetchData();
+    fetchRoles();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -100,7 +122,7 @@ export default function LatestOrder() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/user/delete/${userToDelete}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userToDelete}`, {
         method: 'DELETE',
         headers: {
           Authorization: `${localStorage.getItem('token')}`, // Include the token in the Authorization header
@@ -147,7 +169,7 @@ export default function LatestOrder() {
 
   const handleEditSave = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/user/update/${editedUser._id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update/${editedUser._id}`, {
         method: 'PUT',
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
@@ -155,8 +177,15 @@ export default function LatestOrder() {
         },
         body: JSON.stringify(editedUser)
       });
+
       if (response.ok) {
-        const updatedData = data.map((user) => (user._id === editedUser._id ? { ...editedUser } : user));
+        const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${editedUser.id_role}`, {
+          headers: {
+            Authorization: `${localStorage.getItem('token')}`
+          }
+        });
+        const roleData = await roleResponse.json();
+        const updatedData = data.map((user) => (user._id === editedUser._id ? { ...editedUser, role: roleData.role_name } : user));
         setData(updatedData);
         setOpenEditDialog(false);
         toast.success('User updated successfully', { position: 'top-right' });
@@ -175,12 +204,16 @@ export default function LatestOrder() {
     setEditedUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleRoleChange = (e) => {
+    setEditedUser((prev) => ({ ...prev, id_role: e.target.value }));
+  };
+
   return (
     <MainCard
-      title="Latest Order"
+      title="List of users"
       content={false}
       secondary={
-        <Button component={RouterLink} to="/add-manager" variant="contained" startIcon={<PlusOutlined />}>
+        <Button component={RouterLink} to="/add-user" variant="contained" startIcon={<PlusOutlined />}>
           Add User
         </Button>
       }
@@ -319,7 +352,14 @@ export default function LatestOrder() {
             <TextField name="fname" label="First Name" value={editedUser.fname || ''} onChange={handleFieldChange} fullWidth />
             <TextField name="lname" label="Last Name" value={editedUser.lname || ''} onChange={handleFieldChange} fullWidth />
             <TextField name="email" label="Email" value={editedUser.email || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="role" label="Role" value={editedUser.role || ''} onChange={handleFieldChange} fullWidth />
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select labelId="role-label" name="id_role" value={editedUser.id_role || ''} onChange={handleRoleChange} fullWidth>
+              {roles.map((role) => (
+                <MenuItem key={role._id} value={role._id}>
+                  {role.role_name}
+                </MenuItem>
+              ))}
+            </Select>
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
                 Cancel
