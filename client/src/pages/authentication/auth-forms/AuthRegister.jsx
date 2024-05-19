@@ -16,6 +16,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 // third party
 import * as Yup from 'yup';
@@ -34,6 +36,19 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 export default function AuthRegister() {
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/role/getall');
+        setRoles(response.data);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -53,11 +68,13 @@ export default function AuthRegister() {
   }, []);
 
   const handleSubmit = async (values) => {
+    console.log('Submitting form with values:', values); // Debugging statement
     try {
       const response = await axios.post('http://localhost:8000/api/auth/register', values);
       toast.success(response.data.msg, { position: 'top-right' });
       window.location.href = '/login'; // Redirect to login page
     } catch (error) {
+      console.error('Error during registration:', error); // Debugging statement
       toast.error('Registration failed', { position: 'top-right' });
     }
   };
@@ -70,13 +87,15 @@ export default function AuthRegister() {
           lname: '',
           email: '',
           password: '',
+          id_role: '', // Add id_role to initial values
           submit: null
         }}
         validationSchema={Yup.object().shape({
           fname: Yup.string().max(255).required('First Name is required'),
           lname: Yup.string().max(255).required('Last Name is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          password: Yup.string().max(255).required('Password is required'),
+          id_role: Yup.string().required('Role is required') // Validate the role field
         })}
         onSubmit={(values, { setSubmitting }) => {
           handleSubmit(values);
@@ -91,7 +110,7 @@ export default function AuthRegister() {
                   <InputLabel htmlFor="firstname-signup">First Name*</InputLabel>
                   <OutlinedInput
                     id="firstname-login"
-                    type="firstname"
+                    type="text"
                     value={values.fname}
                     name="fname"
                     onBlur={handleBlur}
@@ -114,13 +133,12 @@ export default function AuthRegister() {
                     fullWidth
                     error={Boolean(touched.lname && errors.lname)}
                     id="lastname-signup"
-                    type="lastname"
+                    type="text"
                     value={values.lname}
                     name="lname"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Doe"
-                    inputProps={{}}
                   />
                 </Stack>
                 {touched.lname && errors.lname && (
@@ -135,14 +153,13 @@ export default function AuthRegister() {
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
-                    id="email-login"
+                    id="email-signup"
                     type="email"
                     value={values.email}
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="demo@company.com"
-                    inputProps={{}}
                   />
                 </Stack>
                 {touched.email && errors.email && (
@@ -180,7 +197,6 @@ export default function AuthRegister() {
                       </InputAdornment>
                     }
                     placeholder="******"
-                    inputProps={{}}
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -200,6 +216,35 @@ export default function AuthRegister() {
                     </Grid>
                   </Grid>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="role-signup">Role*</InputLabel>
+                  <Select
+                    fullWidth
+                    error={Boolean(touched.id_role && errors.id_role)}
+                    id="role-signup"
+                    value={values.id_role}
+                    name="id_role"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    displayEmpty
+                  >
+                    <MenuItem value="" disabled>
+                      Select Role
+                    </MenuItem>
+                    {roles.map((role) => (
+                      <MenuItem key={role._id} value={role._id}>
+                        {role.role_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+                {touched.id_role && errors.id_role && (
+                  <FormHelperText error id="helper-text-role-signup">
+                    {errors.id_role}
+                  </FormHelperText>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body2">

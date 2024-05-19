@@ -4,7 +4,7 @@ import { Grid, TextField, Button, RadioGroup, FormControlLabel, Radio, Stack, Ty
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
 
-const AddManager = () => {
+const AddUser = () => {
   const [formData, setFormData] = useState({
     fname: '',
     lname: '',
@@ -66,15 +66,15 @@ const AddManager = () => {
       });
 
       if (response.ok) {
-        toast.success('Manager added successfully', { position: 'top-right' });
-        navigate('/managers');
+        toast.success('User added successfully', { position: 'top-right' });
+        navigate('/users');
       } else {
-        console.error('Error adding manager:', response.statusText);
-        toast.error('Error adding manager', { position: 'top-right' });
+        console.error('Error adding user:', response.statusText);
+        toast.error('Error adding user', { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Error adding manager:', error);
-      toast.error('Error adding manager', { position: 'top-right' });
+      console.error('Error adding user:', error);
+      toast.error('Error adding users', { position: 'top-right' });
     }
   };
 
@@ -82,7 +82,7 @@ const AddManager = () => {
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         <Grid item xs={12} lg={6}>
-          <MainCard title="Add Manager">
+          <MainCard title="Add User">
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12}>
                 <Stack spacing={1}>
@@ -129,7 +129,7 @@ const AddManager = () => {
               </Grid>
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" type="submit">
-                  Add Manager
+                  Add user
                 </Button>
               </Grid>
             </Grid>
@@ -140,4 +140,4 @@ const AddManager = () => {
   );
 };
 
-export default AddManager;
+export default AddUser;

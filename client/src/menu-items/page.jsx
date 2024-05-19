@@ -51,10 +51,10 @@ const pages = {
    
     } */
     {
-      id: 'managers',
-      title: 'Managers',
+      id: 'users',
+      title: 'Users',
       type: 'item',
-      url: '/managers',
+      url: '/users',
       icon: icons.ApartmentOutlined
     },
     {

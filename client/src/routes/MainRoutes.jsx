@@ -5,9 +5,8 @@ import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
 
-const Managers = Loadable(lazy(() => import('pages/managers/list')));
-
-const AddManager = Loadable(lazy(() => import('pages/managers/add')));
+const Users = Loadable(lazy(() => import('pages/users/list')));
+const AddUser = Loadable(lazy(() => import('pages/users/add')));
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -33,12 +32,12 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'managers',
-      element: <Managers />
+      path: 'users',
+      element: <Users />
     },
     {
-      path: 'add-manager',
-      element: <AddManager />
+      path: 'add-user',
+      element: <AddUser />
     },
     {
       path: 'color',
