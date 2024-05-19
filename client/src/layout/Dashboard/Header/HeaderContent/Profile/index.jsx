@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import axios from 'axios'; // Import Axios
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -50,9 +51,30 @@ function a11yProps(index) {
 
 export default function Profile() {
   const theme = useTheme();
-
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(0);
+  const [user, setUser] = useState({ name: '', role: '' });
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/details`, {
+          headers: { Authorization: `${token}` }
+        });
+        setUser({
+          name: `${response.data.fname} ${response.data.lname}`,
+          role: response.data.id_role.role_name
+        });
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -64,10 +86,18 @@ export default function Profile() {
     setOpen(false);
   };
 
-  const [value, setValue] = useState(0);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const iconBackColorOpen = 'grey.100';
@@ -91,7 +121,7 @@ export default function Profile() {
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            John Doe
+            {user.name}
           </Typography>
         </Stack>
       </ButtonBase>
@@ -124,15 +154,15 @@ export default function Profile() {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{user.name}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              {user.role}
                             </Typography>
                           </Stack>
                         </Stack>
                       </Grid>
                       <Grid item>
-                        <Tooltip title="Logout">
+                        <Tooltip title="Logout" onClick={handleLogout}>
                           <IconButton size="large" sx={{ color: 'text.primary' }}>
                             <LogoutOutlined />
                           </IconButton>
@@ -185,4 +215,9 @@ export default function Profile() {
   );
 }
 
-TabPanel.propTypes = { children: PropTypes.node, value: PropTypes.number, index: PropTypes.number, other: PropTypes.any };
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  value: PropTypes.number,
+  index: PropTypes.number,
+  other: PropTypes.any
+};

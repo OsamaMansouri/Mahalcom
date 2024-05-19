@@ -1,14 +1,40 @@
 import User from "../models/userModel.js";
+import Role from "../models/roleModel.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
 export const create = async (req, res) => {
   try {
-    const userData = new User(req.body);
-    if (!userData) {
-      return res.status(404).json({ msg: "User data not found" });
+    const { fname, lname, email, password, id_role } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "User already exists" });
     }
-    const savedData = await userData.save();
-    res.status(200).json({ msg: "User created successfully" });
+
+    // Validate the role ID
+    const role = await Role.findById(id_role);
+    if (!role) {
+      return res.status(400).json({ msg: "Invalid role ID" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new User({
+      fname,
+      lname,
+      email,
+      password: hashedPassword,
+      id_role,
+    });
+    await newUser.save();
+
+    res.status(201).json({ msg: "User registered successfully" });
   } catch (error) {
+    console.error("Error registering user:", error); // Debugging statement
     res.status(500).json({ error: error.message });
   }
 };
