@@ -78,3 +78,32 @@ export const logout = (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getUserDetails = async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+
+    // Ensure the token is provided
+    if (!token) {
+      return res.status(401).json({ msg: "Authorization token is missing" });
+    }
+
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find the user by ID and populate the role
+    const user = await User.findById(decoded.id).populate(
+      "id_role",
+      "role_name"
+    );
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
