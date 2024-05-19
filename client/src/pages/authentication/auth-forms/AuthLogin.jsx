@@ -60,7 +60,7 @@ export default function AuthLogin({ isDemo = false }) {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
             const response = await axios.post(
-              'http://localhost:8000/api/auth/login',
+              `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
               values // Pass form values to the API request
             );
             const token = response.data.token;
