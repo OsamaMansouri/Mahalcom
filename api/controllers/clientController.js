@@ -1,4 +1,4 @@
-import User from "../models/clientModel.js";
+import Client from "../models/clientModel.js";
 
 export const create = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ export const getAll = async (req, res) => {
     const clientData = await Client.find();
 
     if (!clientData) {
-      return res.status(404).json({ msg: "Client data not found" });
+      return res.status(404).json({ msg: "Client not found" });
     }
 
     res.status(200).json(clientData);
