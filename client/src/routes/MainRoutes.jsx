@@ -9,6 +9,8 @@ const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
 const Clients = Loadable(lazy(() => import('pages/clients/list')));
 const AddClient = Loadable(lazy(() => import('pages/clients/add')));
+const Suppliers = Loadable(lazy(() => import('pages/suppliers/list')));
+const AddSupplier = Loadable(lazy(() => import('pages/suppliers/add')));
 
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
@@ -49,6 +51,14 @@ const MainRoutes = {
     {
       path: 'add-client',
       element: <AddClient />
+    },
+    {
+      path: 'add-supplier',
+      element: <AddSupplier />
+    },
+    {
+      path: 'suppliers',
+      element: <Suppliers />
     },
     {
       path: 'color',
