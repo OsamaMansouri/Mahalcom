@@ -10,7 +10,7 @@ import authRoute from "./routes/authRoute.js";
 import livreurRoute from "./routes/livreurRoute.js";
 import invoiceRoute from "./routes/invoiceRoute.js";
 import clientRoute from "./routes/clientRoute.js";
-import fournisseurRoute from "./routes/fournisseurRoute.js";
+import supplierRoute from "./routes/supplierRoute.js";
 import livraisonRoute from "./routes/livraisonRoute.js";
 import roleRoute from "./routes/roleRoute.js";
 
@@ -47,7 +47,7 @@ app.use("/api/stock", stockRoute);
 app.use("/api/product", productRoute);
 app.use("/api/invoice", invoiceRoute);
 app.use("/api/client", clientRoute);
-app.use("/api/fournisseur", fournisseurRoute);
+app.use("/api/supplier", supplierRoute);
 app.use("/api/livraison", livraisonRoute);
 app.use("/api/livreur", livreurRoute);
 
