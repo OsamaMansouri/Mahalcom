@@ -12,6 +12,8 @@ import {
   ApartmentOutlined
 } from '@ant-design/icons';
 
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+
 // icons
 const icons = {
   LoginOutlined,
@@ -23,7 +25,8 @@ const icons = {
   FileDoneOutlined,
   SkinOutlined,
   TruckOutlined,
-  ApartmentOutlined
+  ApartmentOutlined,
+  CategoryOutlinedIcon
 };
 
 // ==============================|| MENU ITEMS - EXTRA PAGES ||============================== //
@@ -72,12 +75,20 @@ const pages = {
       icon: icons.UserOutlined
     },
     {
+      id: 'categories',
+      title: 'Categories',
+      type: 'item',
+      url: '/categories',
+      icon: icons.CategoryOutlinedIcon
+    },
+    {
       id: 'orders',
       title: 'Orders',
       type: 'item',
       url: '/orders',
       icon: icons.DollarOutlined
     },
+
     {
       id: 'products',
       title: 'Products',

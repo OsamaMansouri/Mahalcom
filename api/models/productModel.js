@@ -10,8 +10,10 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
     },
-    categorie: {
-      type: String,
+    id_catg: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
     price: {
       type: Number,
@@ -19,15 +21,11 @@ const productSchema = new mongoose.Schema(
     quantity: {
       type: Number,
     },
-    expiryDate: {
-      type: Date,
-    },
-    stockId: {
+    id_stock: {
       type: mongoose.Schema.Types.ObjectId,
     },
   },
   { timestamps: true }
 );
-
 
 export default mongoose.model("Product", productSchema);
