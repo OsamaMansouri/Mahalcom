@@ -20,7 +20,10 @@ import {
   InputLabel,
   TablePagination,
   Slide,
-  Chip
+  Chip,
+  Grid,
+  FormHelperText,
+  CardActions
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -52,6 +55,7 @@ export default function LatestOrder() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedUser, setEditedUser] = useState({});
+  const [emptyField, setEmptyField] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -356,36 +360,77 @@ export default function LatestOrder() {
         aria-describedby="edit-user-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Typography variant="h4" align="center">
-              Edit User Details
-            </Typography>
-            <TextField name="fname" label="First Name" value={editedUser.fname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="lname" label="Last Name" value={editedUser.lname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="email" label="Email" value={editedUser.email || ''} onChange={handleFieldChange} fullWidth />
-            <InputLabel id="role-label">Role</InputLabel>
-            <Select labelId="role-label" name="id_role" value={editedUser.id_role || ''} onChange={handleRoleChange} fullWidth>
-              {roles.map((role) => (
-                <MenuItem key={role._id} value={role._id}>
-                  {role.role_name}
-                </MenuItem>
-              ))}
-            </Select>
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button
-                fullWidth
-                color="primary"
-                variant="contained"
-                onClick={handleEditSave}
-                startIcon={<SaveIcon />} // Added Save icon
-              >
-                Save
-              </Button>
-            </Stack>
-          </Stack>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Edit User Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>First Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter first name"
+                        name="fname"
+                        value={editedUser.fname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the first name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Last Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter last name"
+                        name="lname"
+                        value={editedUser.lname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the last name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter email"
+                        name="email"
+                        value={editedUser.email || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the email</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Role</InputLabel>
+                      <Select labelId="role-label" name="id_role" value={editedUser.id_role || ''} onChange={handleRoleChange} fullWidth>
+                        {roles.map((role) => (
+                          <MenuItem key={role._id} value={role._id}>
+                            {role.role_name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Stack>
+                    <FormHelperText>Please enter the role</FormHelperText>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                        Update
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </MainCard>
