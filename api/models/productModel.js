@@ -24,6 +24,7 @@ const productSchema = new mongoose.Schema(
     id_stock: {
       type: mongoose.Schema.Types.ObjectId,
     },
+    instock: {},
   },
   { timestamps: true }
 );
