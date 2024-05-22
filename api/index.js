@@ -10,9 +10,11 @@ import authRoute from "./routes/authRoute.js";
 import livreurRoute from "./routes/livreurRoute.js";
 import invoiceRoute from "./routes/invoiceRoute.js";
 import clientRoute from "./routes/clientRoute.js";
-import fournisseurRoute from "./routes/fournisseurRoute.js";
+import supplierRoute from "./routes/supplierRoute.js";
 import livraisonRoute from "./routes/livraisonRoute.js";
-
+import roleRoute from "./routes/roleRoute.js";
+import categoryRoute from "./routes/categoryRoute.js";
+import orderRoute from "./routes/orderRoute.js";
 dotenv.config();
 
 //express app
@@ -41,13 +43,16 @@ app.use("/api/auth", authRoute);
 
 //routes
 app.use("/api/user", userRoute);
+app.use("/api/role", roleRoute);
 app.use("/api/stock", stockRoute);
 app.use("/api/product", productRoute);
 app.use("/api/invoice", invoiceRoute);
-app.use("/api/client",clientRoute);
-app.use("/api/fournisseur",fournisseurRoute);
-app.use("/api/livraison",livraisonRoute);
+app.use("/api/client", clientRoute);
+app.use("/api/supplier", supplierRoute);
+app.use("/api/livraison", livraisonRoute);
 app.use("/api/livreur", livreurRoute);
+app.use("/api/category", categoryRoute);
+app.use("/api/order",orderRoute);
 
 app.all("*", (req, res) => {
   res.status(404);

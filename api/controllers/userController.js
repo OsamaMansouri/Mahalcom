@@ -1,17 +1,41 @@
 import User from "../models/userModel.js";
+import Role from "../models/roleModel.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
 export const create = async (req, res) => {
   try {
-    const userData = new User(req.body);
-    if (!userData) {
-      return res.status(404).json({ msg: "User data not found" });
-    }
-    const savedData = await userData.save();
-    //res.status(200).json(savedData);
+    const { fname, lname, email, password, id_role } = req.body;
 
-    res.status(200).json({ msg: "User created successfully" });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
+
+    // Validate the role ID
+    const role = await Role.findById(id_role);
+    if (!role) {
+      return res.status(400).json({ msg: "Invalid role ID" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new User({
+      fname,
+      lname,
+      email,
+      password: hashedPassword,
+      id_role,
+    });
+    await newUser.save();
+
+    res.status(201).json({ msg: "User registered successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    console.error("Error registering user:", error); // Debugging statement
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -65,15 +89,15 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const userData = await User.findById(id);
+    const user = await User.findByIdAndDelete(id);
 
-    if (!userData) {
+    if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-    const user = await User.findByIdAndDelete(id);
 
     res.status(200).json({ msg: "User deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

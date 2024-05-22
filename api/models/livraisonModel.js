@@ -1,26 +1,33 @@
 import mongoose from "mongoose";
 const livraisonSchema = new mongoose.Schema(
   {
-    IdCommomde:{
+    id_livreur: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Commonde" 
+      ref: "Livreur",
+      required: true,
     },
-    StatutLivraison: {
+    id_order: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+      required: true,
+    },
+    city: {
       type: String,
     },
-    AdresseLivraison: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Client" 
+    address: {
+      type: String,
+      required: true,
     },
-    IdLivreur :{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Livreur" 
+    date: {
+      type: Date,
+      required: true,
     },
-    DateLivraison :{
-        type : Date,
+    message: {
+      type: String,
     },
-    FraisLivraison :{
-        type : Number,
+    status: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

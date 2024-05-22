@@ -1,35 +1,27 @@
 import mongoose from "mongoose";
 const clientSchema = new mongoose.Schema(
   {
-    fname: {
+    fullname: {
       type: String,
       required: true,
     },
-    lname: {
+    gender: {
       type: String,
       required: true,
     },
-    email: {
+    city: {
       type: String,
-      required: true,
     },
-    password: {
+    address: {
       type: String,
       required: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
-    },
-    adresse: {
-        type: String,
-        required: true,
-    },
-    totalCommande: {
-        type: Number,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Client", clientSchemaSchema);
+export default mongoose.model("Client", clientSchema);
