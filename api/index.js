@@ -14,7 +14,7 @@ import supplierRoute from "./routes/supplierRoute.js";
 import livraisonRoute from "./routes/livraisonRoute.js";
 import roleRoute from "./routes/roleRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
-
+import orderRoute from "./routes/orderRoute.js";
 dotenv.config();
 
 //express app
@@ -52,6 +52,7 @@ app.use("/api/supplier", supplierRoute);
 app.use("/api/livraison", livraisonRoute);
 app.use("/api/livreur", livreurRoute);
 app.use("/api/category", categoryRoute);
+app.use("/api/order",orderRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
