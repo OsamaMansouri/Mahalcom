@@ -10,10 +10,12 @@ const AddUser = Loadable(lazy(() => import('pages/users/add')));
 const Clients = Loadable(lazy(() => import('pages/clients/list')));
 const Categories = Loadable(lazy(() => import('pages/categories/list')));
 const AddCategory = Loadable(lazy(() => import('pages/categories/add')));
-
 const AddClient = Loadable(lazy(() => import('pages/clients/add')));
 const Suppliers = Loadable(lazy(() => import('pages/suppliers/list')));
 const AddSupplier = Loadable(lazy(() => import('pages/suppliers/add')));
+const Products = Loadable(lazy(() => import('pages/products/list')));
+const AddProduct = Loadable(lazy(() => import('pages/products/add')));
+
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -70,6 +72,16 @@ const MainRoutes = {
       path: 'add-category',
       element: <AddCategory />
     },
+    {
+      path: 'products',
+      element: <Products />
+    },
+    {
+      path: 'add-product',
+      element: <AddProduct />
+    },
+
+
     {
       path: 'color',
       element: <Color />

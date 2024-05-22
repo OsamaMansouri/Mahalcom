@@ -23,8 +23,11 @@ const productSchema = new mongoose.Schema(
     },
     id_stock: {
       type: mongoose.Schema.Types.ObjectId,
+      default: "664e4d941c7063fe3860ebf8",
     },
-    instock: {},
+    inStock: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
