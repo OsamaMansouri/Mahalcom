@@ -40,11 +40,46 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 
 // List of Moroccan cities
 const cities = [
-  'Casablanca', 'Rabat', 'Fes', 'Marrakech', 'Tangier', 'Agadir', 'Meknes', 'Oujda', 'Kenitra', 'Tetouan',
-  'Safi', 'Khouribga', 'El Jadida', 'Nador', 'Beni Mellal', 'Taza', 'Mohammedia', 'Ksar El Kebir', 'Laayoune',
-  'Khenifra', 'Settat', 'Larache', 'Khemisset', 'Guelmim', 'Berrechid', 'Inezgane', 'Sidi Kacem', 'Tiznit',
-  'Ouarzazate', 'Fquih Ben Salah', 'Dakhla', 'Azrou', 'Oulad Teima', 'Essaouira', 'Tifelt', 'Sidi Slimane',
-  'Boujdour', 'Errachidia', 'Ben Guerir', 'Tan-Tan'
+  'Casablanca',
+  'Rabat',
+  'Fes',
+  'Marrakech',
+  'Tangier',
+  'Agadir',
+  'Meknes',
+  'Oujda',
+  'Kenitra',
+  'Tetouan',
+  'Safi',
+  'Khouribga',
+  'El Jadida',
+  'Nador',
+  'Beni Mellal',
+  'Taza',
+  'Mohammedia',
+  'Ksar El Kebir',
+  'Laayoune',
+  'Khenifra',
+  'Settat',
+  'Larache',
+  'Khemisset',
+  'Guelmim',
+  'Berrechid',
+  'Inezgane',
+  'Sidi Kacem',
+  'Tiznit',
+  'Ouarzazate',
+  'Fquih Ben Salah',
+  'Dakhla',
+  'Azrou',
+  'Oulad Teima',
+  'Essaouira',
+  'Tifelt',
+  'Sidi Slimane',
+  'Boujdour',
+  'Errachidia',
+  'Ben Guerir',
+  'Tan-Tan'
 ];
 
 // Table data
@@ -162,7 +197,7 @@ export default function LatestOrder() {
   const handleEditSave = async () => {
     // Check if any required field is empty
     const requiredFields = ['fullname', 'phone', 'email', 'address', 'products_type', 'city'];
-    const emptyField = requiredFields.find(field => !editedsupplier[field]);
+    const emptyField = requiredFields.find((field) => !editedsupplier[field]);
     if (emptyField) {
       setEmptyField(emptyField);
       return;
@@ -429,13 +464,7 @@ export default function LatestOrder() {
               )}
             </FormControl>
             <InputLabel id="store-label">Store</InputLabel>
-            <RadioGroup
-              aria-labelledby="store-label"
-              name="store"
-              value={editedsupplier.store || ''}
-              onChange={handleFieldChange}
-              row
-            >
+            <RadioGroup aria-labelledby="store-label" name="store" value={editedsupplier.store || ''} onChange={handleFieldChange} row>
               <FormControlLabel value="yes" control={<Radio />} label="Yes" />
               <FormControlLabel value="no" control={<Radio />} label="No" />
             </RadioGroup>
