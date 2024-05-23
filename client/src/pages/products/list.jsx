@@ -39,8 +39,8 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 // table data
-function createData(index, _id, name,description, address,brand,id_catg,price,quantity,id_stock,inStock ) {
-  return { index, _id, name,description, address,brand,id_catg,price,quantity,id_stock,inStock };
+function createData(index, _id, name, description, address, brand, id_catg, price, quantity, id_stock, inStock) {
+  return { index, _id, name, description, address, brand, id_catg, price, quantity, id_stock, inStock };
 }
 
 export default function LatestOrder() {
@@ -67,7 +67,19 @@ export default function LatestOrder() {
         const responseData = await response.json();
         setData(
           responseData.map((item, index) =>
-            createData(index + 1, item._id, item.name, item.description, item.address, item.brand, item.id_catg, item.price, item.quantity, item.id_stock, item.inStock)
+            createData(
+              index + 1,
+              item._id,
+              item.name,
+              item.description,
+              item.address,
+              item.brand,
+              item.id_catg,
+              item.price,
+              item.quantity,
+              item.id_stock,
+              item.inStock
+            )
           )
         );
       } catch (error) {
@@ -75,15 +87,15 @@ export default function LatestOrder() {
       }
     };
     fetchData();
-    
+
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/getall` ,
-        {headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}` 
-        }},
-        );
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/getall`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`
+          }
+        });
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -206,14 +218,11 @@ export default function LatestOrder() {
             <TableRow>
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Brand</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Stock</TableCell>
               <TableCell>In Stock</TableCell>
-
 
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -223,12 +232,12 @@ export default function LatestOrder() {
               <TableRow hover key={row._id}>
                 <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.brand}</TableCell>
                 <TableCell>
-                  {categories.filter((cat) => cat._id === row.id_catg).map((cat) => (
-                    <p>{cat.catg_name}</p>
-                  ))}
+                  {categories
+                    .filter((cat) => cat._id === row.id_catg)
+                    .map((cat) => (
+                      <p>{cat.catg_name}</p>
+                    ))}
                 </TableCell>
                 <TableCell>{row.price}</TableCell>
                 <TableCell>{row.quantity}</TableCell>
@@ -358,13 +367,18 @@ export default function LatestOrder() {
               Edit Product Details
             </Typography>
             <TextField name="name" label="Name" value={editedProduct.name || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="description" label="description" value={editedProduct.description || ''} onChange={handleFieldChange} fullWidth />
+            <TextField
+              name="description"
+              label="description"
+              value={editedProduct.description || ''}
+              onChange={handleFieldChange}
+              fullWidth
+            />
             <TextField name="brand" label="brand" value={editedProduct.brand || ''} onChange={handleFieldChange} fullWidth />
             <TextField name="price" label="price" value={editedProduct.price || ''} onChange={handleFieldChange} fullWidth />
             <TextField name="quantity" label="quantity" value={editedProduct.quantity || ''} onChange={handleFieldChange} fullWidth />
             <TextField name="id_stock" label="stock id" value={editedProduct.id_stock || ''} onChange={handleFieldChange} fullWidth />
 
-            
             <InputLabel id="gender-label">category</InputLabel>
             <Select
               labelId="gender-label"
@@ -374,7 +388,7 @@ export default function LatestOrder() {
               onChange={handleFieldChange}
               fullWidth
             >
-              {categories.map((cat) => ( 
+              {categories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
                   {cat.catg_name}
                 </MenuItem>
@@ -385,13 +399,7 @@ export default function LatestOrder() {
               <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
                 Cancel
               </Button>
-              <Button
-                fullWidth
-                color="primary"
-                variant="contained"
-                onClick={handleEditSave}
-                startIcon={<SaveIcon />} 
-              >
+              <Button fullWidth color="primary" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
                 Save
               </Button>
             </Stack>

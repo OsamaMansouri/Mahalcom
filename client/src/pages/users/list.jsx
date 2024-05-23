@@ -296,10 +296,9 @@ export default function LatestOrder() {
               <DeleteOutlinedIcon />
             </Avatar>
             <Stack spacing={2}>
-              <Typography variant="h4" align="center">
+              <Typography variant="h5" align="center">
                 Are you sure you want to delete?
               </Typography>
-              <Typography align="center">By deleting the user, all tasks assigned to that user will also be deleted.</Typography>
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
@@ -325,26 +324,42 @@ export default function LatestOrder() {
         aria-describedby="view-user-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              {selectedUser && selectedUser.fname.charAt(0).toUpperCase()}
-            </Avatar>
-            <Stack spacing={2}>
-              <Typography variant="h4" align="center">
-                {selectedUser ? `${selectedUser.fname} ${selectedUser.lname}` : ''}
-              </Typography>
-              <Typography align="center">Email: {selectedUser ? selectedUser.email : ''}</Typography>
-              <Typography align="center">Role: {selectedUser ? selectedUser.role : 'N/A'}</Typography>
-              <Typography align="center">ID: {selectedUser ? selectedUser.index : ''}</Typography>
-              {/* Additional details can be displayed here */}
-            </Stack>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="View User Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>First Name</InputLabel>
+                      <TextField fullWidth value={selectedUser ? `${selectedUser.fname} ${selectedUser.lname}` : ''} aria-readonly />
+                    </Stack>
+                  </Grid>
 
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseViewDialog} color="primary" variant="contained">
-                Close
-              </Button>
-            </Stack>
-          </Stack>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField fullWidth value={selectedUser ? `${selectedUser.email}` : ''} aria-readonly />
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Role</InputLabel>
+                      <TextField fullWidth value={selectedUser ? selectedUser.role : 'N/A'} />
+                    </Stack>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                        Cancel
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
 
