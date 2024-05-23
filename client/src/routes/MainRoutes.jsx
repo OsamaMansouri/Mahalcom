@@ -15,6 +15,8 @@ const Suppliers = Loadable(lazy(() => import('pages/suppliers/list')));
 const AddSupplier = Loadable(lazy(() => import('pages/suppliers/add')));
 const Products = Loadable(lazy(() => import('pages/products/list')));
 const AddProduct = Loadable(lazy(() => import('pages/products/add')));
+const Stocks = Loadable(lazy(() => import('pages/stocks/list')));
+const AddStock = Loadable(lazy(() => import('pages/stocks/add')));
 const EditProfile = Loadable(lazy(() => import('pages/profile/edit')));
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
@@ -84,6 +86,15 @@ const MainRoutes = {
       path: 'add-product',
       element: <AddProduct />
     },
+    {
+      path: 'stocks',
+      element: <Stocks />
+    },
+    {
+      path: 'add-stock',
+      element: <AddStock />
+    },
+
 
     {
       path: 'color',

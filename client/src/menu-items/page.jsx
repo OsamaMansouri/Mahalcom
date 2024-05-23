@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
 // icons
 const icons = {
@@ -26,7 +27,8 @@ const icons = {
   SkinOutlined,
   TruckOutlined,
   ApartmentOutlined,
-  CategoryOutlinedIcon
+  CategoryOutlinedIcon,
+  Inventory2OutlinedIcon
 };
 
 // ==============================|| MENU ITEMS - EXTRA PAGES ||============================== //
@@ -95,6 +97,13 @@ const pages = {
       type: 'item',
       url: '/products',
       icon: icons.SkinOutlined
+    },
+    {
+      id: 'stocks',
+      title: 'Stocks',
+      type: 'item',
+      url: '/stocks',
+      icon: icons.Inventory2OutlinedIcon 
     },
     {
       id: 'deliveries',
