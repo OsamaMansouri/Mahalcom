@@ -15,7 +15,7 @@ const Suppliers = Loadable(lazy(() => import('pages/suppliers/list')));
 const AddSupplier = Loadable(lazy(() => import('pages/suppliers/add')));
 const Products = Loadable(lazy(() => import('pages/products/list')));
 const AddProduct = Loadable(lazy(() => import('pages/products/add')));
-
+const EditProfile = Loadable(lazy(() => import('pages/profile/edit')));
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -39,6 +39,10 @@ const MainRoutes = {
           element: <DashboardDefault />
         }
       ]
+    },
+    {
+      path: 'profile/edit',
+      element: <EditProfile />
     },
     {
       path: 'users',
@@ -80,7 +84,6 @@ const MainRoutes = {
       path: 'add-product',
       element: <AddProduct />
     },
-
 
     {
       path: 'color',

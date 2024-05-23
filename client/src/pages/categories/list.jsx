@@ -200,9 +200,7 @@ export default function LatestOrder() {
                     <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
                       <EditOutlined />
                     </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
-                      <VisibilityOutlinedIcon />
-                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
                       <DeleteOutlinedIcon />
                     </IconButton>
