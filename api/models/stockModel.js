@@ -6,6 +6,9 @@ const stockSchema = new mongoose.Schema(
       ref: "Supplier",
       required: true,
     },
+    name: {
+      type: String,
+    },
     warehouse: {
       type: String,
     },

@@ -24,6 +24,8 @@ import UploadOutlined from '@ant-design/icons/UploadOutlined';
 export default function AddNewProduct() {
   const token = localStorage.getItem('token');
   const [categories, setCategories] = useState([]);
+  const [stocks, setStocks] = useState([]);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,6 +42,21 @@ export default function AddNewProduct() {
       }
     };
     fetchData();
+    const fetchStocks = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/getall`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`
+          }
+        });
+        const data = await response.json();
+        setStocks(data);
+      } catch (error) {
+        console.error('Error fetching stocks:', error);
+      }
+    };
+    fetchStocks();
   }, []);
   
   const [formData, setFormData] = useState({
@@ -49,7 +66,7 @@ export default function AddNewProduct() {
     id_catg: '',
     price: 0,
     quantity: 0,
-    // id_stock: '',
+    id_stock: '',
     inStock:false
   });
 
@@ -251,9 +268,31 @@ export default function AddNewProduct() {
                   ))}
                 </TextField>
               </Grid>
-              {/* {formData.inStock && (  
+              {formData.inStock && (  
+
                 <Grid item xs={12}>
                 <InputLabel sx={{ mb: 1 }}>Stock</InputLabel>
+                  <FormControl fullWidth error={!!errors.id_stock}>
+                    <Select
+                      name="id_stock"
+                      value={formData.id_stock}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      displayEmpty
+                      required
+                    >
+                      <MenuItem value="" disabled>
+                        Select a stock
+                      </MenuItem>
+                      {stocks.map((st) => (
+                        <MenuItem key={st._id} value={st._id}>
+                          {st.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
+                  </FormControl>
+                {/* <InputLabel sx={{ mb: 1 }}>Stock</InputLabel>
                   <TextField
                     fullWidth
                     placeholder="Enter stock id"
@@ -264,9 +303,9 @@ export default function AddNewProduct() {
                     required
                     error={!!errors.id_stock}
                     helperText={errors.id_stock}
-                  />
+                  /> */}
               </Grid>
-              )} */}
+              )}
 
               {/* <Grid item xs={12}>
                 <Typography color="error.main">
