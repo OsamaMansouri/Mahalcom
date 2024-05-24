@@ -19,11 +19,12 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
+  Select,
+  MenuItem,
   TablePagination,
   Slide,
-  MenuItem,
-  Select,
-  FormControl
+  Grid,
+  FormHelperText
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -32,24 +33,14 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { EditOutlined } from '@ant-design/icons';
 
-// Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// List of Moroccan cities
-const cities = [
-  'Casablanca', 'Rabat', 'Fes', 'Marrakech', 'Tangier', 'Agadir', 'Meknes', 'Oujda', 'Kenitra', 'Tetouan',
-  'Safi', 'Khouribga', 'El Jadida', 'Nador', 'Beni Mellal', 'Taza', 'Mohammedia', 'Ksar El Kebir', 'Laayoune',
-  'Khenifra', 'Settat', 'Larache', 'Khemisset', 'Guelmim', 'Berrechid', 'Inezgane', 'Sidi Kacem', 'Tiznit',
-  'Ouarzazate', 'Fquih Ben Salah', 'Dakhla', 'Azrou', 'Oulad Teima', 'Essaouira', 'Tifelt', 'Sidi Slimane',
-  'Boujdour', 'Errachidia', 'Ben Guerir', 'Tan-Tan'
-];
-
-// Table data
-function createData(index, _id, fullname, phone, email, store, address, products_type, city) {
-  return { index, _id, fullname, phone, email, store, address, products_type, city };
+function createData(index, _id, fullname, address, email, phone, city, products_type, store) {
+  return { index, _id, fullname, address, email, phone, city, products_type, store };
 }
 
 export default function LatestOrder() {
@@ -62,7 +53,16 @@ export default function LatestOrder() {
   const [selectedsupplier, setSelectedsupplier] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedsupplier, setEditedsupplier] = useState({});
+  const [fieldErrors, setFieldErrors] = useState({});
   const [emptyField, setEmptyField] = useState('');
+
+  const moroccanCities = [
+    'Casablanca', 'Rabat', 'Fes', 'Marrakech', 'Agadir', 'Tangier', 'Meknes', 'Oujda', 'Kenitra', 'Tetouan',
+    'Safi', 'Nador', 'El Jadida', 'Khemisset', 'Khouribga', 'Beni Mellal', 'Settat', 'Mohammedia', 'Taza', 'Inezgane',
+    'Temara', 'Laayoune', 'Berkane', 'Ksar El Kebir', 'Errachidia', 'Larache', 'Guelmim', 'Ouarzazate', 'Beni Ansar',
+    'Al Hoceima', 'Sidi Kacem', 'Oulad Teima', 'Khenifra', 'Tifelt', 'Sefrou', 'Youssoufia', 'Dakhla', 'Sidi Slimane',
+    'Guercif', 'Ait Melloul', 'Taourirt', 'Fnideq', 'Midelt', 'Azrou', 'Zagora', 'Taroudant', 'Essaouira', 'Ben Guerir'
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,16 +74,12 @@ export default function LatestOrder() {
           }
         });
         const responseData = await response.json();
-        setData(
-          responseData.map((item, index) =>
-            createData(index + 1, item._id, item.fullname, item.phone, item.email, item.store, item.address, item.products_type, item.city)
-          )
-        );
+        const newData = responseData.map((row, index) => createData(index + 1, row._id, row.fullname, row.address, row.email, row.phone, row.city, row.products_type, row.store));
+        setData(newData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData();
   }, []);
 
@@ -111,7 +107,7 @@ export default function LatestOrder() {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/delete/${supplierToDelete}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `${localStorage.getItem('token')}`, // Include the token in the Authorization header
+          Authorization: `${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -143,7 +139,7 @@ export default function LatestOrder() {
 
   const handleEditClick = (supplier) => {
     setSelectedsupplier(supplier);
-    setEditedsupplier({ ...supplier });
+    setEditedsupplier(supplier);
     setOpenEditDialog(true);
   };
 
@@ -151,26 +147,11 @@ export default function LatestOrder() {
     setOpenEditDialog(false);
     setSelectedsupplier(null);
     setEditedsupplier({});
-  };
-
-  const isValidEmail = (email) => {
-    // Regular expression pattern for email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
+    setFieldErrors({});
   };
 
   const handleEditSave = async () => {
-    // Check if any required field is empty
-    const requiredFields = ['fullname', 'phone', 'email', 'address', 'products_type', 'city'];
-    const emptyField = requiredFields.find(field => !editedsupplier[field]);
-    if (emptyField) {
-      setEmptyField(emptyField);
-      return;
-    }
-
-    // Check if email is in the correct format
-    if (!isValidEmail(editedsupplier.email)) {
-      setEmptyField('email');
+    if (Object.values(editedsupplier).some((value) => value === '')) {
       return;
     }
 
@@ -185,7 +166,7 @@ export default function LatestOrder() {
       });
 
       if (response.ok) {
-        const updatedData = data.map((supplier) => (supplier._id === editedsupplier._id ? { ...editedsupplier } : supplier));
+        const updatedData = data.map((supplier) => (supplier._id === editedsupplier._id ? editedsupplier : supplier));
         setData(updatedData);
         setOpenEditDialog(false);
         toast.success('Supplier updated successfully', { position: 'top-right' });
@@ -202,14 +183,16 @@ export default function LatestOrder() {
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setEditedsupplier((prev) => ({ ...prev, [name]: value }));
-    if (emptyField === name) {
-      setEmptyField('');
+    if (value === '') {
+      setFieldErrors((prev) => ({ ...prev, [name]: 'Please fill out this field.' }));
+    } else {
+      setFieldErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
   return (
     <MainCard
-      title="List of suppliers"
+      title="List of Suppliers"
       content={false}
       secondary={
         <Button component={RouterLink} to="/add-supplier" variant="contained" startIcon={<PlusOutlined />}>
@@ -246,7 +229,7 @@ export default function LatestOrder() {
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
                     <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlinedIcon />
+                      <EditOutlined />
                     </IconButton>
                     <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
@@ -262,12 +245,11 @@ export default function LatestOrder() {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={data.length}
-        rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
@@ -277,19 +259,19 @@ export default function LatestOrder() {
         onClose={handleCloseDeleteDialog}
         keepMounted
         TransitionComponent={PopupTransition}
-        maxWidth="xs"
-        aria-labelledby="delete-supplier-title"
-        aria-describedby="delete-supplier-description"
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
-            <Avatar sx={{ width: 72, height: 72, fontSize: '1.75rem', bgcolor: 'error.main' }}>
+            <Avatar color="error" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
               <DeleteOutlinedIcon />
             </Avatar>
             <Stack spacing={2}>
               <Typography variant="h4" align="center">
                 Are you sure you want to delete?
               </Typography>
+              <Typography align="center">By deleting the supplier, all tasks assigned to that supplier will also be deleted.</Typography>
             </Stack>
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseDeleteDialog} color="secondary" variant="outlined">
@@ -315,19 +297,16 @@ export default function LatestOrder() {
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
-            <Avatar sx={{ width: 72, height: 72, fontSize: '1.75rem', bgcolor: 'primary.main' }}>
+            <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
               {selectedsupplier && selectedsupplier.fullname.charAt(0).toUpperCase()}
             </Avatar>
             <Stack spacing={2}>
               <Typography variant="h4" align="center">
                 {selectedsupplier ? selectedsupplier.fullname : ''}
               </Typography>
-              <Typography align="center">Phone: {selectedsupplier ? selectedsupplier.phone : ''}</Typography>
               <Typography align="center">Email: {selectedsupplier ? selectedsupplier.email : ''}</Typography>
-              <Typography align="center">Store: {selectedsupplier ? selectedsupplier.store : ''}</Typography>
-              <Typography align="center">Address: {selectedsupplier ? selectedsupplier.address : ''}</Typography>
-              <Typography align="center">Products Type: {selectedsupplier ? selectedsupplier.products_type : ''}</Typography>
-              <Typography align="center">City: {selectedsupplier ? selectedsupplier.city : ''}</Typography>
+              <Typography align="center">Phone: {selectedsupplier ? selectedsupplier.phone : ''}</Typography>
+              <Typography align="center">ID: {selectedsupplier ? selectedsupplier.index : ''}</Typography>
             </Stack>
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseViewDialog} color="primary" variant="contained">
@@ -354,96 +333,118 @@ export default function LatestOrder() {
             <Typography variant="h4" align="center">
               Edit Supplier Details
             </Typography>
-            <TextField
-              name="fullname"
-              label="Full Name"
-              value={editedsupplier.fullname || ''}
-              onChange={handleFieldChange}
-              error={emptyField === 'fullname'}
-              helperText={emptyField === 'fullname' && 'Please fill all the required fields'}
-              fullWidth
-              onBlur={() => !editedsupplier.fullname && setEmptyField('fullname')}
-            />
-            <TextField
-              name="phone"
-              label="Phone"
-              value={editedsupplier.phone || ''}
-              onChange={handleFieldChange}
-              error={emptyField === 'phone'}
-              helperText={emptyField === 'phone' && 'Please fill all the required fields'}
-              fullWidth
-              onBlur={() => !editedsupplier.phone && setEmptyField('phone')}
-            />
-            <TextField
-              name="email"
-              label="Email"
-              value={editedsupplier.email || ''}
-              onChange={handleFieldChange}
-              error={emptyField === 'email' || (editedsupplier.email && !isValidEmail(editedsupplier.email))}
-              helperText={
-                (emptyField === 'email' && 'Please fill all the required fields') ||
-                (editedsupplier.email && !isValidEmail(editedsupplier.email) && 'Please enter a valid email address')
-              }
-              fullWidth
-              onBlur={() => (!editedsupplier.email || !isValidEmail(editedsupplier.email)) && setEmptyField('email')}
-            />
-            <TextField
-              name="address"
-              label="Address"
-              value={editedsupplier.address || ''}
-              onChange={handleFieldChange}
-              error={emptyField === 'address'}
-              helperText={emptyField === 'address' && 'Please fill all the required fields'}
-              fullWidth
-              onBlur={() => !editedsupplier.address && setEmptyField('address')}
-            />
-            <TextField
-              name="products_type"
-              label="Products Type"
-              value={editedsupplier.products_type || ''}
-              onChange={handleFieldChange}
-              error={emptyField === 'products_type'}
-              helperText={emptyField === 'products_type' && 'Please fill all the required fields'}
-              fullWidth
-              onBlur={() => !editedsupplier.products_type && setEmptyField('products_type')}
-            />
-            <FormControl fullWidth error={emptyField === 'city'}>
+            {emptyField && (
+              <Typography variant="body1" color="error">
+                {emptyField}
+              </Typography>
+            )}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  name="fullname"
+                  label="Full Name"
+                  value={editedsupplier.fullname || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.fullname}
+                  helperText={fieldErrors.fullname}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  name="email"
+                  label="Email"
+                  value={editedsupplier.email || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.email}
+                  helperText={fieldErrors.email}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  name="phone"
+                  label="Phone Number"
+                  value={editedsupplier.phone || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.phone}
+                  helperText={fieldErrors.phone}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  name="address"
+                  label="Address"
+                  value={editedsupplier.address || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.address}
+                  helperText={fieldErrors.address}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  name="products_type"
+                  label="Products Type"
+                  value={editedsupplier.products_type || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.products_type}
+                  helperText={fieldErrors.products_type}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <InputLabel id="city-label">City</InputLabel>
-              <Select
-                labelId="city-label"
-                name="city"
-                value={editedsupplier.city || ''}
-                onChange={handleFieldChange}
-                onBlur={() => !editedsupplier.city && setEmptyField('city')}
-              >
-                {cities.map((city) => (
-                  <MenuItem key={city} value={city}>
-                    {city}
+                <Select
+                  name="city"
+                  value={editedsupplier.city || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldChange}
+                  error={!!fieldErrors.city}
+                  fullWidth
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select City
                   </MenuItem>
-                ))}
-              </Select>
-              {emptyField === 'city' && (
-                <Typography color="error" variant="caption">
-                  Please select a city
-                </Typography>
-              )}
-            </FormControl>
-            <InputLabel id="store-label">Store</InputLabel>
-            <RadioGroup
-              aria-labelledby="store-label"
-              name="store"
-              value={editedsupplier.store || ''}
-              onChange={handleFieldChange}
-              row
-            >
-              <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-              <FormControlLabel value="no" control={<Radio />} label="No" />
-            </RadioGroup>
+                  {moroccanCities.map((city) => (
+                    <MenuItem key={city} value={city}>
+                      {city}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {fieldErrors.city && <FormHelperText error>{fieldErrors.city}</FormHelperText>}
+              </Grid>
+              <Grid item xs={12}>
+              <InputLabel id="city-label">Store</InputLabel>
+                <RadioGroup
+                  name="store"
+                  value={editedsupplier.store || ''}
+                  onChange={handleFieldChange}
+                  row
+                >
+                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel value="no" control={<Radio />} label="No" />
+                </RadioGroup>
+              </Grid>
+            </Grid>
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
                 Cancel
               </Button>
-              <Button fullWidth color="primary" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+              <Button
+                fullWidth
+                color="primary"
+                variant="contained"
+                onClick={handleEditSave}
+                startIcon={<SaveIcon />}
+              >
                 Save
               </Button>
             </Stack>

@@ -1,8 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, TextField, Button, RadioGroup, FormControlLabel, Radio, Stack, InputLabel, FormHelperText, FormControl, FormLabel } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Stack,
+  InputLabel,
+  FormHelperText,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
+
+const moroccanCities = [
+  "Casablanca", "Fez", "Tangier", "Marrakesh", "Salé", "Meknes", "Rabat", "Oujda", "Kenitra", "Agadir",
+  "Tetouan", "Temara", "Safi", "Mohammedia", "Khouribga", "El Jadida", "Beni Mellal", "Ait Melloul", "Nador",
+  "Dar Bouazza", "Taza", "Settat", "Berrechid", "Khemisset", "Inezgane", "Ksar El Kebir", "Larache", "Guelmim",
+  "Khenifra", "Berkane", "Taourirt", "Sidi Slimane", "Sidi Kacem", "Al Hoceima", "Errachidia",
+  "Sefrou", "Youssoufia", "Martil", "Tiznit", "Tan-Tan", "Tiflet", "Bouskoura", "Essaouira", "Taroudant",
+  "Ben Guerir", "Fquih Ben Salah", "Ouarzazate", "Ouazzane", "Midelt", "Skhirat",
+  "Laayoune", "Sidi Ifni", "Azrou", "M'Diq", "Tinghir", "Chefchaouen", "Zagora"
+];
+
 
 const AddClient = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +35,7 @@ const AddClient = () => {
     phone: '',
     address: '',
     gender: '',
-    city: '' 
+    city: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -48,7 +73,7 @@ const AddClient = () => {
   const validateForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (key !== 'city' && !formData[key]) {
+      if (!formData[key]) {
         newErrors[key] = 'This field is required';
       }
     });
@@ -71,7 +96,7 @@ const AddClient = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `${token}` 
+          Authorization: `${token}`
         },
         body: JSON.stringify(formData)
       });
@@ -105,7 +130,6 @@ const AddClient = () => {
                     value={formData.fullname}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.fullname}
                     helperText={errors.fullname}
                   />
@@ -115,15 +139,27 @@ const AddClient = () => {
               <Grid item xs={4}>
                 <Stack spacing={1}>
                   <InputLabel>City</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
+                  <FormControl fullWidth error={!!errors.city}>
+                    <Select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      displayEmpty
+                    >
+                      <MenuItem value="" disabled>
+                        Select City
+                      </MenuItem>
+                      {moroccanCities.map((city) => (
+                        <MenuItem key={city} value={city}>
+                          {city}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.city && <FormHelperText error>{errors.city}</FormHelperText>}
+                  </FormControl>
                 </Stack>
-                <FormHelperText>Please enter your city</FormHelperText>
+                <FormHelperText>Please select your city</FormHelperText>
               </Grid>
               <Grid item xs={8}>
                 <Stack spacing={1}>
@@ -135,7 +171,6 @@ const AddClient = () => {
                     value={formData.address}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.address}
                     helperText={errors.address}
                   />
@@ -152,7 +187,6 @@ const AddClient = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.phone}
                     helperText={errors.phone}
                   />

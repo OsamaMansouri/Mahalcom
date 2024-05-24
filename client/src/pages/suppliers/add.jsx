@@ -25,10 +25,10 @@ const AddSupplier = () => {
     "Casablanca", "Fez", "Tangier", "Marrakesh", "Salé", "Meknes", "Rabat", "Oujda", "Kenitra", "Agadir",
     "Tetouan", "Temara", "Safi", "Mohammedia", "Khouribga", "El Jadida", "Beni Mellal", "Ait Melloul", "Nador",
     "Dar Bouazza", "Taza", "Settat", "Berrechid", "Khemisset", "Inezgane", "Ksar El Kebir", "Larache", "Guelmim",
-    "Khenifra", "Berkane", "Taourirt", "Sidi Slimane", "Sidi Kacem", "Al Hoceima", "Dcheira El Jihadia", "Errachidia",
-    "Sefrou", "Youssoufia", "Martil", "Tiznit", "Tan-Tan", "Tiflet", "Bouskoura", "Essaouira", "Taroudant", "Oulad Teima",
-    "Ben Guerir", "Fquih Ben Salah", "Ouarzazate", "Ouazzane", "Midelt", "Souk El Arbaa", "Skhirat", "Souk Larbaa El Gharb",
-    "Laayoune", "Sidi Ifni", "Azrou", "M'Diq", "Tinghir", "Chefchaouen", "El Aioun Sidi Mellouk", "Zagora"
+    "Khenifra", "Berkane", "Taourirt", "Sidi Slimane", "Sidi Kacem", "Al Hoceima", "Errachidia",
+    "Sefrou", "Youssoufia", "Martil", "Tiznit", "Tan-Tan", "Tiflet", "Bouskoura", "Essaouira", "Taroudant",
+    "Ben Guerir", "Fquih Ben Salah", "Ouarzazate", "Ouazzane", "Midelt", "Skhirat",
+    "Laayoune", "Sidi Ifni", "Azrou", "M'Diq", "Tinghir", "Chefchaouen", "Zagora"
   ];
 
   const handleChange = (e) => {
@@ -127,7 +127,6 @@ const AddSupplier = () => {
                     value={formData.fullname}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.fullname}
                     helperText={errors.fullname}
                   />
@@ -143,7 +142,6 @@ const AddSupplier = () => {
                     value={formData.address}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.address}
                     helperText={errors.address}
                   />
@@ -159,7 +157,6 @@ const AddSupplier = () => {
                     value={formData.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.email}
                     helperText={errors.email}
                   />
@@ -175,7 +172,6 @@ const AddSupplier = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.phone}
                     helperText={errors.phone}
                   />
@@ -191,7 +187,6 @@ const AddSupplier = () => {
                     value={formData.products_type}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.products_type}
                     helperText={errors.products_type}
                   />
@@ -207,7 +202,6 @@ const AddSupplier = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       displayEmpty
-                      required
                     >
                       <MenuItem value="" disabled>
                         Select a city
@@ -223,7 +217,7 @@ const AddSupplier = () => {
                 </Stack>
               </Grid>
               <Grid item xs={12}>
-                <FormControl component="fieldset" required error={!!errors.store}>
+                <FormControl component="fieldset" error={!!errors.store}>
                   <FormLabel component="legend">Does he have an actual store?</FormLabel>
                   <RadioGroup
                     row

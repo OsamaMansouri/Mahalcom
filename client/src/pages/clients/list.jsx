@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
@@ -22,7 +23,13 @@ import {
   Select,
   MenuItem,
   TablePagination,
-  Slide
+  Slide,
+  Grid,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -43,6 +50,17 @@ function createData(index, _id, fullname, address, phone, city, gender) {
   return { index, _id, fullname, address, phone, city, gender };
 }
 
+const moroccanCities = [
+  "Casablanca", "Fez", "Tangier", "Marrakesh", "Salé", "Meknes", "Rabat", "Oujda", "Kenitra", "Agadir",
+  "Tetouan", "Temara", "Safi", "Mohammedia", "Khouribga", "El Jadida", "Beni Mellal", "Ait Melloul", "Nador",
+  "Dar Bouazza", "Taza", "Settat", "Berrechid", "Khemisset", "Inezgane", "Ksar El Kebir", "Larache", "Guelmim",
+  "Khenifra", "Berkane", "Taourirt", "Sidi Slimane", "Sidi Kacem", "Al Hoceima", "Errachidia",
+  "Sefrou", "Youssoufia", "Martil", "Tiznit", "Tan-Tan", "Tiflet", "Bouskoura", "Essaouira", "Taroudant",
+  "Ben Guerir", "Fquih Ben Salah", "Ouarzazate", "Ouazzane", "Midelt", "Skhirat",
+  "Laayoune", "Sidi Ifni", "Azrou", "M'Diq", "Tinghir", "Chefchaouen", "Zagora"
+];
+
+
 export default function LatestOrder() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
@@ -53,6 +71,7 @@ export default function LatestOrder() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedClient, setEditedClient] = useState({});
+  const [inputErrors, setInputErrors] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,37 +160,60 @@ export default function LatestOrder() {
     setOpenEditDialog(false);
     setSelectedClient(null);
     setEditedClient({});
+    setInputErrors({});
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/client/update/${editedClient._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedClient)
-      });
+    if (validateInputs()) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/client/update/${editedClient._id}`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(editedClient)
+        });
 
-      if (response.ok) {
-        const updatedData = data.map((client) => (client._id === editedClient._id ? { ...editedClient } : client));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('Client updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating client:', response.statusText);
+        if (response.ok) {
+          const updatedData = data.map((client) => (client._id === editedClient._id ? { ...editedClient } : client));
+          setData(updatedData);
+          setOpenEditDialog(false);
+          toast.success('Client updated successfully', { position: 'top-right' });
+        } else {
+          console.error('Error updating client:', response.statusText);
+          toast.error('Error updating client', { position: 'top-right' });
+        }
+      } catch (error) {
+        console.error('Error updating client:', error);
         toast.error('Error updating client', { position: 'top-right' });
       }
-    } catch (error) {
-      console.error('Error updating client:', error);
-      toast.error('Error updating client', { position: 'top-right' });
     }
   };
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setEditedClient((prev) => ({ ...prev, [name]: value }));
+    setInputErrors((prev) => ({ ...prev, [name]: '' })); // Reset the error message on change
+  };
+
+  const handleFieldBlur = (e) => {
+    const { name, value } = e.target;
+    if (!value) {
+      setInputErrors((prev) => ({ ...prev, [name]: 'This field is required' }));
+    }
+  };
+
+  const validateInputs = () => {
+    const errors = {};
+    if (!editedClient.fullname) errors.fullname = 'This field is required';
+    if (!editedClient.phone) errors.phone = 'This field is required';
+    if (!editedClient.address) errors.address = 'This field is required';
+    if (!editedClient.city) errors.city = 'This field is required';
+    if (!editedClient.gender) errors.gender = 'This field is required';
+
+    setInputErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   return (
@@ -307,44 +349,105 @@ export default function LatestOrder() {
         keepMounted
         TransitionComponent={PopupTransition}
         fullWidth
-        maxWidth="md" // Adjusted width
+        maxWidth="md"
         aria-labelledby="edit-client-details-title"
         aria-describedby="edit-client-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Typography variant="h4" align="center">
-              Edit Client Details
-            </Typography>
-            <TextField name="fullname" label="Full Name" value={editedClient.fullname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="phone" label="Phone" value={editedClient.phone || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="address" label="Address" value={editedClient.address || ''} onChange={handleFieldChange} fullWidth />
-            <InputLabel id="gender-label">Gender</InputLabel>
-            <Select
-              labelId="gender-label"
-              name="gender"
-              label="Gender"
-              value={editedClient.gender || ''}
-              onChange={handleFieldChange}
-              fullWidth
-            >
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-            </Select>
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button
+          <Typography variant="h4" align="center" gutterBottom>
+            Edit Client Details
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                name="fullname"
+                label="Full Name"
+                value={editedClient.fullname || ''}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
                 fullWidth
-                color="primary"
-                variant="contained"
-                onClick={handleEditSave}
-                startIcon={<SaveIcon />} // Added Save icon
+                required
+                error={!!inputErrors.fullname}
+                helperText={inputErrors.fullname}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                name="phone"
+                label="Phone"
+                value={editedClient.phone || ''}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                fullWidth
+                required
+                error={!!inputErrors.phone}
+                helperText={inputErrors.phone}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                name="address"
+                label="Address"
+                value={editedClient.address || ''}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                fullWidth
+                required
+                error={!!inputErrors.address}
+                helperText={inputErrors.address}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <InputLabel id="city-label">City</InputLabel>
+              <Select
+                labelId="city-label"
+                name="city"
+                label="City"
+                value={editedClient.city || ''}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                fullWidth
+                required
+                error={!!inputErrors.city}
               >
-                Save
-              </Button>
-            </Stack>
+                {moroccanCities.map((city) => (
+                  <MenuItem key={city} value={city}>
+                    {city}
+                  </MenuItem>
+                ))}
+              </Select>
+              {inputErrors.city && <Typography color="error">{inputErrors.city}</Typography>}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Gender</FormLabel>
+                <RadioGroup
+                  name="gender"
+                  value={editedClient.gender || ''}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldBlur}
+                  row
+                >
+                  <FormControlLabel value="male" control={<Radio />} label="Male" />
+                  <FormControlLabel value="female" control={<Radio />} label="Female" />
+                </RadioGroup>
+              </FormControl>
+              {inputErrors.gender && <Typography color="error">{inputErrors.gender}</Typography>}
+            </Grid>
+          </Grid>
+          <Stack direction="row" spacing={2} sx={{ mt: 3, width: '100%' }}>
+            <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              color="primary"
+              variant="contained"
+              onClick={handleEditSave}
+              startIcon={<SaveIcon />}
+            >
+              Save
+            </Button>
           </Stack>
         </DialogContent>
       </Dialog>
