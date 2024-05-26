@@ -58,7 +58,7 @@ export default function AuthLogin({ isDemo = false }) {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          console.log("🚀 ~ onSubmit={ ~ values:", values)
+          console.log('🚀 ~ onSubmit={ ~ values:', values);
           try {
             const response = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
@@ -68,7 +68,7 @@ export default function AuthLogin({ isDemo = false }) {
             localStorage.setItem('token', token);
             toast.success('Login successful', { position: 'top-right' });
             // Redirect the user to /dashboard after successful login
-            window.location.href = '/';
+            window.location.href = '/dashboard/default';
           } catch (error) {
             toast.error('Login failed', { position: 'top-right' });
             setErrors({ submit: error.message }); // Set submit error

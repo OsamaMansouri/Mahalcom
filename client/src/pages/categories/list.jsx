@@ -22,7 +22,10 @@ import {
   Select,
   MenuItem,
   TablePagination,
-  Slide
+  Slide,
+  Grid,
+  FormHelperText,
+  CardActions
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -254,39 +257,8 @@ export default function LatestOrder() {
         </DialogContent>
       </Dialog>
 
-      {/* View Dialog */}
-      <Dialog
-        open={openViewDialog}
-        onClose={handleCloseViewDialog}
-        keepMounted
-        TransitionComponent={PopupTransition}
-        maxWidth="md"
-        aria-labelledby="view-category-title"
-        aria-describedby="view-category-description"
-      >
-        <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              {selectedcategory && selectedcategory.catg_name.charAt(0).toUpperCase()}
-            </Avatar>
-            <Stack spacing={2}>
-              <Typography variant="h4" align="center">
-                {selectedcategory ? `${selectedcategory.catg_name}` : ''}
-              </Typography>
-
-              {/* Additional details can be displayed here */}
-            </Stack>
-
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseViewDialog} color="primary" variant="contained">
-                Close
-              </Button>
-            </Stack>
-          </Stack>
-        </DialogContent>
-      </Dialog>
-
       {/* Edit Dialog */}
+
       <Dialog
         open={openEditDialog}
         onClose={handleCloseEditDialog}
@@ -298,33 +270,38 @@ export default function LatestOrder() {
         aria-describedby="edit-category-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Typography variant="h4" align="center">
-              Edit category Details
-            </Typography>
-            <TextField
-              name="catg_name"
-              label="Ctegory Name"
-              value={editedcategory.catg_name || ''}
-              onChange={handleFieldChange}
-              fullWidth
-            />
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Edit Category Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Category name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter category name"
+                        name="catg_name"
+                        value={editedcategory.catg_name || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the category name</FormHelperText>
+                  </Grid>
 
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button
-                fullWidth
-                color="primary"
-                variant="contained"
-                onClick={handleEditSave}
-                startIcon={<SaveIcon />} // Added Save icon
-              >
-                Save
-              </Button>
-            </Stack>
-          </Stack>
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                        Update
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </MainCard>

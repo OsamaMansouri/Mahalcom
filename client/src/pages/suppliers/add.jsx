@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Grid, TextField, Button, RadioGroup, FormControlLabel, Radio, Stack, InputLabel, FormHelperText, FormControl, FormLabel, Select, MenuItem
+  Grid,
+  TextField,
+  Button,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Stack,
+  InputLabel,
+  FormHelperText,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
@@ -22,13 +34,68 @@ const AddSupplier = () => {
   const navigate = useNavigate();
 
   const moroccanCities = [
-    "Casablanca", "Fez", "Tangier", "Marrakesh", "Salé", "Meknes", "Rabat", "Oujda", "Kenitra", "Agadir",
-    "Tetouan", "Temara", "Safi", "Mohammedia", "Khouribga", "El Jadida", "Beni Mellal", "Ait Melloul", "Nador",
-    "Dar Bouazza", "Taza", "Settat", "Berrechid", "Khemisset", "Inezgane", "Ksar El Kebir", "Larache", "Guelmim",
-    "Khenifra", "Berkane", "Taourirt", "Sidi Slimane", "Sidi Kacem", "Al Hoceima", "Dcheira El Jihadia", "Errachidia",
-    "Sefrou", "Youssoufia", "Martil", "Tiznit", "Tan-Tan", "Tiflet", "Bouskoura", "Essaouira", "Taroudant", "Oulad Teima",
-    "Ben Guerir", "Fquih Ben Salah", "Ouarzazate", "Ouazzane", "Midelt", "Souk El Arbaa", "Skhirat", "Souk Larbaa El Gharb",
-    "Laayoune", "Sidi Ifni", "Azrou", "M'Diq", "Tinghir", "Chefchaouen", "El Aioun Sidi Mellouk", "Zagora"
+    'Casablanca',
+    'Fez',
+    'Tangier',
+    'Marrakesh',
+    'Salé',
+    'Meknes',
+    'Rabat',
+    'Oujda',
+    'Kenitra',
+    'Agadir',
+    'Tetouan',
+    'Temara',
+    'Safi',
+    'Mohammedia',
+    'Khouribga',
+    'El Jadida',
+    'Beni Mellal',
+    'Ait Melloul',
+    'Nador',
+    'Dar Bouazza',
+    'Taza',
+    'Settat',
+    'Berrechid',
+    'Khemisset',
+    'Inezgane',
+    'Ksar El Kebir',
+    'Larache',
+    'Guelmim',
+    'Khenifra',
+    'Berkane',
+    'Taourirt',
+    'Sidi Slimane',
+    'Sidi Kacem',
+    'Al Hoceima',
+    'Dcheira El Jihadia',
+    'Errachidia',
+    'Sefrou',
+    'Youssoufia',
+    'Martil',
+    'Tiznit',
+    'Tan-Tan',
+    'Tiflet',
+    'Bouskoura',
+    'Essaouira',
+    'Taroudant',
+    'Oulad Teima',
+    'Ben Guerir',
+    'Fquih Ben Salah',
+    'Ouarzazate',
+    'Ouazzane',
+    'Midelt',
+    'Souk El Arbaa',
+    'Skhirat',
+    'Souk Larbaa El Gharb',
+    'Laayoune',
+    'Sidi Ifni',
+    'Azrou',
+    "M'Diq",
+    'Tinghir',
+    'Chefchaouen',
+    'El Aioun Sidi Mellouk',
+    'Zagora'
   ];
 
   const handleChange = (e) => {
@@ -201,14 +268,7 @@ const AddSupplier = () => {
                 <Stack spacing={1}>
                   <InputLabel>City</InputLabel>
                   <FormControl fullWidth error={!!errors.city}>
-                    <Select
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      displayEmpty
-                      required
-                    >
+                    <Select name="city" value={formData.city} onChange={handleChange} onBlur={handleBlur} displayEmpty required>
                       <MenuItem value="" disabled>
                         Select a city
                       </MenuItem>
@@ -225,13 +285,7 @@ const AddSupplier = () => {
               <Grid item xs={12}>
                 <FormControl component="fieldset" required error={!!errors.store}>
                   <FormLabel component="legend">Does he have an actual store?</FormLabel>
-                  <RadioGroup
-                    row
-                    name="store"
-                    value={formData.store}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
+                  <RadioGroup row name="store" value={formData.store} onChange={handleChange} onBlur={handleBlur}>
                     <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                     <FormControlLabel value="no" control={<Radio />} label="No" />
                   </RadioGroup>

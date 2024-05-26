@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   CardMedia,
   Chip,
@@ -22,7 +22,11 @@ import {
   Select,
   MenuItem,
   TablePagination,
-  Slide
+  Slide,
+  Grid,
+  FormHelperText,
+  CardActions,
+  FormControl
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -53,6 +57,75 @@ export default function LatestOrder() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedClient, setEditedClient] = useState({});
+
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const navigate = useNavigate();
+
+  const moroccanCities = [
+    'Casablanca',
+    'Fez',
+    'Tangier',
+    'Marrakesh',
+    'Salé',
+    'Meknes',
+    'Rabat',
+    'Oujda',
+    'Kenitra',
+    'Agadir',
+    'Tetouan',
+    'Temara',
+    'Safi',
+    'Mohammedia',
+    'Khouribga',
+    'El Jadida',
+    'Beni Mellal',
+    'Ait Melloul',
+    'Nador',
+    'Dar Bouazza',
+    'Taza',
+    'Settat',
+    'Berrechid',
+    'Khemisset',
+    'Inezgane',
+    'Ksar El Kebir',
+    'Larache',
+    'Guelmim',
+    'Khenifra',
+    'Berkane',
+    'Taourirt',
+    'Sidi Slimane',
+    'Sidi Kacem',
+    'Al Hoceima',
+    'Dcheira El Jihadia',
+    'Errachidia',
+    'Sefrou',
+    'Youssoufia',
+    'Martil',
+    'Tiznit',
+    'Tan-Tan',
+    'Tiflet',
+    'Bouskoura',
+    'Essaouira',
+    'Taroudant',
+    'Oulad Teima',
+    'Ben Guerir',
+    'Fquih Ben Salah',
+    'Ouarzazate',
+    'Ouazzane',
+    'Midelt',
+    'Souk El Arbaa',
+    'Skhirat',
+    'Souk Larbaa El Gharb',
+    'Laayoune',
+    'Sidi Ifni',
+    'Azrou',
+    "M'Diq",
+    'Tinghir',
+    'Chefchaouen',
+    'El Aioun Sidi Mellouk',
+    'Zagora'
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,7 +266,6 @@ export default function LatestOrder() {
               <TableCell>Phone</TableCell>
               <TableCell>Gender</TableCell>
               <TableCell>City</TableCell>
-              <TableCell>Address</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -205,7 +277,6 @@ export default function LatestOrder() {
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.gender}</TableCell>
                 <TableCell>{row.city || '-'}</TableCell>
-                <TableCell>{row.address}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
                     <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
@@ -268,39 +339,97 @@ export default function LatestOrder() {
       </Dialog>
 
       {/* View Dialog */}
+
       <Dialog
         open={openViewDialog}
         onClose={handleCloseViewDialog}
         keepMounted
         TransitionComponent={PopupTransition}
-        maxWidth="md"
+        fullWidth
+        maxWidth="md" // Adjusted width
         aria-labelledby="view-client-title"
         aria-describedby="view-client-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              {selectedClient && selectedClient.fullname.charAt(0).toUpperCase()}
-            </Avatar>
-            <Stack spacing={2}>
-              <Typography variant="h4" align="center">
-                {selectedClient ? `${selectedClient.fullname}` : ''}
-              </Typography>
-              <Typography align="center">Phone: {selectedClient ? selectedClient.phone : ''}</Typography>
-              <Typography align="center">Address: {selectedClient ? selectedClient.address : ''}</Typography>
-              {/* Additional details can be displayed here */}
-            </Stack>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="View Client Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Full Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter full name"
+                        name="fullname"
+                        value={selectedClient ? `${selectedClient.fullname}` : ''}
+                      />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Phone</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter phone number"
+                        name="phone"
+                        value={selectedClient ? selectedClient.phone : ''}
+                      />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Gender</InputLabel>
+                      <Select labelId="gender-label" name="gender" label="Gender" value={selectedClient ? selectedClient.gender : ''}>
+                        <MenuItem value="Male">Male</MenuItem>
+                        <MenuItem value="Female">Female</MenuItem>
+                      </Select>
+                    </Stack>
+                  </Grid>
 
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseViewDialog} color="primary" variant="contained">
-                Close
-              </Button>
-            </Stack>
-          </Stack>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>City</InputLabel>
+                      <FormControl fullWidth error={!!errors.city}>
+                        <Select name="city" value={selectedClient ? selectedClient.city : ''}>
+                          {moroccanCities.map((city) => (
+                            <MenuItem key={city} value={city}>
+                              {city}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Address</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter address"
+                        name="address"
+                        value={selectedClient ? selectedClient.address : ''}
+                      />
+                    </Stack>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                        Cancel
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
 
       {/* Edit Dialog */}
+
       <Dialog
         open={openEditDialog}
         onClose={handleCloseEditDialog}
@@ -308,44 +437,102 @@ export default function LatestOrder() {
         TransitionComponent={PopupTransition}
         fullWidth
         maxWidth="md" // Adjusted width
-        aria-labelledby="edit-client-details-title"
-        aria-describedby="edit-client-details-description"
+        aria-labelledby="edit-user-details-title"
+        aria-describedby="edit-user-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Typography variant="h4" align="center">
-              Edit Client Details
-            </Typography>
-            <TextField name="fullname" label="Full Name" value={editedClient.fullname || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="phone" label="Phone" value={editedClient.phone || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="address" label="Address" value={editedClient.address || ''} onChange={handleFieldChange} fullWidth />
-            <InputLabel id="gender-label">Gender</InputLabel>
-            <Select
-              labelId="gender-label"
-              name="gender"
-              label="Gender"
-              value={editedClient.gender || ''}
-              onChange={handleFieldChange}
-              fullWidth
-            >
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-            </Select>
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button
-                fullWidth
-                color="primary"
-                variant="contained"
-                onClick={handleEditSave}
-                startIcon={<SaveIcon />} // Added Save icon
-              >
-                Save
-              </Button>
-            </Stack>
-          </Stack>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Edit Client Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Full Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter full name"
+                        name="fullname"
+                        value={editedClient.fullname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the full name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Phone</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter phone number"
+                        name="phone"
+                        value={editedClient.phone || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the phone</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Gender</InputLabel>
+                      <Select
+                        labelId="gender-label"
+                        name="gender"
+                        label="Gender"
+                        value={editedClient.gender || ''}
+                        onChange={handleFieldChange}
+                        fullWidth
+                      >
+                        <MenuItem value="Male">Male</MenuItem>
+                        <MenuItem value="Female">Female</MenuItem>
+                      </Select>
+                    </Stack>
+                    <FormHelperText>Please enter the gender</FormHelperText>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>City</InputLabel>
+                      <FormControl fullWidth error={!!errors.city}>
+                        <Select name="city" value={editedClient.city || ''} onChange={handleFieldChange}>
+                          {moroccanCities.map((city) => (
+                            <MenuItem key={city} value={city}>
+                              {city}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <FormHelperText>Please enter the city</FormHelperText>
+                      </FormControl>
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Address</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter address"
+                        name="address"
+                        value={editedClient.address || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the address</FormHelperText>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                        Update
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </MainCard>
