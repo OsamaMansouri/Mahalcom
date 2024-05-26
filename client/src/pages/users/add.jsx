@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { Grid, TextField, Button, RadioGroup, FormControlLabel, Radio, Stack, Typography, InputLabel, FormHelperText } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Stack,
+  Typography,
+  InputLabel,
+  FormHelperText,
+  Select,
+  MenuItem
+} from '@mui/material';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
 
@@ -74,7 +88,7 @@ const AddUser = () => {
 
     // Validate form
     const newErrors = {};
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = 'This field is required';
       }
@@ -90,7 +104,7 @@ const AddUser = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `${token}` // Include Bearer prefix
+          Authorization: `${token}` // Include Bearer prefix
         },
         body: JSON.stringify(formData)
       });
@@ -146,7 +160,7 @@ const AddUser = () => {
                 </Stack>
                 <FormHelperText>Please enter the last name</FormHelperText>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel>Email</InputLabel>
                   <TextField
@@ -162,7 +176,7 @@ const AddUser = () => {
                 </Stack>
                 <FormHelperText>Please enter the email</FormHelperText>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel>Password</InputLabel>
                   <TextField
@@ -179,28 +193,38 @@ const AddUser = () => {
                 </Stack>
                 <FormHelperText>Please enter the password</FormHelperText>
               </Grid>
+
               <Grid item xs={12}>
-                <InputLabel>Role</InputLabel>
-                <RadioGroup
-                  name="id_role"
-                  value={formData.id_role}
-                  onChange={handleRoleChange}
-                  onBlur={handleBlur}
-                  error={!!errors.id_role} // Style the RadioGroup if there's an error
-                  sx={{ borderColor: errors.id_role ? 'red' : 'inherit' }}
-                >
-                  {roles.map((role) => (
-                    <FormControlLabel key={role._id} value={role._id} control={<Radio />} label={role.role_name} />
-                  ))}
-                </RadioGroup>
-                {errors.id_role && (
-                  <FormHelperText error>{errors.id_role}</FormHelperText>
-                )}
+                <Stack spacing={1}>
+                  <InputLabel>Role</InputLabel>
+                  <Select
+                    labelId="role-label"
+                    name="id_role"
+                    value={formData.id_role}
+                    onChange={handleRoleChange}
+                    onBlur={handleBlur}
+                    error={!!errors.id_role} // Style the RadioGroup if there's an error
+                    sx={{ borderColor: errors.id_role ? 'red' : 'inherit' }}
+                  >
+                    {roles.map((role) => (
+                      <MenuItem key={role._id} value={role._id}>
+                        {role.role_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+                {errors.id_role && <FormHelperText error>{errors.id_role}</FormHelperText>}
               </Grid>
+
               <Grid item xs={12}>
-                <Button variant="contained" color="primary" type="submit">
-                  Add user
-                </Button>
+                <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                  <Button variant="contained" color="primary" type="submit">
+                    Add user
+                  </Button>
+                  <Button variant="outlined" color="secondary" component={RouterLink} to="/users">
+                    Cancel
+                  </Button>
+                </Stack>
               </Grid>
             </Grid>
           </MainCard>

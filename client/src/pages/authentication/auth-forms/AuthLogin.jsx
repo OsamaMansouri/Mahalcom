@@ -49,8 +49,8 @@ export default function AuthLogin({ isDemo = false }) {
     <>
       <Formik
         initialValues={{
-          email: '',
-          password: '',
+          email: 'ayouch@mail.com',
+          password: 'pass',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -58,6 +58,7 @@ export default function AuthLogin({ isDemo = false }) {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          console.log("🚀 ~ onSubmit={ ~ values:", values)
           try {
             const response = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
