@@ -19,12 +19,13 @@ import MainCard from 'components/MainCard';
 // assets
 import UploadOutlined from '@ant-design/icons/UploadOutlined';
 
-// ==============================|| ADD NEW PRODUCT - MAIN ||============================== //
+// ==============================|| ADD NEW stock - MAIN ||============================== //
 
-export default function AddNewProduct() {
+export default function AddNewStock() {
   const token = localStorage.getItem('token');
-  const [categories, setCategories] = useState([]);
   const [stocks, setStocks] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [categories, setCategories] = useState([]);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -57,17 +58,44 @@ export default function AddNewProduct() {
       }
     };
     fetchStocks();
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/getall`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`
+          }
+        });
+        const data = await response.json();
+        setSuppliers(data);
+      } catch (error) {
+        console.error('Error fetching stocks:', error);
+      }
+    };
+    fetchSuppliers();
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/getall`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`
+          }
+        });
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
   }, []);
   
   const [formData, setFormData] = useState({
+    id_supplier: '',
     name: '',
-    description: '',
-    brand: '',
+    warehouse: '',
     id_catg: '',
-    price: 0,
-    quantity: 0,
-    id_stock: '',
-    inStock:false
+    type: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -87,7 +115,7 @@ export default function AddNewProduct() {
   };
   
   const handleCancel = () => {
-    navigate(`/products`);
+    navigate(`/stocks`);
   };
 
   const handleBlur = (e) => {
@@ -138,7 +166,7 @@ export default function AddNewProduct() {
 
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/product/create`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,15 +176,15 @@ export default function AddNewProduct() {
       });
 
       if (response.ok) {
-        toast.success('product added successfully', { position: 'top-right' });
-        navigate('/products');
+        toast.success('stock added successfully', { position: 'top-right' });
+        navigate('/stocks');
       } else {
-        console.error('Error adding product:', response.statusText);
-        toast.error('Error adding product', { position: 'top-right' });
+        console.error('Error adding stock:', response.statusText);
+        toast.error('Error adding stock', { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Error adding product:', error);
-      toast.error('Error adding product', { position: 'top-right' });
+      console.error('Error adding stock:', error);
+      toast.error('Error adding stock', { position: 'top-right' });
     }
   };
 
@@ -169,10 +197,10 @@ export default function AddNewProduct() {
             <Grid container spacing={1} direction="column">
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                <InputLabel sx={{ mb: 1 }}>Product Name</InputLabel>
+                <InputLabel sx={{ mb: 1 }}>Stock Name</InputLabel>
                   <TextField
                     fullWidth
-                    placeholder="Enter product name"
+                    placeholder="Enter stock name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
@@ -184,9 +212,38 @@ export default function AddNewProduct() {
                 </Stack>
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Product Description</InputLabel>
-                <TextField placeholder="Enter product description" fullWidth multiline rows={3} name='description' value={formData.description} onChange={handleChange} />
+                <InputLabel sx={{ mb: 1 }}>Warehouse</InputLabel>
+                <TextField placeholder="Enter warehouse name" fullWidth multiline name='warehouse' value={formData.warehouse} onChange={handleChange} />
               </Grid>
+              <Grid item xs={12}>
+                <InputLabel sx={{ mb: 1 }}>Supplier</InputLabel>
+                  <FormControl fullWidth error={!!errors.id_supplier}>
+                    <Select
+                      name="id_supplier"
+                      value={formData.id_supplier}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      displayEmpty
+                      required
+                    >
+                      <MenuItem value="" disabled>
+                        Select a supplier
+                      </MenuItem>
+                      {suppliers.map((sup) => (
+                        <MenuItem key={sup._id} value={sup._id}>
+                          {sup.fullname}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
+                  </FormControl>
+              </Grid>
+            </Grid>
+          </MainCard>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <MainCard>
+            <Grid container direction="column" spacing={2}>
               <Grid item xs={12}>
                 <InputLabel sx={{ mb: 1 }}>Category</InputLabel>
                   <FormControl fullWidth error={!!errors.category}>
@@ -209,122 +266,20 @@ export default function AddNewProduct() {
                     </Select>
                     {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
                   </FormControl>
+              
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Brand</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter the brand"
-                    name="brand"
-                    value={formData.brand}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.brand}
-                    helperText={errors.brand}
-                  />
+                <InputLabel sx={{ mb: 1 }}>Type</InputLabel>
+                <TextField placeholder="Enter type" fullWidth multiline  name='type' value={formData.type} onChange={handleChange} />
               </Grid>
-              <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Price</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.price}
-                    helperText={errors.price}
-                  />
-              </Grid>
-            </Grid>
-          </MainCard>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <MainCard>
-            <Grid container direction="column" spacing={2}>
-              <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Quantity</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter quantity"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.quantity}
-                    helperText={errors.quantity}
-                  />
-              </Grid>
-              <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Status</InputLabel>
-                <TextField placeholder="Select status" fullWidth select name='inStock' value={formData.inStock} onChange={handleChange}>
-                  {statuss.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              {formData.inStock && (  
-
-                <Grid item xs={12}>
-                <InputLabel sx={{ mb: 1 }}>Stock</InputLabel>
-                  <FormControl fullWidth error={!!errors.id_stock}>
-                    <Select
-                      name="id_stock"
-                      value={formData.id_stock}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      displayEmpty
-                      required
-                    >
-                      <MenuItem value="" disabled>
-                        Select a stock
-                      </MenuItem>
-                      {stocks.map((st) => (
-                        <MenuItem key={st._id} value={st._id}>
-                          {st.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
-                  </FormControl>
-                {/* <InputLabel sx={{ mb: 1 }}>Stock</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter stock id"
-                    name="id_stock"
-                    value={formData.id_stock}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.id_stock}
-                    helperText={errors.id_stock}
-                  /> */}
-              </Grid>
-              )}
-
-              {/* <Grid item xs={12}>
-                <Typography color="error.main">
-                  *{' '}
-                  <Typography component="span" color="text.secondary">
-                    Recommended resolution is 640*640 with file size
-                  </Typography>
-                </Typography>
-                <Button variant="outlined" color="secondary" startIcon={<UploadOutlined />} sx={{ mt: 1, textTransform: 'none' }}>
-                  Click to Upload
-                </Button>
-              </Grid>  */}
+           
               <Grid item xs={12}>
                 <Stack direction="row" spacing={2} justifyContent="right" alignItems="center" sx={{ mt: 8 }}>
                   <Button variant="outlined" color="secondary" onClick={handleCancel}>
                     Cancel
                   </Button>
                   <Button type='submit' variant="contained" sx={{ textTransform: 'none' }}>
-                    Add new Product
+                    Add new Stock
                   </Button>
                 </Stack>
               </Grid>
