@@ -12,10 +12,9 @@ const stockSchema = new mongoose.Schema(
     warehouse: {
       type: String,
     },
-    category: {
+    id_catg: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      
     },
     type:{
       type: String,

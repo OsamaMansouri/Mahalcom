@@ -39,8 +39,8 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 // table data
-function createData(index, _id, name, id_supplier, warehouse, category, type) {
-  return { index, _id, name, id_supplier, warehouse, category, type};
+function createData(index, _id, name, id_supplier, warehouse, id_catg, type) {
+  return { index, _id, name, id_supplier, warehouse, id_catg, type};
 }
 
 export default function LatestOrder() {
@@ -74,7 +74,7 @@ export default function LatestOrder() {
               item.name,
               item.id_supplier,
               item.warehouse,
-              item.category,
+              item.id_catg,
               item.type
             )
           )
@@ -253,7 +253,7 @@ export default function LatestOrder() {
                 <TableCell>{row.warehouse}</TableCell>
                 <TableCell>
                   {categories
-                    .filter((c) => c._id === row.category)
+                    .filter((c) => c._id === row.id_catg)
                     .map((c) => (
                       <p>{c.catg_name}</p>
                     ))}
@@ -340,17 +340,15 @@ export default function LatestOrder() {
               <Typography variant="h4" align="center">
                 {selectedStock ? `${selectedStock.name}` : ''}
               </Typography>
-              <Typography align="center">Description : {selectedStock ? selectedStock.description : ''}</Typography>
-              <Typography align="center">Brand : {selectedStock ? selectedStock.brand : ''}</Typography>
-              <Typography align="center">Category : {
-                selectedStock ? categories.filter((cat) => cat._id === selectedStock.id_catg)[0].catg_name : ''
-              }
-              </Typography>
-              <Typography align="center">Price : {selectedStock ? selectedStock.price : ''}</Typography>
-              <Typography align="center">Quantity : {selectedStock ? selectedStock.quantity : ''}</Typography>
+              <Typography align="center">Name : {selectedStock ? selectedStock.name : ''}</Typography>
               <Typography align="center">Stock : {
-                selectedStock ? stocks.filter((st) => st._id === selectedStock.id_stock)[0].name : ''
+                selectedStock ? suppliers.filter((st) => st._id === selectedStock.id_supplier)[0].fullname : ''
               }</Typography>
+              <Typography align="center">Warehouse : {selectedStock ? selectedStock.warehouse : ''}</Typography>
+              <Typography align="center">Categorie : {
+                selectedStock ? categories.filter((st) => st._id === selectedStock.id_catg)[0].catg_name : ''
+              }</Typography>
+              <Typography align="center">Type : {selectedStock ? selectedStock.type : ''}</Typography>
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
@@ -379,19 +377,8 @@ export default function LatestOrder() {
               Edit Stock Details
             </Typography>
             <TextField name="name" label="Name" value={editedStock.name || ''} onChange={handleFieldChange} fullWidth />
-            <TextField
-              name="description"
-              label="description"
-              value={editedStock.description || ''}
-              onChange={handleFieldChange}
-              fullWidth
-            />
-            <TextField name="brand" label="brand" value={editedStock.brand || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="price" label="price" value={editedStock.price || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="quantity" label="quantity" value={editedStock.quantity || ''} onChange={handleFieldChange} fullWidth />
-            {/* <TextField name="id_stock" label="stock" value={editedStock.id_stock || ''} onChange={handleFieldChange} fullWidth /> */}
-           
-
+            <TextField name="id_supplier" label="Supplier" value={editedStock.id_supplier || ''} onChange={handleFieldChange} fullWidth />
+            <TextField name="warehouse" label="Warehouse" value={editedStock.warehouse || ''} onChange={handleFieldChange} fullWidth />
             <InputLabel id="gender-label">category</InputLabel>
             <Select
               labelId="gender-label"
@@ -407,6 +394,7 @@ export default function LatestOrder() {
                 </MenuItem>
               ))}
             </Select>
+            <TextField name="type" label="type" value={editedStock.type || ''} onChange={handleFieldChange} fullWidth />
 
             <Stack direction="row" spacing={2} sx={{ width: 1 }}>
               <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
