@@ -30,6 +30,7 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import FirebaseSocial from './FirebaseSocial';
+import api from 'utils/api';
 
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -60,12 +61,15 @@ export default function AuthLogin({ isDemo = false }) {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           console.log('🚀 ~ onSubmit={ ~ values:', values);
           try {
-            const response = await axios.post(
-              `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
+            const response = await api.post(
+              '/api/auth/login',
               values // Pass form values to the API request
             );
-            const token = response.data.token;
+
+            const { token, refreshToken } = response.data;
             localStorage.setItem('token', token);
+            localStorage.setItem('refreshToken', refreshToken);
+
             toast.success('Login successful', { position: 'top-right' });
             // Redirect the user to /dashboard after successful login
             window.location.href = '/dashboard/default';

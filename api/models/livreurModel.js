@@ -7,7 +7,6 @@ const livreurSchema = new mongoose.Schema(
     },
     lname: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -19,6 +18,10 @@ const livreurSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
+      required: true,
+    },
+    city: {
+      type: String,
       required: true,
     },
   },

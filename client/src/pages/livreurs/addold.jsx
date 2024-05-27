@@ -1,31 +1,18 @@
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-import {
-  Grid,
-  TextField,
-  Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Stack,
-  InputLabel,
-  FormHelperText,
-  FormControl,
-  FormLabel,
-  Select,
-  MenuItem
-} from '@mui/material';
+import { Grid, TextField, Button, Stack, InputLabel, FormHelperText, FormControl, Select, MenuItem } from '@mui/material';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
-import api from 'utils/api';
+import api from 'utils/api'; // Ensure this path is correct
 
-const AddClient = () => {
+const AddLivreur = () => {
   const [formData, setFormData] = useState({
-    fullname: '',
+    fname: '',
+    lname: '',
+    email: '',
+    password: '',
     phone: '',
-    address: '',
-    gender: '',
     city: ''
   });
 
@@ -129,7 +116,7 @@ const AddClient = () => {
   const validateForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (key !== 'city' && !formData[key]) {
+      if (!formData[key]) {
         newErrors[key] = 'This field is required';
       }
     });
@@ -146,18 +133,18 @@ const AddClient = () => {
     }
 
     try {
-      const response = await api.post('/api/client/create', formData);
+      const response = await api.post('/api/livreur/create', formData);
 
       if (response.status === 200) {
-        toast.success('Client added successfully', { position: 'top-right' });
-        navigate('/clients');
+        toast.success('Livreur added successfully', { position: 'top-right' });
+        navigate('/livreurs');
       } else {
-        console.error('Error adding client:', response.statusText);
-        toast.error('Error adding client', { position: 'top-right' });
+        console.error('Error adding livreur:', response.statusText);
+        toast.error('Error adding livreur', { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Error adding client:', error);
-      toast.error('Error adding client', { position: 'top-right' });
+      console.error('Error adding livreur:', error);
+      toast.error('Error adding livreur', { position: 'top-right' });
     }
   };
 
@@ -165,52 +152,100 @@ const AddClient = () => {
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         <Grid item xs={12} lg={12}>
-          <MainCard title="Add Client">
+          <MainCard title="Add Delivery Men">
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={6}>
                 <Stack spacing={1}>
-                  <InputLabel>Full Name</InputLabel>
+                  <InputLabel>First Name</InputLabel>
                   <TextField
                     fullWidth
-                    placeholder="Enter full name"
-                    name="fullname"
-                    value={formData.fullname}
+                    placeholder="Enter first name"
+                    name="fname"
+                    value={formData.fname}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     required
-                    error={!!errors.fullname}
-                    helperText={errors.fullname}
+                    error={!!errors.fname}
+                    helperText={errors.fname}
                   />
                 </Stack>
-                <FormHelperText>Please enter the full name</FormHelperText>
+                <FormHelperText>Please enter the first name</FormHelperText>
               </Grid>
 
               <Grid item xs={6}>
                 <Stack spacing={1}>
-                  <InputLabel>Gender</InputLabel>
-                  <FormControl fullWidth error={!!errors.gender}>
-                    <Select
-                      labelId="gender-label"
-                      name="gender"
-                      label="Gender"
-                      value={formData.gender || ''}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      displayEmpty
-                      required
-                    >
-                      <MenuItem value="" disabled>
-                        Select a gender
-                      </MenuItem>
-                      <MenuItem value="Male">Male</MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                    </Select>
-                    <FormHelperText>Please enter the gender</FormHelperText>
-                  </FormControl>
+                  <InputLabel>Last Name</InputLabel>
+                  <TextField
+                    fullWidth
+                    placeholder="Enter last name"
+                    name="lname"
+                    value={formData.lname}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    error={!!errors.lname}
+                    helperText={errors.lname}
+                  />
                 </Stack>
+                <FormHelperText>Please enter the last name</FormHelperText>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item xs={6}>
+                <Stack spacing={1}>
+                  <InputLabel>Email</InputLabel>
+                  <TextField
+                    fullWidth
+                    placeholder="Enter email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    error={!!errors.email}
+                    helperText={errors.email}
+                  />
+                </Stack>
+                <FormHelperText>Please enter the email</FormHelperText>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Stack spacing={1}>
+                  <InputLabel>Password</InputLabel>
+                  <TextField
+                    fullWidth
+                    placeholder="Enter password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    error={!!errors.password}
+                    helperText={errors.password}
+                  />
+                </Stack>
+                <FormHelperText>Please enter the password</FormHelperText>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Stack spacing={1}>
+                  <InputLabel>Phone</InputLabel>
+                  <TextField
+                    fullWidth
+                    placeholder="Enter phone number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    error={!!errors.phone}
+                    helperText={errors.phone}
+                  />
+                </Stack>
+                <FormHelperText>Please enter the phone number</FormHelperText>
+              </Grid>
+
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel>City</InputLabel>
                   <FormControl fullWidth error={!!errors.city}>
@@ -224,61 +259,17 @@ const AddClient = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText>Please enter the city</FormHelperText>
+                    <FormHelperText>Please select the city</FormHelperText>
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={8}>
-                <Stack spacing={1}>
-                  <InputLabel>Address</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter your address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.address}
-                    helperText={errors.address}
-                  />
-                </Stack>
-                <FormHelperText>Please enter your address</FormHelperText>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel>Phone Number</InputLabel>
-                  <TextField
-                    fullWidth
-                    placeholder="Enter phone number"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    error={!!errors.phone}
-                    helperText={errors.phone}
-                  />
-                </Stack>
-                <FormHelperText>Please enter your phone number</FormHelperText>
-              </Grid>
-              {/*<Grid item xs={12}>
-                <FormControl component="fieldset" required error={!!errors.gender}>
-                  <FormLabel component="legend">Gender</FormLabel>
-                  <RadioGroup row name="gender" value={formData.gender} onChange={handleChange} onBlur={handleBlur}>
-                    <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                    <FormControlLabel value="Female" control={<Radio />} label="Female" />
-                  </RadioGroup>
-                  {errors.gender && <FormHelperText error>{errors.gender}</FormHelperText>}
-                </FormControl>
-                    </Grid>*/}
 
               <Grid item xs={12}>
                 <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
                   <Button variant="contained" color="primary" type="submit">
-                    Add Client
+                    Add Livreur
                   </Button>
-                  <Button variant="outlined" color="secondary" component={RouterLink} to="/clients">
+                  <Button variant="outlined" color="secondary" component={RouterLink} to="/livreurs">
                     Cancel
                   </Button>
                 </Stack>
@@ -291,4 +282,4 @@ const AddClient = () => {
   );
 };
 
-export default AddClient;
+export default AddLivreur;

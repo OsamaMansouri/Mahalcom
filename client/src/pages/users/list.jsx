@@ -243,7 +243,7 @@ export default function LatestOrder() {
                 <TableCell>{row.lname}</TableCell>
                 <TableCell>
                   {(() => {
-                    if (row.role === 'manager') {
+                    if (row.role === 'Manager') {
                       return <Chip color="success" label={row.role || 'N/A'} size="small" />;
                     } else {
                       return <Chip color="primary" label={row.role || 'N/A'} size="small" />;

@@ -29,6 +29,7 @@ export default function ProfileTab() {
       // Call the logout endpoint
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
 
       window.location.href = '/login'; // or navigate programmatically using react-router-dom
     } catch (error) {

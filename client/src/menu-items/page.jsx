@@ -98,12 +98,21 @@ const pages = {
       url: '/products',
       icon: icons.SkinOutlined
     },
+
     {
       id: 'stocks',
       title: 'Stocks',
       type: 'item',
       url: '/stocks',
-      icon: icons.Inventory2OutlinedIcon 
+      icon: icons.Inventory2OutlinedIcon
+    },
+
+    {
+      id: 'deliverymen',
+      title: 'Delivery men',
+      type: 'item',
+      url: '/livreurs',
+      icon: icons.TeamOutlined
     },
     {
       id: 'deliveries',
@@ -111,13 +120,6 @@ const pages = {
       type: 'item',
       url: '/deliveries',
       icon: icons.TruckOutlined
-    },
-    {
-      id: 'deliverymen',
-      title: 'Delivery men',
-      type: 'item',
-      url: '/deliverymen',
-      icon: icons.TeamOutlined
     },
     {
       id: 'invoices',
