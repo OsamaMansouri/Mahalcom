@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
+import { LivreurProvider } from 'contexts/livreur/LivreurContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -18,6 +19,8 @@ const AddProduct = Loadable(lazy(() => import('pages/products/add')));
 const Stocks = Loadable(lazy(() => import('pages/stocks/list')));
 const AddStock = Loadable(lazy(() => import('pages/stocks/add')));
 const EditProfile = Loadable(lazy(() => import('pages/profile/edit')));
+const Livreurs = Loadable(lazy(() => import('pages/livreurs/list')));
+const AddLivreur = Loadable(lazy(() => import('pages/livreurs/add')));
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -94,8 +97,22 @@ const MainRoutes = {
       path: 'add-stock',
       element: <AddStock />
     },
-
-
+    {
+      path: 'livreurs',
+      element: (
+        <LivreurProvider>
+          <Livreurs />
+        </LivreurProvider>
+      )
+    },
+    {
+      path: 'add-livreur',
+      element: (
+        <LivreurProvider>
+          <AddLivreur />
+        </LivreurProvider>
+      )
+    },
     {
       path: 'color',
       element: <Color />

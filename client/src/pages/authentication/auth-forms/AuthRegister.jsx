@@ -30,6 +30,7 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
+import api from 'utils/api';
 
 // ============================|| JWT - REGISTER ||============================ //
 
@@ -70,7 +71,7 @@ export default function AuthRegister() {
   const handleSubmit = async (values) => {
     console.log('Submitting form with values:', values); // Debugging statement
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`, values);
+      const response = await api.post(`/api/auth/register`, values);
       toast.success(response.data.msg, { position: 'top-right' });
       window.location.href = '/login'; // Redirect to login page
     } catch (error) {

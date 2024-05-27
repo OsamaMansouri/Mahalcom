@@ -8,12 +8,16 @@ export const authenticateToken = (req, res, next) => {
   const token = authHeader;
 
   if (!token) {
-    return res.status(401).json({ msg: "Unauthorized" });
+    console.log("Authorization token is missing");
+    return res.status(401).json({ msg: "Unauthorized: Token is missing" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ msg: "Forbidden" });
+      console.log("Token verification failed:", err.message);
+      return res
+        .status(403)
+        .json({ msg: "Forbidden: Token is invalid or expired" });
     }
     req.user = user;
     next();

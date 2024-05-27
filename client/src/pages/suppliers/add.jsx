@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Grid,
   TextField,
@@ -68,7 +69,6 @@ const AddSupplier = () => {
     'Sidi Slimane',
     'Sidi Kacem',
     'Al Hoceima',
-    'Dcheira El Jihadia',
     'Errachidia',
     'Sefrou',
     'Youssoufia',
@@ -79,22 +79,18 @@ const AddSupplier = () => {
     'Bouskoura',
     'Essaouira',
     'Taroudant',
-    'Oulad Teima',
     'Ben Guerir',
     'Fquih Ben Salah',
     'Ouarzazate',
     'Ouazzane',
     'Midelt',
-    'Souk El Arbaa',
     'Skhirat',
-    'Souk Larbaa El Gharb',
     'Laayoune',
     'Sidi Ifni',
     'Azrou',
     "M'Diq",
     'Tinghir',
     'Chefchaouen',
-    'El Aioun Sidi Mellouk',
     'Zagora'
   ];
 
@@ -194,7 +190,6 @@ const AddSupplier = () => {
                     value={formData.fullname}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.fullname}
                     helperText={errors.fullname}
                   />
@@ -210,7 +205,6 @@ const AddSupplier = () => {
                     value={formData.address}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.address}
                     helperText={errors.address}
                   />
@@ -226,7 +220,6 @@ const AddSupplier = () => {
                     value={formData.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.email}
                     helperText={errors.email}
                   />
@@ -242,7 +235,6 @@ const AddSupplier = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.phone}
                     helperText={errors.phone}
                   />
@@ -258,7 +250,6 @@ const AddSupplier = () => {
                     value={formData.products_type}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    required
                     error={!!errors.products_type}
                     helperText={errors.products_type}
                   />
@@ -268,7 +259,7 @@ const AddSupplier = () => {
                 <Stack spacing={1}>
                   <InputLabel>City</InputLabel>
                   <FormControl fullWidth error={!!errors.city}>
-                    <Select name="city" value={formData.city} onChange={handleChange} onBlur={handleBlur} displayEmpty required>
+                    <Select name="city" value={formData.city} onChange={handleChange} onBlur={handleBlur} displayEmpty>
                       <MenuItem value="" disabled>
                         Select a city
                       </MenuItem>
@@ -282,20 +273,33 @@ const AddSupplier = () => {
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={12}>
-                <FormControl component="fieldset" required error={!!errors.store}>
-                  <FormLabel component="legend">Does he have an actual store?</FormLabel>
-                  <RadioGroup row name="store" value={formData.store} onChange={handleChange} onBlur={handleBlur}>
-                    <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-                    <FormControlLabel value="no" control={<Radio />} label="No" />
-                  </RadioGroup>
+              <Grid item xs={3}>
+                <Stack spacing={1}>
+                  <InputLabel>Does he have an actual store?</InputLabel>
+                  <Select
+                    name="store"
+                    value={formData.store || ''}
+                    onChange={handleChange}
+                    error={!!errors.store}
+                    onBlur={handleBlur}
+                    fullWidth
+                    displayEmpty
+                  >
+                    <MenuItem value="Yes">Yes</MenuItem>
+                    <MenuItem value="No">No</MenuItem>
+                  </Select>
                   {errors.store && <FormHelperText error>{errors.store}</FormHelperText>}
-                </FormControl>
+                </Stack>
               </Grid>
               <Grid item xs={12}>
-                <Button variant="contained" color="primary" type="submit">
-                  Add Supplier
-                </Button>
+                <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                  <Button variant="contained" color="primary" type="submit">
+                    Add Supplier
+                  </Button>
+                  <Button variant="outlined" color="secondary" component={RouterLink} to="/suppliers">
+                    Cancel
+                  </Button>
+                </Stack>
               </Grid>
             </Grid>
           </MainCard>

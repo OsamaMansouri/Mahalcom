@@ -7,6 +7,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const generateAccessToken = (user) => {
+  return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "15m" });
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(user, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
+};
+
 export const register = async (req, res) => {
   try {
     const { fname, lname, email, password, id_role } = req.body;
@@ -52,18 +60,16 @@ export const login = async (req, res) => {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
-    // Check passsword
+    // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = generateAccessToken({ id: user._id });
+    const refreshToken = generateRefreshToken({ id: user._id });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, refreshToken });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -78,20 +84,15 @@ export const logout = (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 export const getUserDetails = async (req, res) => {
   try {
     const token = req.headers.authorization;
 
-    // Ensure the token is provided
     if (!token) {
       return res.status(401).json({ msg: "Authorization token is missing" });
     }
 
-    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Find the user by ID and populate the role
     const user = await User.findById(decoded.id).populate(
       "id_role",
       "role_name"
@@ -106,4 +107,21 @@ export const getUserDetails = async (req, res) => {
     console.error("Error fetching user details:", error);
     res.status(500).json({ error: error.message });
   }
+};
+
+export const refreshToken = (req, res) => {
+  const token = req.body.token;
+
+  if (!token) {
+    return res.status(401).json({ msg: "Refresh token is missing" });
+  }
+
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ msg: "Invalid refresh token" });
+    }
+
+    const newToken = generateAccessToken({ id: user.id });
+    res.status(200).json({ token: newToken });
+  });
 };

@@ -63,16 +63,12 @@ export const updateClient = async (req, res) => {
 
 export const deleteClient = async (req, res) => {
   try {
-    const id = req.params.id;
-    const clientData = await Client.findById(id);
-
-    if (!clientData) {
+    const deletedClient = await Client.findByIdAndDelete(req.params.id);
+    if (!deletedClient) {
       return res.status(404).json({ msg: "Client not found" });
     }
-    const client = await Client.findByIdAndDelete(id);
-
-    res.status(200).json({ msg: "Client deleted successfully" });
+    res.json({ msg: "Client deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };

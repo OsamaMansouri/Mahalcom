@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import {
-  CardMedia,
-  Chip,
-  Link,
   Table,
   TableBody,
   TableContainer,
@@ -18,9 +15,9 @@ import {
   Avatar,
   Typography,
   TextField,
-  InputLabel,
   Select,
   MenuItem,
+  InputLabel,
   TablePagination,
   Slide,
   Grid,
@@ -36,115 +33,89 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
-import api from 'utils/api';
+import { useLivreur } from 'contexts/livreur/LivreurContext';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// table data
-function createData(index, _id, fullname, address, phone, city, gender) {
-  return { index, _id, fullname, address, phone, city, gender };
-}
+// Moroccan cities array
+const moroccanCities = [
+  'Casablanca',
+  'Fez',
+  'Tangier',
+  'Marrakesh',
+  'Salé',
+  'Meknes',
+  'Rabat',
+  'Oujda',
+  'Kenitra',
+  'Agadir',
+  'Tetouan',
+  'Temara',
+  'Safi',
+  'Mohammedia',
+  'Khouribga',
+  'El Jadida',
+  'Beni Mellal',
+  'Ait Melloul',
+  'Nador',
+  'Dar Bouazza',
+  'Taza',
+  'Settat',
+  'Berrechid',
+  'Khemisset',
+  'Inezgane',
+  'Ksar El Kebir',
+  'Larache',
+  'Guelmim',
+  'Khenifra',
+  'Berkane',
+  'Taourirt',
+  'Sidi Slimane',
+  'Sidi Kacem',
+  'Al Hoceima',
+  'Dcheira El Jihadia',
+  'Errachidia',
+  'Sefrou',
+  'Youssoufia',
+  'Martil',
+  'Tiznit',
+  'Tan-Tan',
+  'Tiflet',
+  'Bouskoura',
+  'Essaouira',
+  'Taroudant',
+  'Oulad Teima',
+  'Ben Guerir',
+  'Fquih Ben Salah',
+  'Ouarzazate',
+  'Ouazzane',
+  'Midelt',
+  'Souk El Arbaa',
+  'Skhirat',
+  'Souk Larbaa El Gharb',
+  'Laayoune',
+  'Sidi Ifni',
+  'Azrou',
+  "M'Diq",
+  'Tinghir',
+  'Chefchaouen',
+  'El Aioun Sidi Mellouk',
+  'Zagora'
+];
 
 export default function LatestOrder() {
-  const [data, setData] = useState([]);
+  const { livreurs, deleteLivreur, updateLivreur } = useLivreur();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState(null);
+  const [livreurToDelete, setLivreurToDelete] = useState(null);
   const [openViewDialog, setOpenViewDialog] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedLivreur, setSelectedLivreur] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editedClient, setEditedClient] = useState({});
-
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const navigate = useNavigate();
-
-  const moroccanCities = [
-    'Casablanca',
-    'Fez',
-    'Tangier',
-    'Marrakesh',
-    'Salé',
-    'Meknes',
-    'Rabat',
-    'Oujda',
-    'Kenitra',
-    'Agadir',
-    'Tetouan',
-    'Temara',
-    'Safi',
-    'Mohammedia',
-    'Khouribga',
-    'El Jadida',
-    'Beni Mellal',
-    'Ait Melloul',
-    'Nador',
-    'Dar Bouazza',
-    'Taza',
-    'Settat',
-    'Berrechid',
-    'Khemisset',
-    'Inezgane',
-    'Ksar El Kebir',
-    'Larache',
-    'Guelmim',
-    'Khenifra',
-    'Berkane',
-    'Taourirt',
-    'Sidi Slimane',
-    'Sidi Kacem',
-    'Al Hoceima',
-    'Dcheira El Jihadia',
-    'Errachidia',
-    'Sefrou',
-    'Youssoufia',
-    'Martil',
-    'Tiznit',
-    'Tan-Tan',
-    'Tiflet',
-    'Bouskoura',
-    'Essaouira',
-    'Taroudant',
-    'Oulad Teima',
-    'Ben Guerir',
-    'Fquih Ben Salah',
-    'Ouarzazate',
-    'Ouazzane',
-    'Midelt',
-    'Souk El Arbaa',
-    'Skhirat',
-    'Souk Larbaa El Gharb',
-    'Laayoune',
-    'Sidi Ifni',
-    'Azrou',
-    "M'Diq",
-    'Tinghir',
-    'Chefchaouen',
-    'El Aioun Sidi Mellouk',
-    'Zagora'
-  ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get('/api/client/getall');
-        const responseData = response.data;
-        setData(
-          responseData.map((item, index) =>
-            createData(index + 1, item._id, item.fullname, item.address, item.phone, item.city, item.gender)
-          )
-        );
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [editedLivreur, setEditedLivreur] = useState({});
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -156,87 +127,59 @@ export default function LatestOrder() {
   };
 
   const handleDeleteClick = (_id) => {
-    setClientToDelete(_id);
+    setLivreurToDelete(_id);
     setOpenDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setClientToDelete(null);
+    setLivreurToDelete(null);
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await api.delete(`/api/client/delete/${clientToDelete}`);
-
-      if (response.status === 200) {
-        const updatedData = data.filter((client) => client._id !== clientToDelete);
-        setData(updatedData);
-        toast.success('Client deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting client:', response.statusText);
-        toast.error('Error deleting client', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting client:', error);
-      toast.error('Error deleting client', { position: 'top-right' });
-    }
+    await deleteLivreur(livreurToDelete);
     handleCloseDeleteDialog();
   };
 
-  const handleViewDetails = (client) => {
-    setSelectedClient(client);
+  const handleViewDetails = (livreur) => {
+    setSelectedLivreur(livreur);
     setOpenViewDialog(true);
   };
 
   const handleCloseViewDialog = () => {
     setOpenViewDialog(false);
-    setSelectedClient(null);
+    setSelectedLivreur(null);
   };
 
-  const handleEditClick = (client) => {
-    setSelectedClient(client);
-    setEditedClient({ ...client });
+  const handleEditClick = (livreur) => {
+    setSelectedLivreur(livreur);
+    setEditedLivreur({ ...livreur });
     setOpenEditDialog(true);
   };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
-    setSelectedClient(null);
-    setEditedClient({});
+    setSelectedLivreur(null);
+    setEditedLivreur({});
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await api.put(`/api/client/update/${editedClient._id}`, editedClient);
-
-      if (response.status === 200) {
-        const updatedData = data.map((client) => (client._id === editedClient._id ? { ...editedClient } : client));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('Client updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating client:', response.statusText);
-        toast.error('Error updating client', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating client:', error);
-      toast.error('Error updating client', { position: 'top-right' });
-    }
+    await updateLivreur(editedLivreur._id, editedLivreur);
+    handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    setEditedClient((prev) => ({ ...prev, [name]: value }));
+    setEditedLivreur((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <MainCard
-      title="List of Clients"
+      title="List of livreurs"
       content={false}
       secondary={
-        <Button component={RouterLink} to="/add-client" variant="contained" startIcon={<PlusOutlined />}>
-          Add Client
+        <Button component={RouterLink} to="/add-livreur" variant="contained" startIcon={<PlusOutlined />}>
+          Add delivery men
         </Button>
       }
     >
@@ -247,18 +190,20 @@ export default function LatestOrder() {
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
-              <TableCell>Gender</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>City</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+            {livreurs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow hover key={row._id}>
-                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
-                <TableCell>{row.fullname}</TableCell>
+                <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
+                <TableCell>
+                  {row.fname} {row.lname}
+                </TableCell>
                 <TableCell>{row.phone}</TableCell>
-                <TableCell>{row.gender}</TableCell>
+                <TableCell>{row.email}</TableCell>
                 <TableCell>{row.city || '-'}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
@@ -281,7 +226,7 @@ export default function LatestOrder() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={livreurs.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -295,8 +240,8 @@ export default function LatestOrder() {
         keepMounted
         TransitionComponent={PopupTransition}
         maxWidth="xs"
-        aria-labelledby="delete-client-title"
-        aria-describedby="delete-client-description"
+        aria-labelledby="delete-livreur-title"
+        aria-describedby="delete-livreur-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Stack alignItems="center" spacing={3.5}>
@@ -322,7 +267,6 @@ export default function LatestOrder() {
       </Dialog>
 
       {/* View Dialog */}
-
       <Dialog
         open={openViewDialog}
         onClose={handleCloseViewDialog}
@@ -330,13 +274,13 @@ export default function LatestOrder() {
         TransitionComponent={PopupTransition}
         fullWidth
         maxWidth="md" // Adjusted width
-        aria-labelledby="view-client-title"
-        aria-describedby="view-client-description"
+        aria-labelledby="view-livreur-title"
+        aria-describedby="view-livreur-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={12}>
-              <MainCard title="View Client Details">
+              <MainCard title="View livreur Details">
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12}>
                     <Stack spacing={1}>
@@ -345,7 +289,7 @@ export default function LatestOrder() {
                         fullWidth
                         placeholder="Enter full name"
                         name="fullname"
-                        value={selectedClient ? `${selectedClient.fullname}` : ''}
+                        value={selectedLivreur ? `${selectedLivreur.fname} ${selectedLivreur.lname}` : ''}
                       />
                     </Stack>
                   </Grid>
@@ -356,25 +300,15 @@ export default function LatestOrder() {
                         fullWidth
                         placeholder="Enter phone number"
                         name="phone"
-                        value={selectedClient ? selectedClient.phone : ''}
+                        value={selectedLivreur ? selectedLivreur.phone : ''}
                       />
                     </Stack>
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1}>
-                      <InputLabel>Gender</InputLabel>
-                      <Select labelId="gender-label" name="gender" label="Gender" value={selectedClient ? selectedClient.gender : ''}>
-                        <MenuItem value="Male">Male</MenuItem>
-                        <MenuItem value="Female">Female</MenuItem>
-                      </Select>
-                    </Stack>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
                       <InputLabel>City</InputLabel>
-                      <FormControl fullWidth error={!!errors.city}>
-                        <Select name="city" value={selectedClient ? selectedClient.city : ''}>
+                      <FormControl fullWidth>
+                        <Select name="city" value={selectedLivreur ? selectedLivreur.city : ''}>
                           {moroccanCities.map((city) => (
                             <MenuItem key={city} value={city}>
                               {city}
@@ -384,16 +318,10 @@ export default function LatestOrder() {
                       </FormControl>
                     </Stack>
                   </Grid>
-
                   <Grid item xs={6}>
                     <Stack spacing={1}>
-                      <InputLabel>Address</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter address"
-                        name="address"
-                        value={selectedClient ? selectedClient.address : ''}
-                      />
+                      <InputLabel>Email</InputLabel>
+                      <TextField fullWidth placeholder="Enter email" name="email" value={selectedLivreur ? selectedLivreur.email : ''} />
                     </Stack>
                   </Grid>
 
@@ -412,7 +340,6 @@ export default function LatestOrder() {
       </Dialog>
 
       {/* Edit Dialog */}
-
       <Dialog
         open={openEditDialog}
         onClose={handleCloseEditDialog}
@@ -426,20 +353,33 @@ export default function LatestOrder() {
         <DialogContent sx={{ mt: 2, my: 1 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={12}>
-              <MainCard title="Edit Client Details">
+              <MainCard title="Edit livreur Details">
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12}>
                     <Stack spacing={1}>
-                      <InputLabel>Full Name</InputLabel>
+                      <InputLabel>First Name</InputLabel>
                       <TextField
                         fullWidth
-                        placeholder="Enter full name"
-                        name="fullname"
-                        value={editedClient.fullname || ''}
+                        placeholder="Enter first name"
+                        name="fname"
+                        value={editedLivreur.fname || ''}
                         onChange={handleFieldChange}
                       />
                     </Stack>
-                    <FormHelperText>Please enter the full name</FormHelperText>
+                    <FormHelperText>Please enter the first name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Last Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter last name"
+                        name="lname"
+                        value={editedLivreur.lname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the last name</FormHelperText>
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1}>
@@ -448,7 +388,7 @@ export default function LatestOrder() {
                         fullWidth
                         placeholder="Enter phone number"
                         name="phone"
-                        value={editedClient.phone || ''}
+                        value={editedLivreur.phone || ''}
                         onChange={handleFieldChange}
                       />
                     </Stack>
@@ -456,27 +396,22 @@ export default function LatestOrder() {
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1}>
-                      <InputLabel>Gender</InputLabel>
-                      <Select
-                        labelId="gender-label"
-                        name="gender"
-                        label="Gender"
-                        value={editedClient.gender || ''}
-                        onChange={handleFieldChange}
+                      <InputLabel>Email</InputLabel>
+                      <TextField
                         fullWidth
-                      >
-                        <MenuItem value="Male">Male</MenuItem>
-                        <MenuItem value="Female">Female</MenuItem>
-                      </Select>
+                        placeholder="Enter email"
+                        name="email"
+                        value={editedLivreur.email || ''}
+                        onChange={handleFieldChange}
+                      />
                     </Stack>
-                    <FormHelperText>Please enter the gender</FormHelperText>
+                    <FormHelperText>Please enter the email</FormHelperText>
                   </Grid>
-
                   <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>City</InputLabel>
-                      <FormControl fullWidth error={!!errors.city}>
-                        <Select name="city" value={editedClient.city || ''} onChange={handleFieldChange}>
+                      <FormControl fullWidth>
+                        <Select name="city" value={editedLivreur.city || ''} onChange={handleFieldChange}>
                           {moroccanCities.map((city) => (
                             <MenuItem key={city} value={city}>
                               {city}
@@ -486,20 +421,6 @@ export default function LatestOrder() {
                         <FormHelperText>Please enter the city</FormHelperText>
                       </FormControl>
                     </Stack>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>Address</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter address"
-                        name="address"
-                        value={editedClient.address || ''}
-                        onChange={handleFieldChange}
-                      />
-                    </Stack>
-                    <FormHelperText>Please enter the address</FormHelperText>
                   </Grid>
 
                   <CardActions>

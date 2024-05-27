@@ -94,6 +94,7 @@ export default function Profile() {
     try {
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       window.location.href = '/login';
     } catch (error) {
       console.error('Logout failed:', error);
