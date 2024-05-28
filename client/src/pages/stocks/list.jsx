@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
-  CardMedia,
-  Chip,
-  Link,
   Table,
   TableBody,
   TableContainer,
@@ -18,11 +15,15 @@ import {
   Avatar,
   Typography,
   TextField,
-  InputLabel,
   Select,
   MenuItem,
+  InputLabel,
   TablePagination,
-  Slide
+  Slide,
+  Grid,
+  FormHelperText,
+  CardActions,
+  FormControl
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -32,21 +33,15 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
+import { useStock } from 'contexts/stock/StockContext';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// table data
-function createData(index, _id, name, id_supplier, warehouse, id_catg, type) {
-  return { index, _id, name, id_supplier, warehouse, id_catg, type};
-}
-
-export default function LatestOrder() {
-  const [suppliers, setSuppliers] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [data, setData] = useState([]);
+export default function StockList() {
+  const { stocks, suppliers, deleteStock, updateStock } = useStock();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -55,67 +50,6 @@ export default function LatestOrder() {
   const [selectedStock, setSelectedStock] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedStock, setEditedStock] = useState({});
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        setData(
-          responseData.map((item, index) =>
-            createData(
-              index + 1,
-              item._id,
-              item.name,
-              item.id_supplier,
-              item.warehouse,
-              item.id_catg,
-              item.type
-            )
-          )
-        );
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/getall`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${token}`
-          }
-        });
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
-    const fetchSuppliers = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/getall`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${token}`
-          }
-        });
-        const data = await response.json();
-        setSuppliers(data);
-      } catch (error) {
-        console.error('Error fetching stocks:', error);
-      }
-    };
-    fetchSuppliers();
-  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -137,27 +71,7 @@ export default function LatestOrder() {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/delete/${stockToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`, // Include the token in the Authorization header
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const updatedData = data.filter((stock) => stock._id !== stockToDelete);
-        setData(updatedData);
-        toast.success('Stock deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting stock:', response.statusText);
-        toast.error('Error deleting stock', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting stock:', error);
-      toast.error('Error deleting stock', { position: 'top-right' });
-    }
+    await deleteStock(stockToDelete);
     handleCloseDeleteDialog();
   };
 
@@ -173,7 +87,7 @@ export default function LatestOrder() {
 
   const handleEditClick = (stock) => {
     setSelectedStock(stock);
-    setEditedStock({ ...stock });
+    setEditedStock({ ...stock, id_supplier: stock.id_supplier?._id || '' });
     setOpenEditDialog(true);
   };
 
@@ -184,34 +98,17 @@ export default function LatestOrder() {
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/update/${editedStock._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedStock)
-      });
-
-      if (response.ok) {
-        const updatedData = data.map((stock) => (stock._id === editedStock._id ? { ...editedStock } : stock));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('Stock updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating stock:', response.statusText);
-        toast.error('Error updating stock', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating stock:', error);
-      toast.error('Error updating stock', { position: 'top-right' });
-    }
+    await updateStock(editedStock._id, editedStock);
+    handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setEditedStock((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const createData = (index, stock) => {
+    return { ...stock, index: index + 1 };
   };
 
   return (
@@ -230,58 +127,43 @@ export default function LatestOrder() {
             <TableRow>
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Supplier</TableCell>
               <TableCell>Warehouse</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Type</TableCell>
-
+              <TableCell>Supplier</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-              <TableRow hover key={row._id}>
-                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>
-                  {suppliers
-                    .filter((s) => s._id === row.id_supplier)
-                    .map((s) => (
-                      <p>{s.fullname}</p>
-                    ))}
-                </TableCell>
-                <TableCell>{row.warehouse}</TableCell>
-                <TableCell>
-                  {categories
-                    .filter((c) => c._id === row.id_catg)
-                    .map((c) => (
-                      <p>{c.catg_name}</p>
-                    ))}
-                </TableCell>
-                <TableCell>{row.type}</TableCell>
-
-                <TableCell align="center" sx={{ pr: 3 }}>
-                  <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
-                      <VisibilityOutlinedIcon />
-                    </IconButton>
-                    <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
-                    </IconButton>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
+            {stocks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+              const rowData = createData(index, row);
+              return (
+                <TableRow hover key={row._id}>
+                  <TableCell sx={{ pl: 3 }}>{rowData.index}</TableCell>
+                  <TableCell>{rowData.name}</TableCell>
+                  <TableCell>{rowData.warehouse}</TableCell>
+                  <TableCell>{rowData.id_supplier?.fullname}</TableCell>
+                  <TableCell align="center" sx={{ pr: 3 }}>
+                    <Stack direction="row" justifyContent="center" alignItems="center">
+                      <IconButton color="inherit" size="large" onClick={() => handleEditClick(rowData)}>
+                        <EditOutlined />
+                      </IconButton>
+                      <IconButton color="info" size="large" onClick={() => handleViewDetails(rowData)}>
+                        <VisibilityOutlinedIcon />
+                      </IconButton>
+                      <IconButton color="error" size="large" onClick={() => handleDeleteClick(rowData._id)}>
+                        <DeleteOutlinedIcon />
+                      </IconButton>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={stocks.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -327,36 +209,66 @@ export default function LatestOrder() {
         onClose={handleCloseViewDialog}
         keepMounted
         TransitionComponent={PopupTransition}
-        maxWidth="md"
+        fullWidth
+        maxWidth="md" // Adjusted width
         aria-labelledby="view-stock-title"
         aria-describedby="view-stock-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Avatar color="primary" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              {selectedStock && selectedStock.name.charAt(0).toUpperCase()}
-            </Avatar>
-            <Stack spacing={2}>
-              <Typography variant="h4" align="center">
-                {selectedStock ? `${selectedStock.name}` : ''}
-              </Typography>
-              <Typography align="center">Name : {selectedStock ? selectedStock.name : ''}</Typography>
-              <Typography align="center">Stock : {
-                selectedStock ? suppliers.filter((st) => st._id === selectedStock.id_supplier)[0].fullname : ''
-              }</Typography>
-              <Typography align="center">Warehouse : {selectedStock ? selectedStock.warehouse : ''}</Typography>
-              <Typography align="center">Categorie : {
-                selectedStock ? categories.filter((st) => st._id === selectedStock.id_catg)[0].catg_name : ''
-              }</Typography>
-              <Typography align="center">Type : {selectedStock ? selectedStock.type : ''}</Typography>
-            </Stack>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="View Stock Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Name</InputLabel>
+                      <TextField fullWidth placeholder="Enter name" name="name" value={selectedStock ? selectedStock.name : ''} />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Warehouse</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter warehouse"
+                        name="warehouse"
+                        value={selectedStock ? selectedStock.warehouse : ''}
+                      />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Supplier</InputLabel>
+                      <FormControl fullWidth>
+                        <Select name="id_supplier" value={selectedStock ? selectedStock.id_supplier?._id : ''}>
+                          {suppliers.map((supplier) => (
+                            <MenuItem key={supplier._id} value={supplier._id}>
+                              {supplier.fullname}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Grid>
 
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseViewDialog} color="primary" variant="contained">
-                Close
-              </Button>
-            </Stack>
-          </Stack>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Info</InputLabel>
+                      <TextField fullWidth placeholder="Enter info" name="info" value={selectedStock ? selectedStock.info : ''} />
+                    </Stack>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                        Cancel
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
 
@@ -372,39 +284,79 @@ export default function LatestOrder() {
         aria-describedby="edit-stock-details-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Typography variant="h4" align="center">
-              Edit Stock Details
-            </Typography>
-            <TextField name="name" label="Name" value={editedStock.name || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="id_supplier" label="Supplier" value={editedStock.id_supplier || ''} onChange={handleFieldChange} fullWidth />
-            <TextField name="warehouse" label="Warehouse" value={editedStock.warehouse || ''} onChange={handleFieldChange} fullWidth />
-            <InputLabel id="gender-label">category</InputLabel>
-            <Select
-              labelId="gender-label"
-              name="id_catg"
-              label="categorie"
-              value={editedStock.id_catg || ''}
-              onChange={handleFieldChange}
-              fullWidth
-            >
-              {categories.map((cat) => (
-                <MenuItem key={cat._id} value={cat._id}>
-                  {cat.catg_name}
-                </MenuItem>
-              ))}
-            </Select>
-            <TextField name="type" label="type" value={editedStock.type || ''} onChange={handleFieldChange} fullWidth />
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Edit Stock Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter name"
+                        name="name"
+                        value={editedStock.name || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Warehouse</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter warehouse"
+                        name="warehouse"
+                        value={editedStock.warehouse || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the warehouse</FormHelperText>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Supplier</InputLabel>
+                      <FormControl fullWidth>
+                        <Select name="id_supplier" value={editedStock.id_supplier || ''} onChange={handleFieldChange}>
+                          {suppliers.map((supplier) => (
+                            <MenuItem key={supplier._id} value={supplier._id}>
+                              {supplier.fullname}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <FormHelperText>Please select the supplier</FormHelperText>
+                      </FormControl>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Info</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter info"
+                        name="info"
+                        value={editedStock.info || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter the info</FormHelperText>
+                  </Grid>
 
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseEditDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button fullWidth color="primary" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
-                Save
-              </Button>
-            </Stack>
-          </Stack>
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                        Update
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </MainCard>

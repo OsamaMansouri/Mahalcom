@@ -28,9 +28,9 @@ const supplierSchema = new mongoose.Schema(
     store: {
       type: String,
       required: true,
-    }
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("supplier", supplierSchema);
+export default mongoose.model("Supplier", supplierSchema);

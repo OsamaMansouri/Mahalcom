@@ -8,15 +8,13 @@ const stockSchema = new mongoose.Schema(
     },
     name: {
       type: String,
+      required: true,
     },
     warehouse: {
       type: String,
+      required: true,
     },
-    id_catg: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
-    type:{
+    info: {
       type: String,
     },
   },
