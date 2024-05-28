@@ -71,7 +71,7 @@ export default function AuthRegister() {
   const handleSubmit = async (values) => {
     console.log('Submitting form with values:', values); // Debugging statement
     try {
-      const response = await api.post(`/api/auth/register`, values);
+      const response = await api.post('/api/auth/register', values);
       toast.success(response.data.msg, { position: 'top-right' });
       window.location.href = '/login'; // Redirect to login page
     } catch (error) {

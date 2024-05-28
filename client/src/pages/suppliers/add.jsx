@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
+import api from 'utils/api';
 
 const AddSupplier = () => {
   const [formData, setFormData] = useState({
@@ -149,24 +150,15 @@ const AddSupplier = () => {
       return;
     }
 
-    const token = localStorage.getItem('token');
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await api.post('/api/supplier/create', formData);
 
-      if (response.ok) {
+      if (response.status === 200) {
         toast.success('Supplier added successfully', { position: 'top-right' });
         navigate('/suppliers');
       } else {
         console.error('Error adding supplier:', response.statusText);
-        toast.error('Error adding supplier', { position: 'top-right' });
+        toast.error('Error adding suppliers', { position: 'top-right' });
       }
     } catch (error) {
       console.error('Error adding supplier:', error);

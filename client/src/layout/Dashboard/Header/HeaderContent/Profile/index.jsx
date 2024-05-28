@@ -30,6 +30,7 @@ import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
+import api from 'utils/api';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -60,9 +61,7 @@ export default function Profile() {
     const fetchUserDetails = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/details`, {
-          headers: { Authorization: `${token}` }
-        });
+        const response = await api.get('/api/auth/details');
         setUser({
           name: `${response.data.fname} ${response.data.lname}`,
           role: response.data.id_role.role_name
@@ -92,7 +91,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
+      await api.post('/api/auth/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       window.location.href = '/login';
