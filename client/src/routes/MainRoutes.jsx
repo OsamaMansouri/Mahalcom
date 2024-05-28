@@ -5,6 +5,8 @@ import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
 import { LivreurProvider } from 'contexts/livreur/LivreurContext';
+import { StockProvider } from 'contexts/stock/StockContext';
+import { ProductProvider } from 'contexts/product/ProductContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -83,19 +85,35 @@ const MainRoutes = {
     },
     {
       path: 'products',
-      element: <Products />
+      element: (
+        <ProductProvider>
+          <Products />
+        </ProductProvider>
+      )
     },
     {
       path: 'add-product',
-      element: <AddProduct />
+      element: (
+        <ProductProvider>
+          <AddProduct />
+        </ProductProvider>
+      )
     },
     {
       path: 'stocks',
-      element: <Stocks />
+      element: (
+        <StockProvider>
+          <Stocks />
+        </StockProvider>
+      )
     },
     {
       path: 'add-stock',
-      element: <AddStock />
+      element: (
+        <StockProvider>
+          <AddStock />
+        </StockProvider>
+      )
     },
     {
       path: 'livreurs',

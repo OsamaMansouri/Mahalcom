@@ -10,6 +10,10 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
     },
+    image: {
+      type: String,
+      required: true,
+    },
     id_catg: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -23,7 +27,8 @@ const productSchema = new mongoose.Schema(
     },
     id_stock: {
       type: mongoose.Schema.Types.ObjectId,
-      default: "664e4d941c7063fe3860ebf8",
+      ref: "Stock",
+      required: true,
     },
     inStock: {
       type: Boolean,

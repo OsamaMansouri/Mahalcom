@@ -7,9 +7,7 @@ export const create = async (req, res) => {
       return res.status(404).json({ msg: "Product data not found" });
     }
     const savedData = await productData.save();
-    //res.status(200).json(savedData);
-
-    res.status(200).json({ msg: "Product created successfully" });
+    res.status(200).json(savedData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -17,7 +15,9 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const productData = await Product.find();
+    const productData = await Product.find()
+      .populate("id_catg")
+      .populate("id_stock");
 
     if (!productData) {
       return res.status(404).json({ msg: "Product data not found" });
@@ -32,7 +32,9 @@ export const getAll = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const id = req.params.id;
-    const productData = await Product.findById(id);
+    const productData = await Product.findById(id)
+      .populate("id_catg")
+      .populate("id_stock");
 
     if (!productData) {
       return res.status(404).json({ msg: "Product not found" });
@@ -52,11 +54,13 @@ export const updateProduct = async (req, res) => {
     if (!productData) {
       return res.status(404).json({ msg: "Product not found" });
     }
-    const product = await Product.findByIdAndUpdate(id, req.body, {
+    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
-    });
+    })
+      .populate("id_catg")
+      .populate("id_stock");
 
-    res.status(200).json({ msg: "Product updated successfully" });
+    res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -70,7 +74,7 @@ export const deleteProduct = async (req, res) => {
     if (!productData) {
       return res.status(404).json({ msg: "Product not found" });
     }
-    const product = await Product.findByIdAndDelete(id);
+    await Product.findByIdAndDelete(id);
 
     res.status(200).json({ msg: "Product deleted successfully" });
   } catch (error) {
