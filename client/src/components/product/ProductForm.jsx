@@ -16,6 +16,7 @@ import {
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
 import { useProduct } from 'contexts/product/ProductContext';
+import ReactDraft from 'sections/forms/plugins/ReactDraft';
 
 const ProductForm = () => {
   const { addProduct, categories, stocks } = useProduct();
@@ -23,7 +24,7 @@ const ProductForm = () => {
     name: '',
     description: '',
     brand: '',
-    image: '',
+    image: null,
     id_catg: '',
     price: '',
     quantity: '',
@@ -47,6 +48,13 @@ const ProductForm = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: e.target.files[0]
+    }));
+  };
+
   const handleBlur = (e) => {
     const { name, value } = e.target;
     setTouched((prev) => ({
@@ -66,7 +74,7 @@ const ProductForm = () => {
   const validateForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+      if (!formData[key] && key !== 'image' && key !== 'inStock') {
         newErrors[key] = 'This field is required';
       }
     });
@@ -82,7 +90,12 @@ const ProductForm = () => {
       return;
     }
 
-    await addProduct(formData);
+    const formDataToSubmit = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSubmit.append(key, formData[key]);
+    });
+
+    await addProduct(formDataToSubmit);
     navigate('/products');
   };
 
@@ -184,20 +197,11 @@ const ProductForm = () => {
 
         <Grid item xs={6}>
           <Stack spacing={1}>
-            <InputLabel>Image URL</InputLabel>
-            <TextField
-              fullWidth
-              placeholder="Enter image URL"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-              error={!!errors.image}
-              helperText={errors.image}
-            />
+            <InputLabel>Image</InputLabel>
+            <input type="file" name="image" onChange={handleFileChange} />
+            {errors.image && <FormHelperText error>{errors.image}</FormHelperText>}
           </Stack>
-          <FormHelperText>Please enter the image URL</FormHelperText>
+          <FormHelperText>Please select an image</FormHelperText>
         </Grid>
 
         <Grid item xs={6}>
