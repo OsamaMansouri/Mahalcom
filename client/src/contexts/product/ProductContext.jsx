@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import api from 'utils/api';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 
 const ProductContext = createContext();
 
@@ -13,36 +12,68 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [stocks, setStocks] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const productResponse = await api.get('/api/product/getall');
-        setProducts(productResponse.data);
-
-        const categoryResponse = await api.get('/api/category/getall');
-        setCategories(categoryResponse.data);
-
-        const stockResponse = await api.get('/api/stock/getall');
-        setStocks(stockResponse.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
+    fetchProducts();
+    fetchCategories();
+    fetchStocks();
   }, []);
 
-  const addProduct = async (newProduct) => {
+  const fetchProducts = async () => {
     try {
-      const response = await api.post('/api/product/create', newProduct);
-      setProducts([...products, response.data]);
+      const response = await api.get('/api/product/getall');
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/api/category/getall');
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchStocks = async () => {
+    try {
+      const response = await api.get('/api/stock/getall');
+      setStocks(response.data);
+    } catch (error) {
+      console.error('Error fetching stocks:', error);
+    }
+  };
+
+  const addProduct = async (productData) => {
+    try {
+      const response = await api.post('/api/product/create', productData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      setProducts((prevProducts) => [...prevProducts, response.data]);
       toast.success('Product added successfully', { position: 'top-right' });
-      navigate('/products');
+      fetchProducts(); // Fetch updated list of products
     } catch (error) {
       console.error('Error adding product:', error);
       toast.error('Error adding product', { position: 'top-right' });
+    }
+  };
+
+  const updateProduct = async (id, productData) => {
+    try {
+      const response = await api.put(`/api/product/update/${id}`, productData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      await fetchProducts();
+      toast.success('Product updated successfully', { position: 'top-right' });
+    } catch (error) {
+      console.error('Error updating product:', error);
+      toast.error('Error updating product', { position: 'top-right' });
     }
   };
 
@@ -57,19 +88,17 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const updateProduct = async (id, updatedProduct) => {
-    try {
-      const response = await api.put(`/api/product/update/${id}`, updatedProduct);
-      setProducts(products.map((product) => (product._id === id ? response.data : product)));
-      toast.success('Product updated successfully', { position: 'top-right' });
-    } catch (error) {
-      console.error('Error updating product:', error);
-      toast.error('Error updating product', { position: 'top-right' });
-    }
-  };
-
   return (
-    <ProductContext.Provider value={{ products, categories, stocks, addProduct, deleteProduct, updateProduct }}>
+    <ProductContext.Provider
+      value={{
+        products,
+        categories,
+        stocks,
+        addProduct,
+        updateProduct,
+        deleteProduct
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );

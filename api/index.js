@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 import userRoute from "./routes/userRoute.js";
 import stockRoute from "./routes/stockRoute.js";
 import productRoute from "./routes/productRoute.js";
@@ -23,6 +24,10 @@ const app = express();
 //middleware
 app.use(bodyParser.json());
 app.use(cors());
+
+// Serve static files from the 'uploads' directory
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 7000;
 
@@ -52,7 +57,7 @@ app.use("/api/supplier", supplierRoute);
 app.use("/api/livraison", livraisonRoute);
 app.use("/api/livreur", livreurRoute);
 app.use("/api/category", categoryRoute);
-app.use("/api/order",orderRoute);
+app.use("/api/order", orderRoute);
 
 app.all("*", (req, res) => {
   res.status(404);

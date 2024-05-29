@@ -24,18 +24,18 @@ import {
   FormHelperText,
   CardActions,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Chip
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useProduct } from 'contexts/product/ProductContext';
 import { Link as RouterLink } from 'react-router-dom';
 import { EditOutlined } from '@ant-design/icons';
-
 import toast from 'react-hot-toast';
 
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -104,15 +104,20 @@ export default function ProductList() {
   };
 
   const handleEditSave = async () => {
-    await updateProduct(editedProduct._id, editedProduct);
+    const formData = new FormData();
+    Object.keys(editedProduct).forEach((key) => {
+      formData.append(key, editedProduct[key]);
+    });
+
+    await updateProduct(editedProduct._id, formData);
     handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     setEditedProduct((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : files ? files[0] : value
     }));
   };
 
@@ -127,16 +132,14 @@ export default function ProductList() {
       }
     >
       <TableContainer>
-        <Table sx={{ minWidth: 350 }} aria-label="simple table">
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Brand</TableCell>
-              <TableCell>Category</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
+              <TableCell>Product</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
-              <TableCell>In Stock</TableCell>
+              <TableCell>Status</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -144,22 +147,49 @@ export default function ProductList() {
             {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow hover key={row._id}>
                 <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.brand}</TableCell>
-                <TableCell>{row.id_catg?.catg_name || '-'}</TableCell>
-                <TableCell>{row.price}</TableCell>
+                <TableCell sx={{ pl: 3 }}>
+                  <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
+                    <Grid item>
+                      {row.image && (
+                        <img
+                          src={`${import.meta.env.VITE_API_BASE_URL}/${row.image}`}
+                          alt={row.name}
+                          style={{ width: '50px', height: '50px' }}
+                        />
+                      )}
+                    </Grid>
+                    <Grid item xs zeroMinWidth>
+                      <Typography variant="subtitle1">{row.name}</Typography>
+                      <Typography variant="caption" color="secondary">
+                        {row.id_catg?.catg_name || '-'}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </TableCell>
+
+                <TableCell>{row.price} MAD</TableCell>
                 <TableCell>{row.quantity}</TableCell>
-                <TableCell>{row.inStock ? 'Yes' : 'No'}</TableCell>
+                <TableCell>
+                  {(() => {
+                    if (row.inStock) {
+                      return <Chip color="success" label="In Stock" size="small" variant="light" />;
+                    } else {
+                      return <Chip color="error" label="Out of Stock" size="small" variant="light" />;
+                    }
+                  })()}
+                </TableCell>
+
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                    <IconButton color="secondary" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
                     </IconButton>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
+                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>
@@ -458,7 +488,20 @@ export default function ProductList() {
                       label="In Stock"
                     />
                   </Grid>
-
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Image</InputLabel>
+                      <input type="file" name="image" onChange={handleFieldChange} />
+                      {editedProduct.image && (
+                        <img
+                          src={`${import.meta.env.VITE_API_BASE_URL}/${editedProduct.image}`}
+                          alt="Product"
+                          style={{ width: '100px', height: '100px' }}
+                        />
+                      )}
+                    </Stack>
+                    <FormHelperText>Please upload an image</FormHelperText>
+                  </Grid>
                   <CardActions>
                     <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
                       <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
