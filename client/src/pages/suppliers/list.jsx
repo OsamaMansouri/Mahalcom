@@ -15,17 +15,17 @@ import {
   Avatar,
   Typography,
   TextField,
-  Radio,
-  RadioGroup,
-  InputLabel,
-  FormControlLabel,
   Select,
   MenuItem,
   TablePagination,
   Slide,
   Grid,
   FormHelperText,
-  CardActions
+  CardActions,
+  InputLabel,
+  FormControlLabel,
+  RadioGroup,
+  Radio
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -35,6 +35,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
+import { useSupplier } from 'contexts/supplier/SupplierContext';
 
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -45,6 +46,7 @@ function createData(index, _id, fullname, address, email, phone, city, products_
 }
 
 export default function LatestOrder() {
+  const { suppliers, updateSupplier, deleteSupplier } = useSupplier();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -118,25 +120,11 @@ export default function LatestOrder() {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        const newData = responseData.map((row, index) =>
-          createData(index + 1, row._id, row.fullname, row.address, row.email, row.phone, row.city, row.products_type, row.store)
-        );
-        setData(newData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+    const newData = suppliers.map((row, index) =>
+      createData(index + 1, row._id, row.fullname, row.address, row.email, row.phone, row.city, row.products_type, row.store)
+    );
+    setData(newData);
+  }, [suppliers]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -158,27 +146,7 @@ export default function LatestOrder() {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/delete/${supplierToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const updatedData = data.filter((supplier) => supplier._id !== supplierToDelete);
-        setData(updatedData);
-        toast.success('Supplier deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting supplier:', response.statusText);
-        toast.error('Error deleting supplier', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting supplier:', error);
-      toast.error('Error deleting supplier', { position: 'top-right' });
-    }
+    await deleteSupplier(supplierToDelete);
     handleCloseDeleteDialog();
   };
 
@@ -210,29 +178,8 @@ export default function LatestOrder() {
       return;
     }
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/update/${editedsupplier._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedsupplier)
-      });
-
-      if (response.ok) {
-        const updatedData = data.map((supplier) => (supplier._id === editedsupplier._id ? editedsupplier : supplier));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('Supplier updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating supplier:', response.statusText);
-        toast.error('Error updating supplier', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating supplier:', error);
-      toast.error('Error updating supplier', { position: 'top-right' });
-    }
+    await updateSupplier(editedsupplier);
+    handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
@@ -265,31 +212,31 @@ export default function LatestOrder() {
       }
     >
       <TableContainer>
-        <Table sx={{ minWidth: 350 }} aria-label="simple table">
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell>Id</TableCell>
               <TableCell>Full Name</TableCell>
+              <TableCell>Address</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Phone</TableCell>
-              <TableCell>Store</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Products Type</TableCell>
               <TableCell>City</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell>Products Type</TableCell>
+              <TableCell>Store</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-              <TableRow hover key={row._id}>
-                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
+              <TableRow key={row._id}>
+                <TableCell>{row.index}</TableCell>
                 <TableCell>{row.fullname}</TableCell>
+                <TableCell>{row.address}</TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
-                <TableCell>{row.store}</TableCell>
-                <TableCell>{row.address}</TableCell>
-                <TableCell>{row.products_type}</TableCell>
                 <TableCell>{row.city}</TableCell>
+                <TableCell>{row.products_type}</TableCell>
+                <TableCell>{row.store}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
                     <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
@@ -312,42 +259,11 @@ export default function LatestOrder() {
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={data.length}
+        rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
-      {/* Delete Dialog */}
-      <Dialog
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        keepMounted
-        TransitionComponent={PopupTransition}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogContent sx={{ mt: 2, my: 1 }}>
-          <Stack alignItems="center" spacing={3.5}>
-            <Avatar color="error" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-              <DeleteOutlinedIcon />
-            </Avatar>
-            <Stack spacing={2}>
-              <Typography variant="h4" align="center">
-                Are you sure you want to delete?
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-              <Button fullWidth onClick={handleCloseDeleteDialog} color="secondary" variant="outlined">
-                Cancel
-              </Button>
-              <Button fullWidth color="error" variant="contained" onClick={handleDeleteConfirm} autoFocus>
-                Delete
-              </Button>
-            </Stack>
-          </Stack>
-        </DialogContent>
-      </Dialog>
 
       {/* View Dialog */}
       <Dialog
@@ -470,6 +386,38 @@ export default function LatestOrder() {
           </Grid>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        keepMounted
+        TransitionComponent={PopupTransition}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogContent sx={{ mt: 2, my: 1 }}>
+          <Stack alignItems="center" spacing={3.5}>
+            <Avatar color="error" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
+              <DeleteOutlinedIcon />
+            </Avatar>
+            <Stack spacing={2}>
+              <Typography variant="h4" align="center">
+                Are you sure you want to delete?
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
+              <Button fullWidth onClick={handleCloseDeleteDialog} color="secondary" variant="outlined">
+                Cancel
+              </Button>
+              <Button fullWidth color="error" variant="contained" onClick={handleDeleteConfirm} autoFocus>
+                Delete
+              </Button>
+            </Stack>
+          </Stack>
+        </DialogContent>
+      </Dialog>
+      
       {/* Edit Dialog */}
       <Dialog
         open={openEditDialog}
