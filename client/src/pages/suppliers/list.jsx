@@ -417,7 +417,7 @@ export default function LatestOrder() {
           </Stack>
         </DialogContent>
       </Dialog>
-      
+
       {/* Edit Dialog */}
       <Dialog
         open={openEditDialog}
@@ -536,17 +536,14 @@ export default function LatestOrder() {
                   <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel id="city-label">Store</InputLabel>
-                      <Select
+                      <TextField
                         name="store"
                         value={editedsupplier.store || ''}
                         onChange={handleFieldChange}
-                        error={!!fieldErrors.city}
+                        error={!!fieldErrors.store}
+                        helperText={fieldErrors.store}
                         fullWidth
-                        displayEmpty
-                      >
-                        <MenuItem value="Yes">Yes</MenuItem>
-                        <MenuItem value="No">No</MenuItem>
-                      </Select>
+                      />
                     </Stack>
                     <FormHelperText>Please enter the Store</FormHelperText>
                   </Grid>

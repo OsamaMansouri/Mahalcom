@@ -16,7 +16,7 @@ export const create = async (req, res) => {
     });
 
     const savedSupplier = await newSupplier.save();
-    res.status(200).json(savedSupplier); // Return the full livreur data
+    res.status(200).json(savedSupplier); // Return the full supplier data
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
