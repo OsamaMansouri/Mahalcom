@@ -7,7 +7,10 @@ import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
 import { LivreurProvider } from 'contexts/livreur/LivreurContext';
 import { StockProvider } from 'contexts/stock/StockContext';
 import { ProductProvider } from 'contexts/product/ProductContext';
-import {SupplierProvider} from 'contexts/supplier/SupplierContext';
+import { SupplierProvider } from 'contexts/supplier/SupplierContext';
+import { UserProvider } from 'contexts/user/UserContext';
+import { OrderProvider } from 'contexts/order/OrderContext';
+import { ClientProvider } from 'contexts/client/ClientContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -21,9 +24,15 @@ const Products = Loadable(lazy(() => import('pages/products/list')));
 const AddProduct = Loadable(lazy(() => import('pages/products/add')));
 const Stocks = Loadable(lazy(() => import('pages/stocks/list')));
 const AddStock = Loadable(lazy(() => import('pages/stocks/add')));
-const EditProfile = Loadable(lazy(() => import('pages/profile/edit')));
 const Livreurs = Loadable(lazy(() => import('pages/livreurs/list')));
 const AddLivreur = Loadable(lazy(() => import('pages/livreurs/add')));
+const AddOrder = Loadable(lazy(() => import('pages/orders/add')));
+const Orders = Loadable(lazy(() => import('pages/orders/list')));
+
+const UserProfile = Loadable(lazy(() => import('pages/profile/user')));
+const UserTabPersonal = Loadable(lazy(() => import('sections/profile/TabPersonal')));
+const UserTabPassword = Loadable(lazy(() => import('sections/profile/TabPassword')));
+const UserTabSettings = Loadable(lazy(() => import('sections/profile/TabSettings')));
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
@@ -49,8 +58,35 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'profile/edit',
-      element: <EditProfile />
+      path: 'profiles',
+      children: [
+        {
+          path: 'user',
+          element: <UserProfile />,
+          children: [
+            {
+              path: 'personal',
+              element: (
+                <UserProvider>
+                  <UserTabPersonal />
+                </UserProvider>
+              )
+            },
+            {
+              path: 'password',
+              element: (
+                <UserProvider>
+                  <UserTabPassword />
+                </UserProvider>
+              )
+            },
+            {
+              path: 'settings',
+              element: <UserTabSettings />
+            }
+          ]
+        }
+      ]
     },
     {
       path: 'users',
@@ -70,18 +106,18 @@ const MainRoutes = {
     },
     {
       path: 'add-supplier',
-      element:(
-      <SupplierProvider>
-       <AddSupplier />
-      </SupplierProvider>
+      element: (
+        <SupplierProvider>
+          <AddSupplier />
+        </SupplierProvider>
       )
     },
     {
       path: 'suppliers',
-      element:(
+      element: (
         <SupplierProvider>
-        <Suppliers />
-       </SupplierProvider>
+          <Suppliers />
+        </SupplierProvider>
       )
     },
     {
@@ -138,6 +174,28 @@ const MainRoutes = {
         <LivreurProvider>
           <AddLivreur />
         </LivreurProvider>
+      )
+    },
+    {
+      path: 'orders',
+      element: (
+        <ClientProvider>
+          <OrderProvider>
+            <Orders />
+          </OrderProvider>
+        </ClientProvider>
+      )
+    },
+    {
+      path: 'add-order',
+      element: (
+        <ProductProvider>
+          <ClientProvider>
+            <OrderProvider>
+              <AddOrder />
+            </OrderProvider>
+          </ClientProvider>
+        </ProductProvider>
       )
     },
     {

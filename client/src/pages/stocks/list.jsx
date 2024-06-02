@@ -23,7 +23,8 @@ import {
   Grid,
   FormHelperText,
   CardActions,
-  FormControl
+  FormControl,
+  Menu
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -34,6 +35,8 @@ import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
 import { useStock } from 'contexts/stock/StockContext';
+import MoreOutlined from '@ant-design/icons/MoreOutlined';
+import { Link } from 'react-router-dom';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -111,6 +114,17 @@ export default function StockList() {
     return { ...stock, index: index + 1 };
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event?.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <MainCard
       title="List of Stocks"
@@ -152,6 +166,50 @@ export default function StockList() {
                       <IconButton color="error" size="large" onClick={() => handleDeleteClick(rowData._id)}>
                         <DeleteOutlinedIcon />
                       </IconButton>
+                      <IconButton
+                        variant="light"
+                        color="inherit"
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                      >
+                        <MoreOutlined />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          'aria-labelledby': 'basic-button'
+                        }}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right'
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right'
+                        }}
+                      >
+                        <MenuItem
+                          component={Link}
+                          to="/apps/profiles/user/personal"
+                          onClick={() => {
+                            handleClose();
+                            setTimeout(() => {
+                              focusInput();
+                            });
+                          }}
+                        >
+                          Edit
+                        </MenuItem>
+                        <MenuItem onClick={handleClose} disabled>
+                          Delete
+                        </MenuItem>
+                      </Menu>
                     </Stack>
                   </TableCell>
                 </TableRow>

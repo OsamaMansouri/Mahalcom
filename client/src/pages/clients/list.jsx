@@ -44,8 +44,8 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 // table data
-function createData(index, _id, fullname, address, phone, city, gender) {
-  return { index, _id, fullname, address, phone, city, gender };
+function createData(index, _id, fullname, email, address, phone, city, gender) {
+  return { index, _id, fullname, email, address, phone, city, gender };
 }
 
 export default function LatestOrder() {
@@ -135,7 +135,7 @@ export default function LatestOrder() {
         const responseData = response.data;
         setData(
           responseData.map((item, index) =>
-            createData(index + 1, item._id, item.fullname, item.address, item.phone, item.city, item.gender)
+            createData(index + 1, item._id, item.fullname, item.email, item.address, item.phone, item.city, item.gender)
           )
         );
       } catch (error) {
@@ -247,7 +247,6 @@ export default function LatestOrder() {
               <TableCell sx={{ pl: 3 }}>ID</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
-              <TableCell>Gender</TableCell>
               <TableCell>City</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -258,7 +257,6 @@ export default function LatestOrder() {
                 <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
                 <TableCell>{row.fullname}</TableCell>
                 <TableCell>{row.phone}</TableCell>
-                <TableCell>{row.gender}</TableCell>
                 <TableCell>{row.city || '-'}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
@@ -338,7 +336,7 @@ export default function LatestOrder() {
             <Grid item xs={12} lg={12}>
               <MainCard title="View Client Details">
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12}>
+                  <Grid item xs={8}>
                     <Stack spacing={1}>
                       <InputLabel>Full Name</InputLabel>
                       <TextField
@@ -347,6 +345,12 @@ export default function LatestOrder() {
                         name="fullname"
                         value={selectedClient ? `${selectedClient.fullname}` : ''}
                       />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField fullWidth placeholder="Enter email" name="email" value={selectedClient ? `${selectedClient.email}` : ''} />
                     </Stack>
                   </Grid>
                   <Grid item xs={6}>
@@ -428,7 +432,7 @@ export default function LatestOrder() {
             <Grid item xs={12} lg={12}>
               <MainCard title="Edit Client Details">
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12}>
+                  <Grid item xs={8}>
                     <Stack spacing={1}>
                       <InputLabel>Full Name</InputLabel>
                       <TextField
@@ -440,6 +444,19 @@ export default function LatestOrder() {
                       />
                     </Stack>
                     <FormHelperText>Please enter the full name</FormHelperText>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter email"
+                        name="email"
+                        value={editedClient.email || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>Please enter email</FormHelperText>
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1}>

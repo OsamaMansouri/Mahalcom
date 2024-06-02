@@ -217,11 +217,8 @@ export default function LatestOrder() {
             <TableRow>
               <TableCell>Id</TableCell>
               <TableCell>Full Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>City</TableCell>
-              <TableCell>Products Type</TableCell>
               <TableCell>Store</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -231,11 +228,8 @@ export default function LatestOrder() {
               <TableRow key={row._id}>
                 <TableCell>{row.index}</TableCell>
                 <TableCell>{row.fullname}</TableCell>
-                <TableCell>{row.address}</TableCell>
-                <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.city}</TableCell>
-                <TableCell>{row.products_type}</TableCell>
                 <TableCell>{row.store}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">

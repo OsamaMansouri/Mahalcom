@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios
+import { useNavigate, Outlet } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -56,10 +57,10 @@ export default function Profile() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [user, setUser] = useState({ name: '', role: '' });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const token = localStorage.getItem('token');
       try {
         const response = await api.get('/api/auth/details');
         setUser({
@@ -186,6 +187,7 @@ export default function Profile() {
                         {...a11yProps(0)}
                       />
                       <Tab
+                        onClick={() => navigate('/profiles/user/settings')}
                         sx={{
                           display: 'flex',
                           flexDirection: 'row',
@@ -202,9 +204,11 @@ export default function Profile() {
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab />
                   </TabPanel>
-                  <TabPanel value={value} index={1} dir={theme.direction}>
-                    <SettingTab />
-                  </TabPanel>
+                  {/*
+                    <TabPanel value={value} index={1} dir={theme.direction}>
+                      <SettingTab />
+                    </TabPanel>
+                      */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>
