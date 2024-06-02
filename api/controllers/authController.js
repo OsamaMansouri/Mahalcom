@@ -109,6 +109,36 @@ export const getUserDetails = async (req, res) => {
   }
 };
 
+// Update user details
+export const updateUserDetails = async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ msg: "Authorization token is missing" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { fname, lname, email } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.id,
+      { fname, lname, email },
+      { new: true }
+    )
+      .select("-password")
+      .populate("id_role", "role_name");
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const refreshToken = (req, res) => {
   const token = req.body.token;
 
@@ -124,4 +154,31 @@ export const refreshToken = (req, res) => {
     const newToken = generateAccessToken({ id: user.id });
     res.status(200).json({ token: newToken });
   });
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Incorrect old password" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ msg: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

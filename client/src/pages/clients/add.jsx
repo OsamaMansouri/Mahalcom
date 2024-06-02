@@ -23,6 +23,7 @@ import api from 'utils/api';
 const AddClient = () => {
   const [formData, setFormData] = useState({
     fullname: '',
+    email: '',
     phone: '',
     address: '',
     gender: '',
@@ -185,7 +186,25 @@ const AddClient = () => {
                 <FormHelperText>Please enter the full name</FormHelperText>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={3}>
+                <Stack spacing={1}>
+                  <InputLabel>Email</InputLabel>
+                  <TextField
+                    fullWidth
+                    placeholder="Enter full name"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                    error={!!errors.email}
+                    helperText={errors.email}
+                  />
+                </Stack>
+                <FormHelperText>Please enter email</FormHelperText>
+              </Grid>
+
+              <Grid item xs={3}>
                 <Stack spacing={1}>
                   <InputLabel>Gender</InputLabel>
                   <FormControl fullWidth error={!!errors.gender}>
