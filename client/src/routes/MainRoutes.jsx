@@ -11,6 +11,7 @@ import { SupplierProvider } from 'contexts/supplier/SupplierContext';
 import { UserProvider } from 'contexts/user/UserContext';
 import { OrderProvider } from 'contexts/order/OrderContext';
 import { ClientProvider } from 'contexts/client/ClientContext';
+import { CategoryProvider } from 'contexts/category/CategoryContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -90,19 +91,35 @@ const MainRoutes = {
     },
     {
       path: 'users',
-      element: <Users />
+      element: (
+        <UserProvider>
+        <Users />
+      </UserProvider>
+      )
     },
     {
       path: 'add-user',
-      element: <AddUser />
+      element: (
+        <UserProvider>
+        <AddUser />
+      </UserProvider>
+      )
     },
     {
       path: 'clients',
-      element: <Clients />
+      element: (
+        <ClientProvider>
+        <Clients />
+      </ClientProvider>
+      )
     },
     {
       path: 'add-client',
-      element: <AddClient />
+      element:(
+        <ClientProvider>
+        <AddClient />
+      </ClientProvider>
+      ) 
     },
     {
       path: 'add-supplier',
@@ -122,11 +139,19 @@ const MainRoutes = {
     },
     {
       path: 'categories',
-      element: <Categories />
+      element: (
+        <CategoryProvider>
+        <Categories />
+      </CategoryProvider>
+      )
     },
     {
       path: 'add-category',
-      element: <AddCategory />
+      element: (
+        <CategoryProvider>
+        <AddCategory />
+      </CategoryProvider>
+      )
     },
     {
       path: 'products',

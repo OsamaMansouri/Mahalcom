@@ -35,45 +35,28 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
+import { useCategory } from 'contexts/category/CategoryContext';
+import { DeleteOutlined } from '@ant-design/icons';
 
-// Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// table data
 function createData(index, _id, catg_name) {
   return { index, _id, catg_name };
 }
 
 export default function LatestOrder() {
-  const [data, setData] = useState([]);
+  const { categories, fetchCategories, deleteCategory, updateCategory } = useCategory();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [categoryToDelete, setcategoryToDelete] = useState(null);
-  const [openViewDialog, setOpenViewDialog] = useState(false);
-  const [selectedcategory, setSelectedcategory] = useState(null);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editedcategory, setEditedcategory] = useState({});
+  const [editedCategory, setEditedCategory] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        setData(responseData.map((item, index) => createData(index + 1, item._id, item.catg_name)));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
+    fetchCategories();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -86,96 +69,43 @@ export default function LatestOrder() {
   };
 
   const handleDeleteClick = (_id) => {
-    setcategoryToDelete(_id);
+    setCategoryToDelete(_id);
     setOpenDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setcategoryToDelete(null);
+    setCategoryToDelete(null);
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/delete/${categoryToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`, // Include the token in the Authorization header
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const updatedData = data.filter((category) => category._id !== categoryToDelete);
-        setData(updatedData);
-        toast.success('category deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting category:', response.statusText);
-        toast.error('Error deleting category', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting category:', error);
-      toast.error('Error deleting category', { position: 'top-right' });
-    }
+    await deleteCategory(categoryToDelete);
     handleCloseDeleteDialog();
   };
 
-  const handleViewDetails = (category) => {
-    setSelectedcategory(category);
-    setOpenViewDialog(true);
-  };
-
-  const handleCloseViewDialog = () => {
-    setOpenViewDialog(false);
-    setSelectedcategory(null);
-  };
-
   const handleEditClick = (category) => {
-    setSelectedcategory(category);
-    setEditedcategory({ ...category });
+    setEditedCategory({ ...category });
     setOpenEditDialog(true);
   };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
-    setSelectedcategory(null);
-    setEditedcategory({});
+    setEditedCategory({});
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/category/update/${editedcategory._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedcategory)
-      });
-
-      if (response.ok) {
-        const updatedData = data.map((category) => (category._id === editedcategory._id ? { ...editedcategory } : category));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('category updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating category:', response.statusText);
-        toast.error('Error updating category', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating category:', error);
-      toast.error('Error updating category', { position: 'top-right' });
-    }
+    await updateCategory(editedCategory);
+    handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    setEditedcategory((prev) => ({ ...prev, [name]: value }));
+    setEditedCategory((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <MainCard
-      title="List of categorys"
+      title="List of categories"
       content={false}
       secondary={
         <Button component={RouterLink} to="/add-category" variant="contained" startIcon={<PlusOutlined />}>
@@ -193,19 +123,19 @@ export default function LatestOrder() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+            {categories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow hover key={row._id}>
-                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
+                <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
                 <TableCell>{row.catg_name}</TableCell>
 
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
                       <EditOutlined />
                     </IconButton>
 
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
+                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>
@@ -217,7 +147,7 @@ export default function LatestOrder() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={categories.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -258,14 +188,13 @@ export default function LatestOrder() {
       </Dialog>
 
       {/* Edit Dialog */}
-
       <Dialog
         open={openEditDialog}
         onClose={handleCloseEditDialog}
         keepMounted
         TransitionComponent={PopupTransition}
         fullWidth
-        maxWidth="md" // Adjusted width
+        maxWidth="md"
         aria-labelledby="edit-category-details-title"
         aria-describedby="edit-category-details-description"
       >
@@ -281,7 +210,7 @@ export default function LatestOrder() {
                         fullWidth
                         placeholder="Enter category name"
                         name="catg_name"
-                        value={editedcategory.catg_name || ''}
+                        value={editedCategory.catg_name || ''}
                         onChange={handleFieldChange}
                       />
                     </Stack>
