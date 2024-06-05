@@ -11,13 +11,6 @@ const livraisonSchema = new mongoose.Schema(
       ref: "Order",
       required: true,
     },
-    city: {
-      type: String,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
     date: {
       type: Date,
       required: true,

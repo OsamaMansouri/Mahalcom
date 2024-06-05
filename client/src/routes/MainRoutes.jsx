@@ -11,6 +11,7 @@ import { SupplierProvider } from 'contexts/supplier/SupplierContext';
 import { UserProvider } from 'contexts/user/UserContext';
 import { OrderProvider } from 'contexts/order/OrderContext';
 import { ClientProvider } from 'contexts/client/ClientContext';
+import { CategoryProvider } from 'contexts/category/CategoryContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -67,17 +68,17 @@ const MainRoutes = {
             {
               path: 'personal',
               element: (
-                <UserProvider>
-                  <UserTabPersonal />
-                </UserProvider>
+                  <UserProvider>
+                    <UserTabPersonal />
+                  </UserProvider>
               )
             },
             {
               path: 'password',
               element: (
-                <UserProvider>
-                  <UserTabPassword />
-                </UserProvider>
+                  <UserProvider>
+                    <UserTabPassword />
+                  </UserProvider>
               )
             },
             {
@@ -90,112 +91,136 @@ const MainRoutes = {
     },
     {
       path: 'users',
-      element: <Users />
+      element: (
+          <UserProvider>
+            <Users />
+          </UserProvider>
+      )
     },
     {
       path: 'add-user',
-      element: <AddUser />
+      element: (
+          <UserProvider>
+            <AddUser />
+          </UserProvider>
+      )
     },
     {
       path: 'clients',
-      element: <Clients />
+      element: (
+          <ClientProvider>
+            <Clients />
+          </ClientProvider>
+      )
     },
     {
       path: 'add-client',
-      element: <AddClient />
+      element:(
+          <ClientProvider>
+            <AddClient />
+          </ClientProvider>
+      )
     },
     {
       path: 'add-supplier',
       element: (
-        <SupplierProvider>
-          <AddSupplier />
-        </SupplierProvider>
+          <SupplierProvider>
+            <AddSupplier />
+          </SupplierProvider>
       )
     },
     {
       path: 'suppliers',
       element: (
-        <SupplierProvider>
-          <Suppliers />
-        </SupplierProvider>
+          <SupplierProvider>
+            <Suppliers />
+          </SupplierProvider>
       )
     },
     {
       path: 'categories',
-      element: <Categories />
+      element: (
+          <CategoryProvider>
+            <Categories />
+          </CategoryProvider>
+      )
     },
     {
       path: 'add-category',
-      element: <AddCategory />
+      element: (
+          <CategoryProvider>
+            <AddCategory />
+          </CategoryProvider>
+      )
     },
     {
       path: 'products',
       element: (
-        <ProductProvider>
-          <Products />
-        </ProductProvider>
+          <ProductProvider>
+            <Products />
+          </ProductProvider>
       )
     },
     {
       path: 'add-product',
       element: (
-        <ProductProvider>
-          <AddProduct />
-        </ProductProvider>
+          <ProductProvider>
+            <AddProduct />
+          </ProductProvider>
       )
     },
     {
       path: 'stocks',
       element: (
-        <StockProvider>
-          <Stocks />
-        </StockProvider>
+          <StockProvider>
+            <Stocks />
+          </StockProvider>
       )
     },
     {
       path: 'add-stock',
       element: (
-        <StockProvider>
-          <AddStock />
-        </StockProvider>
+          <StockProvider>
+            <AddStock />
+          </StockProvider>
       )
     },
     {
       path: 'livreurs',
       element: (
-        <LivreurProvider>
-          <Livreurs />
-        </LivreurProvider>
+          <LivreurProvider>
+            <Livreurs />
+          </LivreurProvider>
       )
     },
     {
       path: 'add-livreur',
       element: (
-        <LivreurProvider>
-          <AddLivreur />
-        </LivreurProvider>
+          <LivreurProvider>
+            <AddLivreur />
+          </LivreurProvider>
       )
     },
     {
       path: 'orders',
       element: (
-        <ClientProvider>
-          <OrderProvider>
-            <Orders />
-          </OrderProvider>
-        </ClientProvider>
+          <ClientProvider>
+            <OrderProvider>
+              <Orders />
+            </OrderProvider>
+          </ClientProvider>
       )
     },
     {
       path: 'add-order',
       element: (
-        <ProductProvider>
-          <ClientProvider>
-            <OrderProvider>
-              <AddOrder />
-            </OrderProvider>
-          </ClientProvider>
-        </ProductProvider>
+          <ProductProvider>
+            <ClientProvider>
+              <OrderProvider>
+                <AddOrder />
+              </OrderProvider>
+            </ClientProvider>
+          </ProductProvider>
       )
     },
     {
@@ -218,4 +243,4 @@ const MainRoutes = {
   ]
 };
 
-export default MainRoutes;
+export default MainRoutes;
