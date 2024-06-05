@@ -118,7 +118,7 @@ const pages = {
       id: 'deliveries',
       title: 'Deliveries',
       type: 'item',
-      url: '/deliveries',
+      url: '/livraisons',
       icon: icons.TruckOutlined
     },
     {

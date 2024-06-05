@@ -68,17 +68,17 @@ const MainRoutes = {
             {
               path: 'personal',
               element: (
-                <UserProvider>
-                  <UserTabPersonal />
-                </UserProvider>
+                  <UserProvider>
+                    <UserTabPersonal />
+                  </UserProvider>
               )
             },
             {
               path: 'password',
               element: (
-                <UserProvider>
-                  <UserTabPassword />
-                </UserProvider>
+                  <UserProvider>
+                    <UserTabPassword />
+                  </UserProvider>
               )
             },
             {
@@ -92,63 +92,63 @@ const MainRoutes = {
     {
       path: 'users',
       element: (
-        <UserProvider>
-        <Users />
-      </UserProvider>
+          <UserProvider>
+            <Users />
+          </UserProvider>
       )
     },
     {
       path: 'add-user',
       element: (
-        <UserProvider>
-        <AddUser />
-      </UserProvider>
+<UserProvider>
+            <AddUser />
+          </UserProvider>
       )
     },
     {
       path: 'clients',
       element: (
-        <ClientProvider>
-        <Clients />
-      </ClientProvider>
+<ClientProvider>
+            <Clients />
+          </ClientProvider>
       )
     },
     {
       path: 'add-client',
       element:(
-        <ClientProvider>
-        <AddClient />
-      </ClientProvider>
+ <ClientProvider>
+            <AddClient />
+          </ClientProvider>
       ) 
     },
     {
       path: 'add-supplier',
       element: (
-        <SupplierProvider>
-          <AddSupplier />
-        </SupplierProvider>
+          <SupplierProvider>
+            <AddSupplier />
+          </SupplierProvider>
       )
     },
     {
       path: 'suppliers',
       element: (
-        <SupplierProvider>
-          <Suppliers />
-        </SupplierProvider>
+          <SupplierProvider>
+            <Suppliers />
+          </SupplierProvider>
       )
     },
     {
       path: 'categories',
       element: (
-        <CategoryProvider>
-        <Categories />
-      </CategoryProvider>
+<CategoryProvider>
+            <Categories />
+          </CategoryProvider>
       )
     },
     {
       path: 'add-category',
       element: (
-        <CategoryProvider>
+<CategoryProvider>
         <AddCategory />
       </CategoryProvider>
       )
@@ -156,71 +156,71 @@ const MainRoutes = {
     {
       path: 'products',
       element: (
-        <ProductProvider>
-          <Products />
-        </ProductProvider>
+          <ProductProvider>
+            <Products />
+          </ProductProvider>
       )
     },
     {
       path: 'add-product',
       element: (
-        <ProductProvider>
-          <AddProduct />
-        </ProductProvider>
+          <ProductProvider>
+            <AddProduct />
+          </ProductProvider>
       )
     },
     {
       path: 'stocks',
       element: (
-        <StockProvider>
-          <Stocks />
-        </StockProvider>
+          <StockProvider>
+            <Stocks />
+          </StockProvider>
       )
     },
     {
       path: 'add-stock',
       element: (
-        <StockProvider>
-          <AddStock />
-        </StockProvider>
+          <StockProvider>
+            <AddStock />
+          </StockProvider>
       )
     },
     {
       path: 'livreurs',
       element: (
-        <LivreurProvider>
-          <Livreurs />
-        </LivreurProvider>
+          <LivreurProvider>
+            <Livreurs />
+          </LivreurProvider>
       )
     },
     {
       path: 'add-livreur',
       element: (
-        <LivreurProvider>
-          <AddLivreur />
-        </LivreurProvider>
+          <LivreurProvider>
+            <AddLivreur />
+          </LivreurProvider>
       )
     },
     {
       path: 'orders',
       element: (
-        <ClientProvider>
-          <OrderProvider>
-            <Orders />
-          </OrderProvider>
-        </ClientProvider>
+          <ClientProvider>
+            <OrderProvider>
+              <Orders />
+            </OrderProvider>
+          </ClientProvider>
       )
     },
     {
       path: 'add-order',
       element: (
-        <ProductProvider>
-          <ClientProvider>
-            <OrderProvider>
-              <AddOrder />
-            </OrderProvider>
-          </ClientProvider>
-        </ProductProvider>
+          <ProductProvider>
+            <ClientProvider>
+              <OrderProvider>
+                <AddOrder />
+              </OrderProvider>
+            </ClientProvider>
+          </ProductProvider>
       )
     },
     {
@@ -243,4 +243,4 @@ const MainRoutes = {
   ]
 };
 
-export default MainRoutes;
+export default MainRoutes;
