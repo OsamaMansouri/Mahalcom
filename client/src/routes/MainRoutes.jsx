@@ -100,7 +100,7 @@ const MainRoutes = {
     {
       path: 'add-user',
       element: (
-          <UserProvider>
+<UserProvider>
             <AddUser />
           </UserProvider>
       )
@@ -108,7 +108,7 @@ const MainRoutes = {
     {
       path: 'clients',
       element: (
-          <ClientProvider>
+<ClientProvider>
             <Clients />
           </ClientProvider>
       )
@@ -116,10 +116,10 @@ const MainRoutes = {
     {
       path: 'add-client',
       element:(
-          <ClientProvider>
+ <ClientProvider>
             <AddClient />
           </ClientProvider>
-      )
+      ) 
     },
     {
       path: 'add-supplier',
@@ -140,7 +140,7 @@ const MainRoutes = {
     {
       path: 'categories',
       element: (
-          <CategoryProvider>
+<CategoryProvider>
             <Categories />
           </CategoryProvider>
       )
@@ -148,9 +148,9 @@ const MainRoutes = {
     {
       path: 'add-category',
       element: (
-          <CategoryProvider>
-            <AddCategory />
-          </CategoryProvider>
+<CategoryProvider>
+        <AddCategory />
+      </CategoryProvider>
       )
     },
     {

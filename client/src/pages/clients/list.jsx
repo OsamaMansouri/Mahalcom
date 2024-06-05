@@ -36,7 +36,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
-import api from 'utils/api';
+import { useClient } from 'contexts/client/ClientContext';
+import { DeleteOutlined } from '@ant-design/icons';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -49,7 +50,7 @@ function createData(index, _id, fullname, email, address, phone, city, gender) {
 }
 
 export default function LatestOrder() {
-  const [data, setData] = useState([]);
+  const { clients, fetchClients, deleteClient, updateClient } = useClient();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -129,21 +130,7 @@ export default function LatestOrder() {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get('/api/client/getall');
-        const responseData = response.data;
-        setData(
-          responseData.map((item, index) =>
-            createData(index + 1, item._id, item.fullname, item.email, item.address, item.phone, item.city, item.gender)
-          )
-        );
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
+    fetchClients();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -166,21 +153,7 @@ export default function LatestOrder() {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await api.delete(`/api/client/delete/${clientToDelete}`);
-
-      if (response.status === 200) {
-        const updatedData = data.filter((client) => client._id !== clientToDelete);
-        setData(updatedData);
-        toast.success('Client deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting client:', response.statusText);
-        toast.error('Error deleting client', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting client:', error);
-      toast.error('Error deleting client', { position: 'top-right' });
-    }
+    await deleteClient(clientToDelete);
     handleCloseDeleteDialog();
   };
 
@@ -207,22 +180,8 @@ export default function LatestOrder() {
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await api.put(`/api/client/update/${editedClient._id}`, editedClient);
-
-      if (response.status === 200) {
-        const updatedData = data.map((client) => (client._id === editedClient._id ? { ...editedClient } : client));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('Client updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating client:', response.statusText);
-        toast.error('Error updating client', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating client:', error);
-      toast.error('Error updating client', { position: 'top-right' });
-    }
+    await updateClient(editedClient._id, editedClient);
+    handleCloseEditDialog();
   };
 
   const handleFieldChange = (e) => {
@@ -252,22 +211,23 @@ export default function LatestOrder() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+            {clients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow hover key={row._id}>
-                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
+                <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
                 <TableCell>{row.fullname}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.city || '-'}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                    <IconButton color="secondary" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
                     </IconButton>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
+                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>
@@ -279,7 +239,7 @@ export default function LatestOrder() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={clients.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -319,9 +279,9 @@ export default function LatestOrder() {
         </DialogContent>
       </Dialog>
 
-      {/* View Dialog */}
+     {/* View Dialog */}
 
-      <Dialog
+     <Dialog
         open={openViewDialog}
         onClose={handleCloseViewDialog}
         keepMounted

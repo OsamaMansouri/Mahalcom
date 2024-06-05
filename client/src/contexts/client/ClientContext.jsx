@@ -30,6 +30,7 @@ export const ClientProvider = ({ children }) => {
       const response = await api.post('/api/client/create', clientData);
       setClients((prevClients) => [...prevClients, response.data]);
       toast.success('Client added successfully', { position: 'top-right' });
+      fetchClients(); // Fetch updated list of clients
     } catch (error) {
       console.error('Error adding client:', error);
       toast.error('Error adding client', { position: 'top-right' });
@@ -39,7 +40,7 @@ export const ClientProvider = ({ children }) => {
   const updateClient = async (id, clientData) => {
     try {
       const response = await api.put(`/api/client/update/${id}`, clientData);
-      setClients((prevClients) => prevClients.map((client) => (client._id === id ? response.data : client)));
+      await fetchClients();
       toast.success('Client updated successfully', { position: 'top-right' });
     } catch (error) {
       console.error('Error updating client:', error);
@@ -72,3 +73,5 @@ export const ClientProvider = ({ children }) => {
     </ClientContext.Provider>
   );
 };
+
+ 
