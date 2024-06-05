@@ -33,6 +33,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { EditOutlined } from '@ant-design/icons';
+import { useUser } from 'contexts/user/UserContext';
+import { DeleteOutlined } from '@ant-design/icons';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -45,8 +47,8 @@ function createData(index, _id, fname, lname, email, role, id_role) {
 }
 
 export default function LatestOrder() {
+  const { users, roles, updateUser, deleteUser } = useUser();
   const [data, setData] = useState([]);
-  const [roles, setRoles] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -55,54 +57,16 @@ export default function LatestOrder() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedUser, setEditedUser] = useState({});
-  const [emptyField, setEmptyField] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        // Add unique IDs to each row and fetch role names
-        const newData = await Promise.all(
-          responseData.map(async (row, index) => {
-            const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${row.id_role}`, {
-              headers: {
-                Authorization: `${token}`
-              }
-            });
-            const roleData = await roleResponse.json();
-            return createData(index + 1, row._id, row.fname, row.lname, row.email, roleData.role_name, row.id_role);
-          })
-        );
-        setData(newData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    const fetchRoles = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
-        const responseData = await response.json();
-        setRoles(responseData);
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-      }
-    };
-
-    fetchData();
-    fetchRoles();
-  }, []);
+    if (users) {
+      const newData = users.map((row, index) => {
+        const role = roles.find(role => role._id === row.id_role);
+        return createData(index + 1, row._id, row.fname, row.lname, row.email, role ? role.role_name : 'N/A', row.id_role);
+      });
+      setData(newData);
+    }
+  }, [users, roles]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -124,27 +88,7 @@ export default function LatestOrder() {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const updatedData = data.filter((user) => user._id !== userToDelete);
-        setData(updatedData);
-        toast.success('User deleted successfully', { position: 'top-right' });
-      } else {
-        console.error('Error deleting user:', response.statusText);
-        toast.error('Error deleting user', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      toast.error('Error deleting user', { position: 'top-right' });
-    }
+    await deleteUser(userToDelete);
     handleCloseDeleteDialog();
   };
 
@@ -159,7 +103,6 @@ export default function LatestOrder() {
   };
 
   const handleEditClick = (user) => {
-    console.log('Editing user:', user); // Debugging log
     setSelectedUser(user);
     setEditedUser(user);
     setOpenEditDialog(true);
@@ -172,35 +115,8 @@ export default function LatestOrder() {
   };
 
   const handleEditSave = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update/${editedUser._id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedUser)
-      });
-
-      if (response.ok) {
-        const roleResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/${editedUser.id_role}`, {
-          headers: {
-            Authorization: `${localStorage.getItem('token')}`
-          }
-        });
-        const roleData = await roleResponse.json();
-        const updatedData = data.map((user) => (user._id === editedUser._id ? { ...editedUser, role: roleData.role_name } : user));
-        setData(updatedData);
-        setOpenEditDialog(false);
-        toast.success('User updated successfully', { position: 'top-right' });
-      } else {
-        console.error('Error updating user:', response.statusText);
-        toast.error('Error updating user', { position: 'top-right' });
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
-      toast.error('Error updating user', { position: 'top-right' });
-    }
+    await updateUser(editedUser._id, editedUser);
+    setOpenEditDialog(false);
   };
 
   const handleFieldChange = (e) => {
@@ -231,7 +147,6 @@ export default function LatestOrder() {
               <TableCell>Last Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Email</TableCell>
-
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -242,26 +157,20 @@ export default function LatestOrder() {
                 <TableCell>{row.fname}</TableCell>
                 <TableCell>{row.lname}</TableCell>
                 <TableCell>
-                  {(() => {
-                    if (row.role === 'Manager') {
-                      return <Chip color="success" label={row.role || 'N/A'} size="small" />;
-                    } else {
-                      return <Chip color="primary" label={row.role || 'N/A'} size="small" />;
-                    }
-                  })()}
+                  <Chip color={row.role === 'Manager' ? 'success' : 'primary'} label={row.role || 'N/A'} size="small" />
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                    <IconButton color="secondary" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
                     </IconButton>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
+                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>
