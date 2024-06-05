@@ -12,6 +12,7 @@ import { UserProvider } from 'contexts/user/UserContext';
 import { OrderProvider } from 'contexts/order/OrderContext';
 import { ClientProvider } from 'contexts/client/ClientContext';
 import { CategoryProvider } from 'contexts/category/CategoryContext';
+import { LivraisonProvider } from 'contexts/delivery/deliveryContext';
 
 const Users = Loadable(lazy(() => import('pages/users/list')));
 const AddUser = Loadable(lazy(() => import('pages/users/add')));
@@ -29,6 +30,9 @@ const Livreurs = Loadable(lazy(() => import('pages/livreurs/list')));
 const AddLivreur = Loadable(lazy(() => import('pages/livreurs/add')));
 const AddOrder = Loadable(lazy(() => import('pages/orders/add')));
 const Orders = Loadable(lazy(() => import('pages/orders/list')));
+const AddLivraison = Loadable(lazy(()=>import ('pages/deliveries/add')))
+const Livraisons = Loadable(lazy(()=>import ('pages/deliveries/List')))
+
 
 const UserProfile = Loadable(lazy(() => import('pages/profile/user')));
 const UserTabPersonal = Loadable(lazy(() => import('sections/profile/TabPersonal')));
@@ -223,6 +227,27 @@ const MainRoutes = {
           </ProductProvider>
       )
     },
+    {
+      path: 'livraisons',
+      element: (
+
+          <LivraisonProvider>
+            <Livraisons />
+          </LivraisonProvider>
+      )
+    },
+    {
+      path: 'add-livraison',
+      element: (
+          <LivreurProvider>
+          <OrderProvider>
+            <LivraisonProvider>
+            <AddLivraison />
+          </LivraisonProvider>
+            </OrderProvider>
+            </LivreurProvider>
+            )
+    },
     {
       path: 'color',
       element: <Color />

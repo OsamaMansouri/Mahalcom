@@ -11,10 +11,12 @@ export const useUser = () => {
 export const UserProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
     fetchUsers();
-    fetchRoles(); // Fetch roles when the component mounts
+    fetchRoles();
+    fetchUserDetails();
   }, []);
 
   const fetchUsers = async () => {
@@ -48,7 +50,7 @@ export const UserProvider = ({ children }) => {
       const response = await api.post('/api/user/create', userData);
       setUsers((prevUsers) => [...prevUsers, response.data]);
       toast.success('User added successfully', { position: 'top-right' });
-      fetchUsers(); // Fetch updated list of users
+      fetchUsers();
     } catch (error) {
       console.error('Error adding user:', error);
       toast.error('Error adding user', { position: 'top-right' });
@@ -77,15 +79,52 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const fetchUserDetails = async () => {
+    try {
+      const response = await api.get('/api/auth/details');
+      setUserDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  const updateUserDetails = async (userData) => {
+    try {
+      const response = await api.put('/api/auth/update', userData);
+      setUserDetails(response.data);
+      toast.success('User details updated successfully', { position: 'top-right' });
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      toast.error('Error updating user details', { position: 'top-right' });
+    }
+  };
+
+  const changePassword = async (oldPassword, newPassword) => {
+    try {
+      await api.put('/api/auth/change-password', { oldPassword, newPassword });
+      toast.success('Password changed successfully', { position: 'top-right' });
+    } catch (error) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.msg, { position: 'top-right' });
+      } else {
+        toast.error('An error occurred', { position: 'top-right' });
+      }
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         users,
         roles,
+        userDetails,
         fetchUsers,
         addUser,
         updateUser,
-        deleteUser
+        deleteUser,
+        fetchUserDetails,
+        updateUserDetails,
+        changePassword
       }}
     >
       {children}
