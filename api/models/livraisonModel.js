@@ -1,4 +1,73 @@
 import mongoose from "mongoose";
+
+const productSchema = new mongoose.Schema(
+  {
+    product_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    client_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client",
+      required: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
+    products: [productSchema],
+    totalQuantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Paid", "Unpaid", "Cancelled"],
+      default: "Unpaid",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["In Store", "COD", "Online Payment"],
+      default: "In Store",
+    },
+    sendNotif: {
+      type: Boolean,
+    },
+    notes: {
+      type: String,
+    },
+  },
+  { _id: false }
+);
+
 const livraisonSchema = new mongoose.Schema(
   {
     id_livreur: {
@@ -6,19 +75,24 @@ const livraisonSchema = new mongoose.Schema(
       ref: "Livreur",
       required: true,
     },
-    id_order: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
-      required: true,
-    },
-    date: {
+    orders: [orderSchema],
+    delivery_date: {
       type: Date,
       required: true,
     },
     message: {
       type: String,
     },
-    status: {
+    livraisonStatus: {
+      type: String,
+      enum: ["Pending", "In Transit", "Delivered", "Cancelled"],
+      default: "Pending",
+      required: true,
+    },
+    trackingInfo: {
+      type: String,
+    },
+    deliveryAddress: {
       type: String,
       required: true,
     },
@@ -26,4 +100,4 @@ const livraisonSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("livraison", livraisonSchema);
+export default mongoose.model("Livraison", livraisonSchema);

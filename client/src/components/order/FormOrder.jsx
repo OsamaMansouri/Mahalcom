@@ -44,7 +44,7 @@ const FormOrder = () => {
     <Formik
       initialValues={{
         client_id: '',
-        products: [{ product_id: '', quantity: 1, name: '', price: '' }],
+        products: [{ product_id: '', quantity: 1, name: '', price: '', image: '' }],
         paymentStatus: '',
         paymentMethod: '',
         sendNotif: false,
@@ -154,6 +154,7 @@ const FormOrder = () => {
                             <TableCell>Name</TableCell>
                             <TableCell>Quantity</TableCell>
                             <TableCell>Price</TableCell>
+                            <TableCell>Image</TableCell>
                             <TableCell align="center">Action</TableCell>
                           </TableRow>
                         </TableHead>
@@ -181,6 +182,7 @@ const FormOrder = () => {
                                       setFieldValue(`products[${index}].product_id`, e.target.value);
                                       setFieldValue(`products[${index}].name`, selectedProduct.name);
                                       setFieldValue(`products[${index}].price`, selectedProduct.price);
+                                      setFieldValue(`products[${index}].image`, selectedProduct.image);
                                     }}
                                     onBlur={handleBlur}
                                     displayEmpty
@@ -260,6 +262,34 @@ const FormOrder = () => {
                                   }
                                 />
                               </TableCell>
+                              <TableCell>
+                                <TextField
+                                  type="text"
+                                  name={`products[${index}].image`}
+                                  value={product.image}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  inputProps={{ min: 0 }}
+                                  error={
+                                    touched.products &&
+                                    touched.products[index] &&
+                                    touched.products[index].image &&
+                                    !!errors.products &&
+                                    !!errors.products[index] &&
+                                    !!errors.products[index].image
+                                  }
+                                  helperText={
+                                    touched.products &&
+                                    touched.products[index] &&
+                                    touched.products[index].image &&
+                                    !!errors.products &&
+                                    !!errors.products[index] &&
+                                    !!errors.products[index].image
+                                      ? errors.products[index].image
+                                      : ''
+                                  }
+                                />
+                              </TableCell>
                               <TableCell align="center">
                                 <IconButton color="error" onClick={() => remove(index)}>
                                   <DeleteOutlined />
@@ -275,7 +305,7 @@ const FormOrder = () => {
                       <Button
                         color="primary"
                         startIcon={<PlusOutlined />}
-                        onClick={() => push({ product_id: '', quantity: 1, name: '', price: '' })}
+                        onClick={() => push({ product_id: '', quantity: 1, name: '', price: '', image: '' })}
                         variant="dashed"
                         sx={{ bgcolor: 'transparent !important' }}
                       >

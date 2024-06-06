@@ -68,6 +68,7 @@ export const create = async (req, res) => {
           product_id: product._id,
           name: product.name,
           price: product.price,
+          image: product.image,
           quantity: item.quantity,
         };
       })

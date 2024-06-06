@@ -42,13 +42,68 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 
 // Moroccan cities array
 const moroccanCities = [
-  'Casablanca', 'Fez', 'Tangier', 'Marrakesh', 'Salé', 'Meknes', 'Rabat', 'Oujda', 'Kenitra', 'Agadir',
-  'Tetouan', 'Temara', 'Safi', 'Mohammedia', 'Khouribga', 'El Jadida', 'Beni Mellal', 'Ait Melloul', 'Nador',
-  'Dar Bouazza', 'Taza', 'Settat', 'Berrechid', 'Khemisset', 'Inezgane', 'Ksar El Kebir', 'Larache', 'Guelmim',
-  'Khenifra', 'Berkane', 'Taourirt', 'Sidi Slimane', 'Sidi Kacem', 'Al Hoceima', 'Dcheira El Jihadia', 'Errachidia',
-  'Sefrou', 'Youssoufia', 'Martil', 'Tiznit', 'Tan-Tan', 'Tiflet', 'Bouskoura', 'Essaouira', 'Taroudant', 'Oulad Teima',
-  'Ben Guerir', 'Fquih Ben Salah', 'Ouarzazate', 'Ouazzane', 'Midelt', 'Souk El Arbaa', 'Skhirat', 'Souk Larbaa El Gharb',
-  'Laayoune', 'Sidi Ifni', 'Azrou', "M'Diq", 'Tinghir', 'Chefchaouen', 'El Aioun Sidi Mellouk', 'Zagora'
+  'Casablanca',
+  'Fez',
+  'Tangier',
+  'Marrakesh',
+  'Salé',
+  'Meknes',
+  'Rabat',
+  'Oujda',
+  'Kenitra',
+  'Agadir',
+  'Tetouan',
+  'Temara',
+  'Safi',
+  'Mohammedia',
+  'Khouribga',
+  'El Jadida',
+  'Beni Mellal',
+  'Ait Melloul',
+  'Nador',
+  'Dar Bouazza',
+  'Taza',
+  'Settat',
+  'Berrechid',
+  'Khemisset',
+  'Inezgane',
+  'Ksar El Kebir',
+  'Larache',
+  'Guelmim',
+  'Khenifra',
+  'Berkane',
+  'Taourirt',
+  'Sidi Slimane',
+  'Sidi Kacem',
+  'Al Hoceima',
+  'Dcheira El Jihadia',
+  'Errachidia',
+  'Sefrou',
+  'Youssoufia',
+  'Martil',
+  'Tiznit',
+  'Tan-Tan',
+  'Tiflet',
+  'Bouskoura',
+  'Essaouira',
+  'Taroudant',
+  'Oulad Teima',
+  'Ben Guerir',
+  'Fquih Ben Salah',
+  'Ouarzazate',
+  'Ouazzane',
+  'Midelt',
+  'Souk El Arbaa',
+  'Skhirat',
+  'Souk Larbaa El Gharb',
+  'Laayoune',
+  'Sidi Ifni',
+  'Azrou',
+  "M'Diq",
+  'Tinghir',
+  'Chefchaouen',
+  'El Aioun Sidi Mellouk',
+  'Zagora'
 ];
 
 export default function LatestOrder() {
@@ -159,274 +214,270 @@ export default function LatestOrder() {
   };
 
   return (
-      <MainCard
-          title="List of livreurs"
-          content={false}
-          secondary={
-            <Button component={RouterLink} to="/add-livreur" variant="contained" startIcon={<PlusOutlined />}>
-              Add delivery men
-            </Button>
-          }
-      >
-        <TableContainer>
-          <Table sx={{ minWidth: 350 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ pl: 3 }}>ID</TableCell>
-                <TableCell>Full Name</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell align="center">Actions</TableCell>
+    <MainCard
+      title="List of livreurs"
+      content={false}
+      secondary={
+        <Button component={RouterLink} to="/add-livreur" variant="contained" startIcon={<PlusOutlined />}>
+          Add delivery men
+        </Button>
+      }
+    >
+      <TableContainer>
+        <Table sx={{ minWidth: 350 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell>Full Name</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {livreurs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+              <TableRow hover key={row._id}>
+                <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
+                <TableCell>
+                  {row.fname} {row.lname}
+                </TableCell>
+                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.city || '-'}</TableCell>
+                <TableCell align="center" sx={{ pr: 3 }}>
+                  <Stack direction="row" justifyContent="center" alignItems="center">
+                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                      <VisibilityOutlinedIcon />
+                    </IconButton>
+                    <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
+                      <DeleteOutlinedIcon />
+                    </IconButton>
+                  </Stack>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {livreurs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow hover key={row._id}>
-                    <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
-                    <TableCell>{row.fname} {row.lname}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.city || '-'}</TableCell>
-                    <TableCell align="center" sx={{ pr: 3 }}>
-                      <Stack direction="row" justifyContent="center" alignItems="center">
-                        <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                          <EditOutlined />
-                        </IconButton>
-                        <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
-                          <VisibilityOutlinedIcon />
-                        </IconButton>
-                        <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                          <DeleteOutlinedIcon />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={livreurs.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={livreurs.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
-        {/* Delete Dialog */}
-        <Dialog
-            open={openDeleteDialog}
-            onClose={handleCloseDeleteDialog}
-            keepMounted
-            TransitionComponent={PopupTransition        }
-            maxWidth="xs"
-            aria-labelledby="delete-livreur-title"
-            aria-describedby="delete-livreur-description"
-        >
-          <DialogContent sx={{ mt: 2, my: 1 }}>
-            <Stack alignItems="center" spacing={3.5}>
-              <Avatar color="error" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
-                <DeleteOutlinedIcon />
-              </Avatar>
-              <Stack spacing={2}>
-                <Typography variant="h4" align="center">
-                  Are you sure you want to delete?
-                </Typography>
-              </Stack>
-
-              <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-                <Button fullWidth onClick={handleCloseDeleteDialog} color="secondary" variant="outlined">
-                  Cancel
-                </Button>
-                <Button fullWidth color="error" variant="contained" onClick={handleDeleteConfirm} autoFocus>
-                  Delete
-                </Button>
-              </Stack>
+      {/* Delete Dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        keepMounted
+        TransitionComponent={PopupTransition}
+        maxWidth="xs"
+        aria-labelledby="delete-livreur-title"
+        aria-describedby="delete-livreur-description"
+      >
+        <DialogContent sx={{ mt: 2, my: 1 }}>
+          <Stack alignItems="center" spacing={3.5}>
+            <Avatar color="error" sx={{ width: 72, height: 72, fontSize: '1.75rem' }}>
+              <DeleteOutlinedIcon />
+            </Avatar>
+            <Stack spacing={2}>
+              <Typography variant="h4" align="center">
+                Are you sure you want to delete?
+              </Typography>
             </Stack>
-          </DialogContent>
-        </Dialog>
 
-        {/* View Dialog */}
-        <Dialog
-            open={openViewDialog}
-            onClose={handleCloseViewDialog}
-            keepMounted
-            TransitionComponent={PopupTransition}
-            fullWidth
-            maxWidth="md"
-            aria-labelledby="view-livreur-title"
-            aria-describedby="view-livreur-description"
-        >
-          <DialogContent sx={{ mt: 2, my: 1 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={12}>
-                <MainCard title="View livreur Details">
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12}>
-                      <Stack spacing={1}>
-                        <InputLabel>Full Name</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter full name"
-                            name="fullname"
-                            value={selectedLivreur ? `${selectedLivreur.fname} ${selectedLivreur.lname}` : ''}
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack spacing={1}>
-                        <InputLabel>Phone</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter phone number"
-                            name="phone"
-                            value={selectedLivreur ? selectedLivreur.phone : ''}
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack spacing={1}>
-                        <InputLabel>City</InputLabel>
-                        <TextField fullWidth name="city" value={selectedLivreur ? selectedLivreur.city : ''} />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack spacing={1}>
-                        <InputLabel>Email</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter email"
-                            name="email"
-                            value={selectedLivreur ? selectedLivreur.email : ''}
-                        />
-                      </Stack>
-                    </Grid>
+            <Stack direction="row" spacing={2} sx={{ width: 1 }}>
+              <Button fullWidth onClick={handleCloseDeleteDialog} color="secondary" variant="outlined">
+                Cancel
+              </Button>
+              <Button fullWidth color="error" variant="contained" onClick={handleDeleteConfirm} autoFocus>
+                Delete
+              </Button>
+            </Stack>
+          </Stack>
+        </DialogContent>
+      </Dialog>
 
-                    <CardActions>
-                      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
-                        <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
-                          Close
-                        </Button>
-                      </Stack>
-                    </CardActions>
+      {/* View Dialog */}
+      <Dialog
+        open={openViewDialog}
+        onClose={handleCloseViewDialog}
+        keepMounted
+        TransitionComponent={PopupTransition}
+        fullWidth
+        maxWidth="md"
+        aria-labelledby="view-livreur-title"
+        aria-describedby="view-livreur-description"
+      >
+        <DialogContent sx={{ mt: 2, my: 1 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="View livreur Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Full Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter full name"
+                        name="fullname"
+                        value={selectedLivreur ? `${selectedLivreur.fname} ${selectedLivreur.lname}` : ''}
+                      />
+                    </Stack>
                   </Grid>
-                </MainCard>
-              </Grid>
-            </Grid>
-          </DialogContent>
-        </Dialog>
-
-        {/* Edit Dialog */}
-        <Dialog
-            open={openEditDialog}
-            onClose={handleCloseEditDialog}
-            keepMounted
-            TransitionComponent={PopupTransition}
-            fullWidth
-            maxWidth="md"
-            aria-labelledby="edit-user-details-title"
-            aria-describedby="edit-user-details-description"
-        >
-          <DialogContent sx={{ mt: 2, my: 1 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={12}>
-                <MainCard title="Edit livreur Details">
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12}>
-                      <Stack spacing={1}>
-                        <InputLabel>First Name</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter first name"
-                            name="fname"
-                            required
-                            value={editedLivreur.fname || ''}
-                            onChange={handleFieldChange}
-                        />
-                      </Stack>
-                      <FormHelperText>{fieldErrors.fname}</FormHelperText>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack spacing={1}>
-                        <InputLabel>Last Name</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter last name"
-                            name="lname"
-                            required
-                            value={editedLivreur.lname || ''}
-                            onChange={handleFieldChange}
-                        />
-                      </Stack>
-                      <FormHelperText>{fieldErrors.lname}</FormHelperText>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack spacing={1}>
-                        <InputLabel>Phone</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter phone number"
-                            name="phone"
-                            required
-                            value={editedLivreur.phone || ''}
-                            onChange={handleFieldChange}
-                        />
-                      </Stack>
-                      <FormHelperText>{fieldErrors.phone}</FormHelperText>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack spacing={1}>
-                        <InputLabel>Email</InputLabel>
-                        <TextField
-                            fullWidth
-                            placeholder="Enter email"
-                            name="email"
-                            value={editedLivreur.email || ''}
-                            required
-                            //onBlur={handleEmailBlur}
-                            onChange={handleFieldChange}
-                            //error={emailError !== ''}
-                            //helperText={emailError}
-                        />
-                      </Stack>
-                      <FormHelperText>{fieldErrors.email}</FormHelperText>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack spacing={1}>
-                        <InputLabel>City</InputLabel>
-                        <FormControl fullWidth>
-                          <Select name="city" value={editedLivreur.city || ''} onChange={handleFieldChange}>
-                            {moroccanCities.map((city) => (
-                                <MenuItem key={city} value={city}>
-                                  {city}
-                                </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <FormHelperText>{fieldErrors.city}</FormHelperText>
-                      </Stack>
-                    </Grid>
-
-                    <CardActions>
-                      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
-                        <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
-                          Cancel
-                        </Button>
-                        <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
-                          Update
-                        </Button>
-                      </Stack>
-                    </CardActions>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Phone</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter phone number"
+                        name="phone"
+                        value={selectedLivreur ? selectedLivreur.phone : ''}
+                      />
+                    </Stack>
                   </Grid>
-                </MainCard>
-              </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>City</InputLabel>
+                      <TextField fullWidth name="city" value={selectedLivreur ? selectedLivreur.city : ''} />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField fullWidth placeholder="Enter email" name="email" value={selectedLivreur ? selectedLivreur.email : ''} />
+                    </Stack>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                        Close
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
             </Grid>
-          </DialogContent>
-        </Dialog>
-      </MainCard>
+          </Grid>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        keepMounted
+        TransitionComponent={PopupTransition}
+        fullWidth
+        maxWidth="md"
+        aria-labelledby="edit-user-details-title"
+        aria-describedby="edit-user-details-description"
+      >
+        <DialogContent sx={{ mt: 2, my: 1 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Edit livreur Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>First Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter first name"
+                        name="fname"
+                        required
+                        value={editedLivreur.fname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>{fieldErrors.fname}</FormHelperText>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Last Name</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter last name"
+                        name="lname"
+                        required
+                        value={editedLivreur.lname || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>{fieldErrors.lname}</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Phone</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter phone number"
+                        name="phone"
+                        required
+                        value={editedLivreur.phone || ''}
+                        onChange={handleFieldChange}
+                      />
+                    </Stack>
+                    <FormHelperText>{fieldErrors.phone}</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>Email</InputLabel>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter email"
+                        name="email"
+                        value={editedLivreur.email || ''}
+                        required
+                        //onBlur={handleEmailBlur}
+                        onChange={handleFieldChange}
+                        //error={emailError !== ''}
+                        //helperText={emailError}
+                      />
+                    </Stack>
+                    <FormHelperText>{fieldErrors.email}</FormHelperText>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack spacing={1}>
+                      <InputLabel>City</InputLabel>
+                      <FormControl fullWidth>
+                        <Select name="city" value={editedLivreur.city || ''} onChange={handleFieldChange}>
+                          {moroccanCities.map((city) => (
+                            <MenuItem key={city} value={city}>
+                              {city}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormHelperText>{fieldErrors.city}</FormHelperText>
+                    </Stack>
+                  </Grid>
+
+                  <CardActions>
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                        Update
+                      </Button>
+                    </Stack>
+                  </CardActions>
+                </Grid>
+              </MainCard>
+            </Grid>
+          </Grid>
+        </DialogContent>
+      </Dialog>
+    </MainCard>
   );
 }
-
