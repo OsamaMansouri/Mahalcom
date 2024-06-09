@@ -17,33 +17,20 @@ import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import WalletOutlined from '@ant-design/icons/WalletOutlined';
 import api from 'utils/api';
+import { useUser } from 'contexts/user/UserContext';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
 export default function ProfileTab() {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { logout } = useUser(); // Use logout from context
 
   const handleListItemClick = (event, index, route = '') => {
     setSelectedIndex(index);
 
     if (route && route !== '') {
       navigate(route);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      // Call the logout endpoint
-      await api.post('/api/auth/logout');
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-
-      window.location.href = '/login'; // or navigate programmatically using react-router-dom
-    } catch (error) {
-      // Handle error if logout fails
-      console.error('Logout failed:', error);
-      // You can optionally display an error message to the user
     }
   };
 
@@ -56,7 +43,7 @@ export default function ProfileTab() {
         <ListItemText primary="Edit Profile" />
       </ListItemButton>
 
-      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
+      <ListItemButton selected={selectedIndex === 2} onClick={logout}>
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>

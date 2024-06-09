@@ -1,11 +1,9 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
 
+// project import
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 import AuthGuard from 'utils/withAuth';
-import withRole from 'utils/withRole'; // Import the withRole HOC
-
 import { LivreurProvider } from 'contexts/livreur/LivreurContext';
 import { StockProvider } from 'contexts/stock/StockContext';
 import { ProductProvider } from 'contexts/product/ProductContext';
@@ -46,8 +44,7 @@ const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
-
-// ==============================|| MAIN ROUTING ||============================== //
+const Unauthorized = Loadable(lazy(() => import('pages/Unauthorized'))); // Import the Unauthorized component
 
 const MainRoutes = {
   path: '/',
@@ -99,19 +96,23 @@ const MainRoutes = {
     },
     {
       path: 'users',
-      element: withRole(['Admin'])(() => (
-        <UserProvider>
-          <Users />
-        </UserProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <UserProvider>
+            <Users />
+          </UserProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'add-user',
-      element: withRole(['Admin'])(() => (
-        <UserProvider>
-          <AddUser />
-        </UserProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <UserProvider>
+            <AddUser />
+          </UserProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'clients',
@@ -179,19 +180,23 @@ const MainRoutes = {
     },
     {
       path: 'stocks',
-      element: withRole(['Admin'])(() => (
-        <StockProvider>
-          <Stocks />
-        </StockProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <StockProvider>
+            <Stocks />
+          </StockProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'add-stock',
-      element: withRole(['Admin'])(() => (
-        <StockProvider>
-          <AddStock />
-        </StockProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <StockProvider>
+            <AddStock />
+          </StockProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'livreurs',
@@ -211,25 +216,29 @@ const MainRoutes = {
     },
     {
       path: 'orders',
-      element: withRole(['Admin'])(() => (
-        <ClientProvider>
-          <OrderProvider>
-            <Orders />
-          </OrderProvider>
-        </ClientProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <ClientProvider>
+            <OrderProvider>
+              <Orders />
+            </OrderProvider>
+          </ClientProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'add-order',
-      element: withRole(['Admin'])(() => (
-        <ProductProvider>
-          <ClientProvider>
-            <OrderProvider>
-              <AddOrder />
-            </OrderProvider>
-          </ClientProvider>
-        </ProductProvider>
-      ))
+      element: (
+        <AuthGuard allowedRoles={['Admin']}>
+          <ProductProvider>
+            <ClientProvider>
+              <OrderProvider>
+                <AddOrder />
+              </OrderProvider>
+            </ClientProvider>
+          </ProductProvider>
+        </AuthGuard>
+      )
     },
     {
       path: 'deliveries',
@@ -252,6 +261,10 @@ const MainRoutes = {
           </OrderProvider>
         </LivreurProvider>
       )
+    },
+    {
+      path: 'unauthorized',
+      element: <Unauthorized />
     }
   ]
 };

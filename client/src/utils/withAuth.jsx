@@ -1,10 +1,20 @@
-// AuthGuard.jsx
+// utils/withAuth.js
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-const AuthGuard = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('token') !== null;
+const AuthGuard = ({ children, allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('userRole');
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/unauthorized" />;
+  }
+
+  return children;
 };
 
 export default AuthGuard;
