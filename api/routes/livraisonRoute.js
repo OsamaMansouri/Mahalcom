@@ -5,6 +5,7 @@ import {
   getById,
   update,
   deleteLivraison,
+  getUndelivered,
 } from "../controllers/livraisonController.js";
 import { authenticateToken } from "../middleware/auth.js";
 
@@ -13,6 +14,7 @@ const router = express.Router();
 // livraison routes
 router.post("/create", authenticateToken, create);
 router.get("/getall", authenticateToken, getAll);
+router.get("/getUndelivered", authenticateToken, getUndelivered);
 router.get("/:id", authenticateToken, getById);
 router.put("/update/:id", authenticateToken, update);
 router.delete("/delete/:id", authenticateToken, deleteLivraison);

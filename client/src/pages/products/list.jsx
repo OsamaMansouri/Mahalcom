@@ -91,8 +91,7 @@ export default function ProductList() {
     setSelectedProduct(product);
     setEditedProduct({
       ...product,
-      id_catg: product.id_catg?._id || '',
-      id_stock: product.id_stock?._id || ''
+      id_catg: product.id_catg?._id || ''
     });
     setOpenEditDialog(true);
   };
@@ -331,20 +330,7 @@ export default function ProductList() {
                       />
                     </Stack>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>Stock</InputLabel>
-                      <FormControl fullWidth>
-                        <Select name="id_stock" value={selectedProduct ? selectedProduct.id_stock?._id : ''} readOnly>
-                          {stocks.map((stock) => (
-                            <MenuItem key={stock._id} value={stock._id}>
-                              {stock.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </Grid>
+
                   <Grid item xs={6}>
                     <FormControlLabel
                       control={
@@ -465,21 +451,7 @@ export default function ProductList() {
                     </Stack>
                     <FormHelperText>Please enter the quantity</FormHelperText>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>Stock</InputLabel>
-                      <FormControl fullWidth>
-                        <Select name="id_stock" value={editedProduct.id_stock || ''} onChange={handleFieldChange}>
-                          {stocks.map((stock) => (
-                            <MenuItem key={stock._id} value={stock._id}>
-                              {stock.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                    <FormHelperText>Please enter the stock</FormHelperText>
-                  </Grid>
+
                   <Grid item xs={6}>
                     <FormControlLabel
                       control={

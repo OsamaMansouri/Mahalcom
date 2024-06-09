@@ -1,9 +1,35 @@
 import Stock from "../models/stockModel.js";
+import Product from "../models/productModel.js"; // Import your Product model
 
 // Create new stock
 export const create = async (req, res) => {
   try {
-    const stockData = new Stock(req.body);
+    const { id_supplier, products, name, warehouse, info } = req.body;
+
+    const populatedProducts = await Promise.all(
+      products.map(async (item) => {
+        const product = await Product.findById(item.product_id);
+        if (!product) {
+          throw new Error(`Product with ID ${item.product_id} not found`);
+        }
+        return {
+          product_id: product._id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: item.quantity,
+        };
+      })
+    );
+
+    const stockData = new Stock({
+      id_supplier,
+      products: populatedProducts,
+      name,
+      warehouse,
+      info,
+    });
+
     await stockData.save();
     res
       .status(200)

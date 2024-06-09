@@ -12,6 +12,7 @@ export const useStock = () => {
 export const StockProvider = ({ children }) => {
   const [stocks, setStocks] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +23,9 @@ export const StockProvider = ({ children }) => {
 
         const supplierResponse = await api.get('/api/supplier/getall');
         setSuppliers(supplierResponse.data);
+
+        const productResponse = await api.get('/api/product/getall'); // Adjust the endpoint as needed
+        setProducts(productResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -66,5 +70,7 @@ export const StockProvider = ({ children }) => {
     }
   };
 
-  return <StockContext.Provider value={{ stocks, suppliers, addStock, deleteStock, updateStock }}>{children}</StockContext.Provider>;
+  return (
+    <StockContext.Provider value={{ stocks, suppliers, products, addStock, deleteStock, updateStock }}>{children}</StockContext.Provider>
+  );
 };

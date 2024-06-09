@@ -70,9 +70,9 @@ const orderSchema = new mongoose.Schema(
 
 const livraisonSchema = new mongoose.Schema(
   {
-    id_livreur: {
+    id_user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Livreur",
+      ref: "User",
       required: true,
     },
     orders: [orderSchema],

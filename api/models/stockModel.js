@@ -1,4 +1,32 @@
 import mongoose, { Schema } from "mongoose";
+
+const productSchema = new mongoose.Schema(
+  {
+    product_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const stockSchema = new mongoose.Schema(
   {
     id_supplier: {
@@ -6,6 +34,7 @@ const stockSchema = new mongoose.Schema(
       ref: "Supplier",
       required: true,
     },
+    products: [productSchema],
     name: {
       type: String,
       required: true,

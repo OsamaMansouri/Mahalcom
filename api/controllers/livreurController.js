@@ -1,20 +1,27 @@
-import Livreur from "../models/livreurModel.js";
+import User from "../models/userModel.js";
+import Role from "../models/roleModel.js"; // Import Role if needed for role checks
 
 export const create = async (req, res) => {
   try {
-    const { fname, lname, email, password, phone, city } = req.body;
+    const { fname, lname, email, password, id_role } = req.body;
 
-    const newLivreur = new Livreur({
+    // Optionally check if id_role corresponds to a "Livreur" role
+    // Example check could involve verifying role name if Role schema contains name property
+    const role = await Role.findById(id_role);
+    if (!role || role.role_name !== "Livreur") {
+      return res.status(400).json({ msg: "Invalid role for livreur" });
+    }
+
+    const newUser = new User({
       fname,
       lname,
       email,
       password,
-      phone,
-      city,
+      id_role,
     });
 
-    const savedLivreur = await newLivreur.save();
-    res.status(201).json(savedLivreur); // Return the full livreur data
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser); // Return the full user data
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -22,13 +29,15 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const livreurData = await Livreur.find();
+    // Add a condition to fetch only users with the "Livreur" role
+    const livreurRole = await Role.findOne({ role_name: "Livreur" });
+    const userData = await User.find({ id_role: livreurRole._id });
 
-    if (!livreurData) {
+    if (!userData) {
       return res.status(404).json({ msg: "Livreur data not found" });
     }
 
-    res.status(200).json(livreurData);
+    res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -37,13 +46,13 @@ export const getAll = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const id = req.params.id;
-    const livreurData = await Livreur.findById(id);
+    const userData = await User.findById(id);
 
-    if (!livreurData) {
+    if (!userData) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
 
-    res.status(200).json(livreurData);
+    res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -51,15 +60,13 @@ export const getById = async (req, res) => {
 
 export const updateLivreur = async (req, res) => {
   try {
-    const updatedLivreur = await Livreur.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updatedLivreur) {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updatedUser) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
-    res.json(updatedLivreur);
+    res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -67,8 +74,8 @@ export const updateLivreur = async (req, res) => {
 
 export const deleteLivreur = async (req, res) => {
   try {
-    const deletedLivreur = await Livreur.findByIdAndDelete(req.params.id);
-    if (!deletedLivreur) {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
       return res.status(404).json({ msg: "Livreur not found" });
     }
     res.json({ msg: "Livreur deleted successfully" });

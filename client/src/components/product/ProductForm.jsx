@@ -28,7 +28,6 @@ const ProductForm = () => {
     id_catg: '',
     price: '',
     quantity: '',
-    id_stock: '',
     inStock: false
   });
 
@@ -102,24 +101,6 @@ const ProductForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Stack spacing={1}>
-            <InputLabel>Stock</InputLabel>
-            <FormControl fullWidth error={!!errors.id_stock}>
-              <Select name="id_stock" value={formData.id_stock} onChange={handleChange} onBlur={handleBlur} displayEmpty required>
-                <MenuItem value="" disabled>
-                  Select a stock
-                </MenuItem>
-                {stocks.map((stock) => (
-                  <MenuItem key={stock._id} value={stock._id}>
-                    {stock.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.id_stock && <FormHelperText>{errors.id_stock}</FormHelperText>}
-            </FormControl>
-          </Stack>
-        </Grid>
         <Grid item xs={8}>
           <Stack spacing={1}>
             <InputLabel>Name</InputLabel>
