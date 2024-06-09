@@ -1,9 +1,11 @@
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 
-// project import
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
-import AuthGuard from 'utils/withAuth'; // Import the AuthGuard component
+import AuthGuard from 'utils/withAuth';
+import withRole from 'utils/withRole'; // Import the withRole HOC
+
 import { LivreurProvider } from 'contexts/livreur/LivreurContext';
 import { StockProvider } from 'contexts/stock/StockContext';
 import { ProductProvider } from 'contexts/product/ProductContext';
@@ -43,7 +45,6 @@ const Typography = Loadable(lazy(() => import('pages/component-overview/typograp
 const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 
-// render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -98,19 +99,19 @@ const MainRoutes = {
     },
     {
       path: 'users',
-      element: (
+      element: withRole(['Admin'])(() => (
         <UserProvider>
           <Users />
         </UserProvider>
-      )
+      ))
     },
     {
       path: 'add-user',
-      element: (
+      element: withRole(['Admin'])(() => (
         <UserProvider>
           <AddUser />
         </UserProvider>
-      )
+      ))
     },
     {
       path: 'clients',
@@ -178,19 +179,19 @@ const MainRoutes = {
     },
     {
       path: 'stocks',
-      element: (
+      element: withRole(['Admin'])(() => (
         <StockProvider>
           <Stocks />
         </StockProvider>
-      )
+      ))
     },
     {
       path: 'add-stock',
-      element: (
+      element: withRole(['Admin'])(() => (
         <StockProvider>
           <AddStock />
         </StockProvider>
-      )
+      ))
     },
     {
       path: 'livreurs',
@@ -210,17 +211,17 @@ const MainRoutes = {
     },
     {
       path: 'orders',
-      element: (
+      element: withRole(['Admin'])(() => (
         <ClientProvider>
           <OrderProvider>
             <Orders />
           </OrderProvider>
         </ClientProvider>
-      )
+      ))
     },
     {
       path: 'add-order',
-      element: (
+      element: withRole(['Admin'])(() => (
         <ProductProvider>
           <ClientProvider>
             <OrderProvider>
@@ -228,7 +229,7 @@ const MainRoutes = {
             </OrderProvider>
           </ClientProvider>
         </ProductProvider>
-      )
+      ))
     },
     {
       path: 'deliveries',

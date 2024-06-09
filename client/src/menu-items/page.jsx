@@ -1,4 +1,4 @@
-// assets
+import React from 'react';
 import {
   LoginOutlined,
   ProfileOutlined,
@@ -11,11 +11,9 @@ import {
   TruckOutlined,
   ApartmentOutlined
 } from '@ant-design/icons';
-
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
-// icons
 const icons = {
   LoginOutlined,
   ProfileOutlined,
@@ -31,31 +29,11 @@ const icons = {
   Inventory2OutlinedIcon
 };
 
-// ==============================|| MENU ITEMS - EXTRA PAGES ||============================== //
+const pages = () => {
+  const userRole = localStorage.getItem('userRole') || 'Manager'; // Default role is 'manager' if not found
 
-const pages = {
-  id: 'features',
-  title: 'Features',
-  type: 'group',
-  children: [
-    /*{
-      id: 'login1',
-      title: 'Login',
-      type: 'item',
-      url: '/login',
-      icon: icons.LoginOutlined,
-      target: true
-    },
-    {
-      id: 'register1',
-      title: 'Register',
-      type: 'item',
-      url: '/register',
-      icon: icons.ProfileOutlined,
-      target: true
-   
-    } */
-    {
+  const menuItems = [
+    userRole === 'Admin' && {
       id: 'users',
       title: 'Users',
       type: 'item',
@@ -83,14 +61,13 @@ const pages = {
       url: '/categories',
       icon: icons.CategoryOutlinedIcon
     },
-    {
+    userRole === 'Admin' && {
       id: 'orders',
       title: 'Orders',
       type: 'item',
       url: '/orders',
       icon: icons.DollarOutlined
     },
-
     {
       id: 'products',
       title: 'Products',
@@ -98,15 +75,13 @@ const pages = {
       url: '/products',
       icon: icons.SkinOutlined
     },
-
-    {
+    userRole === 'Admin' && {
       id: 'stocks',
       title: 'Stocks',
       type: 'item',
       url: '/stocks',
       icon: icons.Inventory2OutlinedIcon
     },
-
     {
       id: 'deliverymen',
       title: 'Delivery men',
@@ -121,14 +96,24 @@ const pages = {
       url: '/deliveries',
       icon: icons.TruckOutlined
     },
-    {
+    userRole === 'Admin' && {
       id: 'invoices',
       title: 'Invoices',
       type: 'item',
       url: '/invoices',
       icon: icons.FileDoneOutlined
     }
-  ]
+  ].filter(Boolean);
+
+  return {
+    id: 'features',
+    title: 'Features',
+    type: 'group',
+    children: menuItems.map((item) => ({
+      ...item,
+      key: item.id
+    }))
+  };
 };
 
-export default pages;
+export default pages();

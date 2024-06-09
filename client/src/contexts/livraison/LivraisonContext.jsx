@@ -58,7 +58,8 @@ export const LivraisonProvider = ({ children }) => {
   const updateLivraison = async (id, updatedLivraison) => {
     try {
       const response = await api.put(`/api/livraison/update/${id}`, updatedLivraison);
-      setLivraisons((prev) => prev.map((livraison) => (livraison._id === id ? response.data : livraison)));
+      const updatedLivraisons = livraisons.map((livraison) => (livraison._id === id ? response.data : livraison));
+      setLivraisons(updatedLivraisons);
     } catch (error) {
       console.error('Error updating livraison:', error);
       toast.error('Error updating livraison');

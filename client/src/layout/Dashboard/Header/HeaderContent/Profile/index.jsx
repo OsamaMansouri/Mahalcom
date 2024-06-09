@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
 import { useNavigate, Outlet } from 'react-router-dom';
 
 // material-ui
@@ -32,6 +31,7 @@ import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
 import api from 'utils/api';
+import { useUser } from 'contexts/user/UserContext';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -54,6 +54,7 @@ function a11yProps(index) {
 export default function Profile() {
   const theme = useTheme();
   const anchorRef = useRef(null);
+  const { logout } = useUser(); // Use logout from context
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [user, setUser] = useState({ name: '', role: '' });
@@ -88,17 +89,6 @@ export default function Profile() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await api.post('/api/auth/logout');
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
   };
 
   const iconBackColorOpen = 'grey.100';
@@ -163,7 +153,7 @@ export default function Profile() {
                         </Stack>
                       </Grid>
                       <Grid item>
-                        <Tooltip title="Logout" onClick={handleLogout}>
+                        <Tooltip title="Logout" onClick={logout}>
                           <IconButton size="large" sx={{ color: 'text.primary' }}>
                             <LogoutOutlined />
                           </IconButton>
@@ -204,11 +194,6 @@ export default function Profile() {
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab />
                   </TabPanel>
-                  {/*
-                    <TabPanel value={value} index={1} dir={theme.direction}>
-                      <SettingTab />
-                    </TabPanel>
-                      */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 // material-ui
@@ -29,15 +28,15 @@ import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-import FirebaseSocial from './FirebaseSocial';
-import api from 'utils/api';
+import { useUser } from 'contexts/user/UserContext';
 
 // ============================|| JWT - LOGIN ||============================ //
 
 export default function AuthLogin({ isDemo = false }) {
   const [checked, setChecked] = React.useState(false);
-
+  const { login } = useUser();
   const [showPassword, setShowPassword] = React.useState(false);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -59,25 +58,13 @@ export default function AuthLogin({ isDemo = false }) {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          console.log('🚀 ~ onSubmit={ ~ values:', values);
           try {
-            const response = await api.post(
-              '/api/auth/login',
-              values // Pass form values to the API request
-            );
-
-            const { token, refreshToken } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('refreshToken', refreshToken);
-
-            toast.success('Login successful', { position: 'top-right' });
-            // Redirect the user to /dashboard after successful login
-            window.location.href = '/dashboard/default';
+            await login(values);
           } catch (error) {
-            toast.error('Login failed', { position: 'top-right' });
-            setErrors({ submit: error.message }); // Set submit error
+            setErrors({ submit: error.message });
+            setStatus({ success: false });
+            setSubmitting(false);
           }
-          setSubmitting(false);
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
