@@ -1,6 +1,7 @@
 import Livraison from "../models/livraisonModel.js";
 import Order from "../models/orderModel.js";
 import Supplier from "../models/livreurModel.js";
+import Product from "../models/productModel.js"; // Import the product model
 
 // Create a new livraison
 export const create = async (req, res) => {
@@ -114,6 +115,19 @@ export const update = async (req, res) => {
       .populate("id_livreur")
       .populate("orders.client_id")
       .populate("orders.products.product_id");
+
+    // Update product quantity if the status is "Delivered"
+    if (livraisonStatus === "Delivered") {
+      for (const order of populatedLivraison.orders) {
+        for (const product of order.products) {
+          const productDoc = await Product.findById(product.product_id._id);
+          if (productDoc) {
+            productDoc.quantity -= product.quantity;
+            await productDoc.save();
+          }
+        }
+      }
+    }
 
     res.status(200).json(populatedLivraison);
   } catch (error) {

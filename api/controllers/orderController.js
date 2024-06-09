@@ -141,6 +141,17 @@ export const create = async (req, res) => {
       });
     }
 
+    // Update product quantity if payment method is "In Store"
+    if (paymentMethod === "In Store") {
+      for (const item of populatedProducts) {
+        const product = await Product.findById(item.product_id);
+        if (product) {
+          product.quantity -= item.quantity;
+          await product.save();
+        }
+      }
+    }
+
     res.status(201).json(savedOrder);
   } catch (error) {
     console.error("Error adding order:", error);
