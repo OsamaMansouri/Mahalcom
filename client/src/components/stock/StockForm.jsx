@@ -1,22 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, TextField, Button, Stack, InputLabel, FormHelperText, FormControl, Select, MenuItem } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  Stack,
+  InputLabel,
+  FormHelperText,
+  FormControl,
+  Select,
+  MenuItem,
+  IconButton,
+  Box,
+  Typography
+} from '@mui/material';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import MainCard from 'components/MainCard';
 import toast from 'react-hot-toast';
 import { useStock } from 'contexts/stock/StockContext';
 
 const StockForm = () => {
-  const { addStock, suppliers } = useStock();
+  const { addStock, suppliers, products } = useStock();
   const [formData, setFormData] = useState({
     id_supplier: '',
     name: '',
     warehouse: '',
-    info: ''
+    info: '',
+    products: []
   });
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Initialize product data
+    if (formData.products.length === 0) {
+      setFormData((prev) => ({
+        ...prev,
+        products: [{ product_id: '', quantity: 0, name: '', price: 0, image: '' }]
+      }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +62,45 @@ const StockForm = () => {
       [name]: true
     }));
     validateField(name, value);
+  };
+
+  const handleProductChange = (index, e) => {
+    const { name, value } = e.target;
+    const selectedProduct = products.find((product) => product._id === value);
+
+    setFormData((prev) => {
+      const updatedProducts = [...prev.products];
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        product_id: value,
+        name: selectedProduct.name,
+        quantity: selectedProduct.quantity,
+        price: selectedProduct.price,
+        image: selectedProduct.image
+      };
+      return {
+        ...prev,
+        products: updatedProducts
+      };
+    });
+  };
+
+  const handleAddProduct = () => {
+    setFormData((prev) => ({
+      ...prev,
+      products: [...prev.products, { product_id: '', quantity: 0, name: '', price: 0, image: '' }]
+    }));
+  };
+
+  const handleRemoveProduct = (index) => {
+    setFormData((prev) => {
+      const updatedProducts = [...prev.products];
+      updatedProducts.splice(index, 1);
+      return {
+        ...prev,
+        products: updatedProducts
+      };
+    });
   };
 
   const validateField = (name, value) => {
@@ -140,22 +204,86 @@ const StockForm = () => {
 
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel>Info</InputLabel>
-
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={3}
-                    placeholder="Enter additional info"
-                    name="info"
-                    value={formData.info}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={!!errors.info}
-                    helperText={errors.info}
-                  />
+                  <InputLabel>Products</InputLabel>
+                  {formData.products.map((product, index) => (
+                    <Grid container spacing={2} alignItems="center" key={index}>
+                      <Grid item xs={3}>
+                        <FormControl fullWidth error={!!errors[`products[${index}].product_id`]}>
+                          <Select
+                            name={`products[${index}].product_id`}
+                            value={product.product_id}
+                            onChange={(e) => handleProductChange(index, e)}
+                            displayEmpty
+                            required
+                          >
+                            <MenuItem value="" disabled>
+                              Select a product
+                            </MenuItem>
+                            {products.map((product) => (
+                              <MenuItem key={product._id} value={product._id}>
+                                {product.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {errors[`products[${index}].product_id`] && (
+                            <FormHelperText>{errors[`products[${index}].product_id`]}</FormHelperText>
+                          )}
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          fullWidth
+                          placeholder="Quantity"
+                          name={`products[${index}].quantity`}
+                          value={product.quantity}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          InputProps={{ readOnly: true }}
+                          error={!!errors[`products[${index}].quantity`]}
+                          helperText={errors[`products[${index}].quantity`]}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          fullWidth
+                          placeholder="Price"
+                          name={`products[${index}].price`}
+                          value={product.price}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          InputProps={{ readOnly: true }}
+                          error={!!errors[`products[${index}].price`]}
+                          helperText={errors[`products[${index}].price`]}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        {product.image && (
+                          <img
+                            src={`${import.meta.env.VITE_API_BASE_URL}/${product.image}`}
+                            alt={product.name}
+                            style={{ width: '50px', height: '50px' }}
+                          />
+                        )}
+                      </Grid>
+                      <Grid item xs={2}>
+                        <IconButton color="error" onClick={() => handleRemoveProduct(index)}>
+                          <DeleteOutlined />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  ))}
+                  <Box sx={{ pt: 2.5, pr: 2.5, pb: 2.5, pl: 0 }}>
+                    <Button
+                      color="primary"
+                      startIcon={<PlusOutlined />}
+                      onClick={handleAddProduct}
+                      variant="dashed"
+                      sx={{ bgcolor: 'transparent !important' }}
+                    >
+                      Add Product
+                    </Button>
+                  </Box>
                 </Stack>
-                <FormHelperText>Please enter additional info (optional)</FormHelperText>
               </Grid>
 
               <Grid item xs={12}>

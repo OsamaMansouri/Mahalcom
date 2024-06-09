@@ -115,15 +115,7 @@ export default function LivraisonList() {
   };
 
   return (
-    <MainCard
-      title="List of deliveries"
-      content={false}
-      secondary={
-        <Button component={RouterLink} to="/add-delivery" variant="contained" startIcon={<PlusOutlined />}>
-          Add Delivery
-        </Button>
-      }
-    >
+    <MainCard title="List of deliveries" content={false}>
       <TableContainer>
         <Table>
           <TableHead>
@@ -166,9 +158,6 @@ export default function LivraisonList() {
                     </IconButton>
                     <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
                       <EditOutlined />
-                    </IconButton>
-                    <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>
@@ -336,10 +325,7 @@ export default function LivraisonList() {
                     <Stack spacing={1}>
                       <InputLabel>Livreur</InputLabel>
                       <FormControl fullWidth>
-                        <Select name="id_user" value={editedLivraison.id_user || ''} onChange={handleFieldChange} displayEmpty>
-                          <MenuItem value="" disabled>
-                            Select a livreur
-                          </MenuItem>
+                        <Select name="id_user" value={editedLivraison.id_user || ''} readOnly>
                           {livreurs.map((livreur) => (
                             <MenuItem key={livreur._id} value={livreur._id}>
                               {livreur.fname}
@@ -352,13 +338,7 @@ export default function LivraisonList() {
                   <Grid item xs={4}>
                     <Stack spacing={1}>
                       <InputLabel>Delivery Date</InputLabel>
-                      <TextField
-                        fullWidth
-                        type="date"
-                        name="delivery_date"
-                        value={editedLivraison.delivery_date || ''}
-                        onChange={handleFieldChange}
-                      />
+                      <TextField fullWidth readOnly name="delivery_date" value={editedLivraison.delivery_date || ''} />
                     </Stack>
                   </Grid>
                   <Grid item xs={4}>
@@ -385,12 +365,7 @@ export default function LivraisonList() {
                   <Grid item xs={8}>
                     <Stack spacing={1}>
                       <InputLabel>Delivery Address</InputLabel>
-                      <TextField
-                        fullWidth
-                        name="deliveryAddress"
-                        value={editedLivraison.deliveryAddress || ''}
-                        onChange={handleFieldChange}
-                      />
+                      <TextField fullWidth readOnly name="deliveryAddress" value={editedLivraison.deliveryAddress || ''} />
                     </Stack>
                   </Grid>
                   <Grid item xs={12}>

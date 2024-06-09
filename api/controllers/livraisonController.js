@@ -2,12 +2,13 @@ import Livraison from "../models/livraisonModel.js";
 import Order from "../models/orderModel.js";
 import Supplier from "../models/livreurModel.js";
 import Product from "../models/productModel.js"; // Import the product model
+import User from "../models/userModel.js"; // Import the product model
 
 // Create a new livraison
 export const create = async (req, res) => {
   try {
     const {
-      id_livreur,
+      id_user,
       orders,
       delivery_date,
       message,
@@ -16,7 +17,7 @@ export const create = async (req, res) => {
     } = req.body;
 
     // Check if the livreur exists
-    const supplier = await Supplier.findById(id_livreur);
+    const supplier = await User.findById(id_user);
     if (!supplier) {
       return res.status(404).json({ message: "Supplier not found" });
     }
@@ -35,7 +36,7 @@ export const create = async (req, res) => {
     );
 
     const livraisonData = {
-      id_livreur,
+      id_user,
       orders: populatedOrders,
       delivery_date,
       message,
@@ -57,7 +58,22 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const livraisons = await Livraison.find()
-      .populate("id_livreur")
+      .populate("id_user")
+      .populate("orders.client_id orders.products.product_id");
+    res.status(200).json(livraisons);
+  } catch (error) {
+    console.error("Error fetching livraisons:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get all Undelivered livraisons
+export const getUndelivered = async (req, res) => {
+  try {
+    const livraisons = await Livraison.find({
+      livraisonStatus: { $ne: "Delivered" },
+    })
+      .populate("id_user")
       .populate("orders.client_id orders.products.product_id");
     res.status(200).json(livraisons);
   } catch (error) {
@@ -71,7 +87,7 @@ export const getById = async (req, res) => {
   try {
     const { id } = req.params;
     const livraison = await Livraison.findById(id)
-      .populate("id_livreur")
+      .populate("id_user")
       .populate("orders.client_id orders.products.product_id");
     if (!livraison) {
       return res.status(404).json({ message: "Livraison not found" });
@@ -88,7 +104,7 @@ export const update = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      id_livreur,
+      id_user,
       orders,
       delivery_date,
       message,
@@ -101,7 +117,7 @@ export const update = async (req, res) => {
       return res.status(404).json({ message: "Livraison not found" });
     }
 
-    if (id_livreur) livraison.id_livreur = id_livreur;
+    if (id_user) livraison.id_user = id_user;
     if (orders) livraison.orders = orders;
     if (delivery_date) livraison.delivery_date = delivery_date;
     if (message) livraison.message = message;
@@ -112,7 +128,7 @@ export const update = async (req, res) => {
 
     // Populate the orders with client and product details
     const populatedLivraison = await Livraison.findById(updatedLivraison._id)
-      .populate("id_livreur")
+      .populate("id_user")
       .populate("orders.client_id")
       .populate("orders.products.product_id");
 

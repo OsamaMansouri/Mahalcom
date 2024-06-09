@@ -33,7 +33,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
-import { EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useStock } from 'contexts/stock/StockContext';
 import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import { Link } from 'react-router-dom';
@@ -157,59 +157,15 @@ export default function StockList() {
                   <TableCell>{rowData.id_supplier?.fullname}</TableCell>
                   <TableCell align="center" sx={{ pr: 3 }}>
                     <Stack direction="row" justifyContent="center" alignItems="center">
-                      <IconButton color="inherit" size="large" onClick={() => handleEditClick(rowData)}>
-                        <EditOutlined />
-                      </IconButton>
-                      <IconButton color="info" size="large" onClick={() => handleViewDetails(rowData)}>
+                      <IconButton color="secondary" size="large" onClick={() => handleViewDetails(rowData)}>
                         <VisibilityOutlinedIcon />
                       </IconButton>
+                      <IconButton color="primary" size="large" onClick={() => handleEditClick(rowData)}>
+                        <EditOutlined />
+                      </IconButton>
                       <IconButton color="error" size="large" onClick={() => handleDeleteClick(rowData._id)}>
-                        <DeleteOutlinedIcon />
+                        <DeleteOutlined />
                       </IconButton>
-                      <IconButton
-                        variant="light"
-                        color="inherit"
-                        id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
-                      >
-                        <MoreOutlined />
-                      </IconButton>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                          'aria-labelledby': 'basic-button'
-                        }}
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right'
-                        }}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right'
-                        }}
-                      >
-                        <MenuItem
-                          component={Link}
-                          to="/apps/profiles/user/personal"
-                          onClick={() => {
-                            handleClose();
-                            setTimeout(() => {
-                              focusInput();
-                            });
-                          }}
-                        >
-                          Edit
-                        </MenuItem>
-                        <MenuItem onClick={handleClose} disabled>
-                          Delete
-                        </MenuItem>
-                      </Menu>
                     </Stack>
                   </TableCell>
                 </TableRow>

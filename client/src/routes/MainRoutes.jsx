@@ -33,6 +33,8 @@ const Orders = Loadable(lazy(() => import('pages/orders/list')));
 const AddLivraison = Loadable(lazy(() => import('pages/livraisons/add')));
 const Livraisons = Loadable(lazy(() => import('pages/livraisons/list')));
 
+const LivraisonsManagement = Loadable(lazy(() => import('pages/livraisons/listmanagment')));
+
 const UserProfile = Loadable(lazy(() => import('pages/profile/user')));
 const UserTabPersonal = Loadable(lazy(() => import('sections/profile/TabPersonal')));
 const UserTabPassword = Loadable(lazy(() => import('sections/profile/TabPassword')));
@@ -259,6 +261,16 @@ const MainRoutes = {
               <AddLivraison />
             </LivraisonProvider>
           </OrderProvider>
+        </LivreurProvider>
+      )
+    },
+    {
+      path: 'deliveries_m',
+      element: (
+        <LivreurProvider>
+          <LivraisonProvider>
+            <LivraisonsManagement />
+          </LivraisonProvider>
         </LivreurProvider>
       )
     },

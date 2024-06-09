@@ -5,9 +5,9 @@ export const create = async (req, res) => {
     const productData = { ...req.body, image: req.file.path };
     const product = new Product(productData);
     const savedProduct = await product.save();
-    const populatedProduct = await Product.findById(savedProduct._id)
-      .populate("id_catg")
-      .populate("id_stock");
+    const populatedProduct = await Product.findById(savedProduct._id).populate(
+      "id_catg"
+    );
     res.status(201).json(populatedProduct);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -16,10 +16,7 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const productData = await Product.find()
-      .populate("id_catg")
-      .populate("id_stock");
-
+    const productData = await Product.find().populate("id_catg");
     if (!productData) {
       return res.status(404).json({ msg: "Product data not found" });
     }
@@ -54,9 +51,7 @@ export const updateProduct = async (req, res) => {
     }
     const product = await Product.findByIdAndUpdate(id, productData, {
       new: true,
-    })
-      .populate("id_catg")
-      .populate("id_stock");
+    }).populate("id_catg");
 
     if (!product) {
       return res.status(404).json({ msg: "Product not found" });

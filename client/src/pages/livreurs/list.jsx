@@ -32,7 +32,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
-import { EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useLivreur } from 'contexts/livreur/LivreurContext';
 
 // Simple PopupTransition component
@@ -231,7 +231,6 @@ export default function LatestOrder() {
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>City</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -244,17 +243,17 @@ export default function LatestOrder() {
                 </TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.city || '-'}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                    <IconButton color="secondary" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
                     </IconButton>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
-                      <DeleteOutlinedIcon />
+                      <DeleteOutlined />
                     </IconButton>
                   </Stack>
                 </TableCell>

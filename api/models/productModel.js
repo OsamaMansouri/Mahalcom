@@ -25,11 +25,6 @@ const productSchema = new mongoose.Schema(
     quantity: {
       type: Number,
     },
-    id_stock: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Stock",
-      required: true,
-    },
     inStock: {
       type: Boolean,
     },

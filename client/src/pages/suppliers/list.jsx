@@ -233,12 +233,13 @@ export default function LatestOrder() {
                 <TableCell>{row.store}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
-                    <IconButton color="inherit" size="large" onClick={() => handleEditClick(row)}>
-                      <EditOutlined />
-                    </IconButton>
-                    <IconButton color="info" size="large" onClick={() => handleViewDetails(row)}>
+                    <IconButton color="secondary" size="large" onClick={() => handleViewDetails(row)}>
                       <VisibilityOutlinedIcon />
                     </IconButton>
+                    <IconButton color="primary" size="large" onClick={() => handleEditClick(row)}>
+                      <EditOutlined />
+                    </IconButton>
+
                     <IconButton color="error" size="large" onClick={() => handleDeleteClick(row._id)}>
                       <DeleteOutlinedIcon />
                     </IconButton>

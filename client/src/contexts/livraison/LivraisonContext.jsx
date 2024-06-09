@@ -19,7 +19,7 @@ export const LivraisonProvider = ({ children }) => {
 
   const fetchLivraisons = async () => {
     try {
-      const response = await api.get('/api/livraison/getall');
+      const response = await api.get('/api/livraison/getUndelivered');
       setLivraisons(response.data);
     } catch (error) {
       console.error('Error fetching livraisons:', error);
@@ -38,6 +38,8 @@ export const LivraisonProvider = ({ children }) => {
   const addLivraison = async (livraison) => {
     try {
       const response = await api.post('/api/livraison/create', livraison);
+      toast.success('Livraison added successfully', { position: 'top-right' });
+
       setLivraisons((prev) => [...prev, response.data]);
     } catch (error) {
       console.error('Error adding livraison:', error);

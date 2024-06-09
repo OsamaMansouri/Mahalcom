@@ -40,7 +40,7 @@ const LivraisonForm = ({ onSubmit }) => {
   return (
     <Formik
       initialValues={{
-        id_livreur: '',
+        id_user: '',
         orders: [{ order_id: '' }],
         delivery_date: '',
         deliveryAddress: '',
@@ -48,7 +48,7 @@ const LivraisonForm = ({ onSubmit }) => {
         livraisonStatus: ''
       }}
       validationSchema={Yup.object().shape({
-        id_livreur: Yup.string().required('Livreur is required'),
+        id_user: Yup.string().required('Livreur is required'),
         orders: Yup.array()
           .of(
             Yup.object().shape({
@@ -76,8 +76,8 @@ const LivraisonForm = ({ onSubmit }) => {
             <Grid item xs={4}>
               <Stack spacing={1}>
                 <InputLabel>Livreur</InputLabel>
-                <FormControl fullWidth error={touched.id_livreur && !!errors.id_livreur}>
-                  <Select name="id_livreur" value={values.id_livreur} onChange={handleChange} onBlur={handleBlur} displayEmpty>
+                <FormControl fullWidth error={touched.id_user && !!errors.id_user}>
+                  <Select name="id_user" value={values.id_user} onChange={handleChange} onBlur={handleBlur} displayEmpty>
                     <MenuItem value="" disabled>
                       Select a livreur
                     </MenuItem>
@@ -87,7 +87,7 @@ const LivraisonForm = ({ onSubmit }) => {
                       </MenuItem>
                     ))}
                   </Select>
-                  {touched.id_livreur && errors.id_livreur && <FormHelperText>{errors.id_livreur}</FormHelperText>}
+                  {touched.id_user && errors.id_user && <FormHelperText>{errors.id_user}</FormHelperText>}
                 </FormControl>
               </Stack>
             </Grid>
