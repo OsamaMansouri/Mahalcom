@@ -14,6 +14,7 @@ import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { UserProvider } from 'contexts/user/UserContext';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -30,7 +31,10 @@ export default function DashboardLayout() {
 
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
-      <Header />
+      <UserProvider>
+        <Header />
+      </UserProvider>
+
       <Drawer />
       <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
         <Toolbar />

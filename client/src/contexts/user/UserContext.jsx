@@ -25,20 +25,13 @@ export const UserProvider = ({ children }) => {
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Error fetching users', { position: 'top-right' });
     }
   };
 
   const fetchRoles = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/role/getall`);
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setRoles(data);
-      } else {
-        console.error('Unexpected response format:', data);
-        toast.error('Error fetching roles', { position: 'top-right' });
-      }
+      const response = await api.get('/api/role/getall');
+      setRoles(response.data);
     } catch (error) {
       console.error('Error fetching roles:', error);
       toast.error('Error fetching roles', { position: 'top-right' });
@@ -112,6 +105,35 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const login = async (values) => {
+    try {
+      const response = await api.post('/api/auth/login', values);
+      const { token, refreshToken, role } = response.data; // Get role from response
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userRole', role); // Store user's role in local storage
+      fetchUserDetails();
+      toast.success('Login successful', { position: 'top-right' });
+      window.location.href = '/dashboard/default';
+    } catch (error) {
+      toast.error('Login failed', { position: 'top-right' });
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await api.post('/api/auth/logout');
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userRole');
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout failed:', error);
+      toast.error('Logout failed', { position: 'top-right' });
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -124,7 +146,9 @@ export const UserProvider = ({ children }) => {
         deleteUser,
         fetchUserDetails,
         updateUserDetails,
-        changePassword
+        changePassword,
+        login,
+        logout
       }}
     >
       {children}

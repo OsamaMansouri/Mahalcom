@@ -61,7 +61,7 @@ export default function LatestOrder() {
   useEffect(() => {
     if (users) {
       const newData = users.map((row, index) => {
-        const role = roles.find(role => role._id === row.id_role);
+        const role = roles.find((role) => role._id === row.id_role);
         return createData(index + 1, row._id, row.fname, row.lname, row.email, role ? role.role_name : 'N/A', row.id_role);
       });
       setData(newData);
@@ -157,7 +157,7 @@ export default function LatestOrder() {
                 <TableCell>{row.fname}</TableCell>
                 <TableCell>{row.lname}</TableCell>
                 <TableCell>
-                  <Chip color={row.role === 'Manager' ? 'success' : 'primary'} label={row.role || 'N/A'} size="small" />
+                  <Chip color={row.role === 'Admin' ? 'success' : 'primary'} label={row.role || 'N/A'} size="small" />
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>

@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("id_role");
     if (!user) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
@@ -69,7 +69,7 @@ export const login = async (req, res) => {
     const token = generateAccessToken({ id: user._id });
     const refreshToken = generateRefreshToken({ id: user._id });
 
-    res.status(200).json({ token, refreshToken });
+    res.status(200).json({ token, refreshToken, role: user.id_role.role_name });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

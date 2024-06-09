@@ -108,7 +108,14 @@ export const update = async (req, res) => {
     if (deliveryAddress) livraison.deliveryAddress = deliveryAddress;
 
     const updatedLivraison = await livraison.save();
-    res.status(200).json(updatedLivraison);
+
+    // Populate the orders with client and product details
+    const populatedLivraison = await Livraison.findById(updatedLivraison._id)
+      .populate("id_livreur")
+      .populate("orders.client_id")
+      .populate("orders.products.product_id");
+
+    res.status(200).json(populatedLivraison);
   } catch (error) {
     console.error("Error updating livraison:", error);
     res.status(500).json({ error: error.message });
