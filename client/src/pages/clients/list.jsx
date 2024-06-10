@@ -203,7 +203,7 @@ export default function LatestOrder() {
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>City</TableCell>
@@ -279,9 +279,9 @@ export default function LatestOrder() {
         </DialogContent>
       </Dialog>
 
-     {/* View Dialog */}
+      {/* View Dialog */}
 
-     <Dialog
+      <Dialog
         open={openViewDialog}
         onClose={handleCloseViewDialog}
         keepMounted

@@ -23,20 +23,15 @@ import {
   Grid,
   FormHelperText,
   CardActions,
-  FormControl,
-  Menu
+  FormControl
 } from '@mui/material';
 import MainCard from 'components/MainCard';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
-import toast from 'react-hot-toast';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useStock } from 'contexts/stock/StockContext';
-import MoreOutlined from '@ant-design/icons/MoreOutlined';
-import { Link } from 'react-router-dom';
 
 // Simple PopupTransition component
 const PopupTransition = React.forwardRef(function Transition(props, ref) {
@@ -111,18 +106,9 @@ export default function StockList() {
   };
 
   const createData = (index, stock) => {
-    return { ...stock, index: index + 1 };
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event?.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+    // Calculate total quantity of products in the stock
+    const totalQuantity = stock.products.reduce((sum, product) => sum + product.quantity, 0);
+    return { ...stock, index: index + 1, totalQuantity };
   };
 
   return (
@@ -139,10 +125,11 @@ export default function StockList() {
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Warehouse</TableCell>
               <TableCell>Supplier</TableCell>
+              <TableCell>Total Quantity</TableCell> {/* New column for Total Quantity */}
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -155,6 +142,7 @@ export default function StockList() {
                   <TableCell>{rowData.name}</TableCell>
                   <TableCell>{rowData.warehouse}</TableCell>
                   <TableCell>{rowData.id_supplier?.fullname}</TableCell>
+                  <TableCell>{rowData.totalQuantity}</TableCell> {/* Display total quantity */}
                   <TableCell align="center" sx={{ pr: 3 }}>
                     <Stack direction="row" justifyContent="center" alignItems="center">
                       <IconButton color="secondary" size="large" onClick={() => handleViewDetails(rowData)}>
@@ -233,52 +221,64 @@ export default function StockList() {
             <Grid item xs={12} lg={12}>
               <MainCard title="View Stock Details">
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel>Name</InputLabel>
-                      <TextField fullWidth placeholder="Enter name" name="name" value={selectedStock ? selectedStock.name : ''} />
+                      <TextField fullWidth name="name" value={selectedStock?.name || ''} readOnly />
                     </Stack>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel>Warehouse</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter warehouse"
-                        name="warehouse"
-                        value={selectedStock ? selectedStock.warehouse : ''}
-                      />
+                      <TextField fullWidth name="warehouse" value={selectedStock?.warehouse || ''} readOnly />
                     </Stack>
                   </Grid>
                   <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel>Supplier</InputLabel>
-                      <FormControl fullWidth>
-                        <Select name="id_supplier" value={selectedStock ? selectedStock.id_supplier?._id : ''}>
-                          {suppliers.map((supplier) => (
-                            <MenuItem key={supplier._id} value={supplier._id}>
-                              {supplier.fullname}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                      <TextField fullWidth name="supplier" value={selectedStock?.id_supplier?.fullname || ''} readOnly />
                     </Stack>
                   </Grid>
-
                   <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel>Info</InputLabel>
-                      <TextField fullWidth placeholder="Enter info" name="info" value={selectedStock ? selectedStock.info : ''} />
+                      <TextField fullWidth name="info" value={selectedStock?.info || ''} readOnly />
                     </Stack>
                   </Grid>
-
-                  <CardActions>
-                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
-                      <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
-                        Cancel
-                      </Button>
-                    </Stack>
-                  </CardActions>
+                  <Grid item xs={12}>
+                    <Typography variant="h6">Products</Typography>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>#</TableCell>
+                            <TableCell>Product</TableCell>
+                            <TableCell>Quantity</TableCell>
+                            <TableCell>Price</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {selectedStock?.products.map((product, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{index + 1}</TableCell>
+                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product.quantity}</TableCell>
+                              <TableCell>{product.price}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <CardActions>
+                      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+                        <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                          Close
+                        </Button>
+                      </Stack>
+                    </CardActions>
+                  </Grid>
                 </Grid>
               </MainCard>
             </Grid>
@@ -305,26 +305,14 @@ export default function StockList() {
                   <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>Name</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter name"
-                        name="name"
-                        value={editedStock.name || ''}
-                        onChange={handleFieldChange}
-                      />
+                      <TextField fullWidth name="name" value={editedStock.name || ''} onChange={handleFieldChange} />
                     </Stack>
                     <FormHelperText>Please enter the name</FormHelperText>
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>Warehouse</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter warehouse"
-                        name="warehouse"
-                        value={editedStock.warehouse || ''}
-                        onChange={handleFieldChange}
-                      />
+                      <TextField fullWidth name="warehouse" value={editedStock.warehouse || ''} onChange={handleFieldChange} />
                     </Stack>
                     <FormHelperText>Please enter the warehouse</FormHelperText>
                   </Grid>
@@ -346,27 +334,47 @@ export default function StockList() {
                   <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel>Info</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter info"
-                        name="info"
-                        value={editedStock.info || ''}
-                        onChange={handleFieldChange}
-                      />
+                      <TextField fullWidth name="info" value={editedStock.info || ''} onChange={handleFieldChange} />
                     </Stack>
                     <FormHelperText>Please enter the info</FormHelperText>
                   </Grid>
-
-                  <CardActions>
-                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
-                      <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
-                        Cancel
-                      </Button>
-                      <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
-                        Update
-                      </Button>
-                    </Stack>
-                  </CardActions>
+                  <Grid item xs={12}>
+                    <Typography variant="h6">Products</Typography>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>#</TableCell>
+                            <TableCell>Product</TableCell>
+                            <TableCell>Quantity</TableCell>
+                            <TableCell>Price</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {editedStock.products?.map((product, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{index + 1}</TableCell>
+                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product.quantity}</TableCell>
+                              <TableCell>{product.price}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <CardActions>
+                      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+                        <Button variant="outlined" color="secondary" onClick={handleCloseEditDialog}>
+                          Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" onClick={handleEditSave} startIcon={<SaveIcon />}>
+                          Update
+                        </Button>
+                      </Stack>
+                    </CardActions>
+                  </Grid>
                 </Grid>
               </MainCard>
             </Grid>

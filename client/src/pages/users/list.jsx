@@ -142,7 +142,7 @@ export default function LatestOrder() {
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
               <TableCell>Role</TableCell>
@@ -157,8 +157,15 @@ export default function LatestOrder() {
                 <TableCell>{row.fname}</TableCell>
                 <TableCell>{row.lname}</TableCell>
                 <TableCell>
-                  <Chip color={row.role === 'Admin' ? 'success' : 'primary'} label={row.role || 'N/A'} size="small" />
+                  <Chip
+                    color={
+                      row.role === 'Admin' ? 'success' : row.role === 'Manager' ? 'primary' : row.role === 'Livreur' ? 'warning' : 'default'
+                    }
+                    label={row.role || 'N/A'}
+                    size="small"
+                  />
                 </TableCell>
+
                 <TableCell>{row.email}</TableCell>
                 <TableCell align="center" sx={{ pr: 3 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">

@@ -215,18 +215,18 @@ export default function LatestOrder() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>City</TableCell>
               <TableCell>Store</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow key={row._id}>
-                <TableCell>{row.index}</TableCell>
+                <TableCell sx={{ pl: 3 }}>{row.index}</TableCell>
                 <TableCell>{row.fullname}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.city}</TableCell>

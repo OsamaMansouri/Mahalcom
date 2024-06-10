@@ -3,21 +3,22 @@ import Role from "../models/roleModel.js"; // Import Role if needed for role che
 
 export const create = async (req, res) => {
   try {
-    const { fname, lname, email, password, id_role } = req.body;
+    // Find the role with the name "Livreur"
+    const role = await Role.findOne({ role_name: "Livreur" });
 
-    // Optionally check if id_role corresponds to a "Livreur" role
-    // Example check could involve verifying role name if Role schema contains name property
-    const role = await Role.findById(id_role);
-    if (!role || role.role_name !== "Livreur") {
+    if (!role) {
       return res.status(400).json({ msg: "Invalid role for livreur" });
     }
 
+    const { fname, lname, email, password } = req.body;
+
+    // Create a new user with the role's ID
     const newUser = new User({
       fname,
       lname,
       email,
       password,
-      id_role,
+      id_role: role._id, // Assign the role's ID to id_role
     });
 
     const savedUser = await newUser.save();

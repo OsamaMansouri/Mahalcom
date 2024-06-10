@@ -227,7 +227,7 @@ export default function LatestOrder() {
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Email</TableCell>
@@ -321,7 +321,7 @@ export default function LatestOrder() {
             <Grid item xs={12} lg={12}>
               <MainCard title="View livreur Details">
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>Full Name</InputLabel>
                       <TextField
@@ -332,24 +332,8 @@ export default function LatestOrder() {
                       />
                     </Stack>
                   </Grid>
+
                   <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>Phone</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter phone number"
-                        name="phone"
-                        value={selectedLivreur ? selectedLivreur.phone : ''}
-                      />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>City</InputLabel>
-                      <TextField fullWidth name="city" value={selectedLivreur ? selectedLivreur.city : ''} />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel>Email</InputLabel>
                       <TextField fullWidth placeholder="Enter email" name="email" value={selectedLivreur ? selectedLivreur.email : ''} />
@@ -386,7 +370,7 @@ export default function LatestOrder() {
             <Grid item xs={12} lg={12}>
               <MainCard title="Edit livreur Details">
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>First Name</InputLabel>
                       <TextField
@@ -400,7 +384,7 @@ export default function LatestOrder() {
                     </Stack>
                     <FormHelperText>{fieldErrors.fname}</FormHelperText>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Stack spacing={1}>
                       <InputLabel>Last Name</InputLabel>
                       <TextField
@@ -414,21 +398,8 @@ export default function LatestOrder() {
                     </Stack>
                     <FormHelperText>{fieldErrors.lname}</FormHelperText>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>Phone</InputLabel>
-                      <TextField
-                        fullWidth
-                        placeholder="Enter phone number"
-                        name="phone"
-                        required
-                        value={editedLivreur.phone || ''}
-                        onChange={handleFieldChange}
-                      />
-                    </Stack>
-                    <FormHelperText>{fieldErrors.phone}</FormHelperText>
-                  </Grid>
-                  <Grid item xs={6}>
+
+                  <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel>Email</InputLabel>
                       <TextField
@@ -444,21 +415,6 @@ export default function LatestOrder() {
                       />
                     </Stack>
                     <FormHelperText>{fieldErrors.email}</FormHelperText>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Stack spacing={1}>
-                      <InputLabel>City</InputLabel>
-                      <FormControl fullWidth>
-                        <Select name="city" value={editedLivreur.city || ''} onChange={handleFieldChange}>
-                          {moroccanCities.map((city) => (
-                            <MenuItem key={city} value={city}>
-                              {city}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormHelperText>{fieldErrors.city}</FormHelperText>
-                    </Stack>
                   </Grid>
 
                   <CardActions>

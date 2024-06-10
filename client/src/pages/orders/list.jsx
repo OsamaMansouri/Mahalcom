@@ -16,9 +16,11 @@ import {
   TablePagination,
   Slide,
   Grid,
+  TextField,
   CardActions,
   Box,
-  Chip
+  Chip,
+  InputLabel
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -89,7 +91,7 @@ export default function ListOrders() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Client</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Products</TableCell>
@@ -102,7 +104,7 @@ export default function ListOrders() {
           <TableBody>
             {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order, index) => (
               <TableRow hover key={order._id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
                 <TableCell>{order.client_id.fullname}</TableCell>
                 <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                 <TableCell>
@@ -115,13 +117,11 @@ export default function ListOrders() {
                 <TableCell>{order.totalQuantity}</TableCell>
                 <TableCell>{order.price}</TableCell>
                 <TableCell>
-                  {(() => {
-                    if (order.paymentStatus === 'Paid') {
-                      return <Chip color="success" label="Paid" size="small" variant="light" />;
-                    } else {
-                      return <Chip color="error" label={order.paymentStatus} size="small" variant="light" />;
-                    }
-                  })()}
+                  {order.paymentStatus === 'Paid' ? (
+                    <Chip color="success" label="Paid" size="small" variant="light" />
+                  ) : (
+                    <Chip color="error" label={order.paymentStatus} size="small" variant="light" />
+                  )}
                 </TableCell>
                 <TableCell align="center" sx={{ pr: 2 }}>
                   <Stack direction="row" justifyContent="center" alignItems="center">
@@ -193,58 +193,98 @@ export default function ListOrders() {
         aria-describedby="view-order-description"
       >
         <DialogContent sx={{ mt: 2, my: 1 }}>
-          <MainCard title="Order Details">
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="h6">Client</Typography>
-                <Typography variant="body2">{selectedOrder?.client_id?.fullname}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Order Date</Typography>
-                <Typography variant="body2">{new Date(selectedOrder?.date).toLocaleDateString()}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Total Price</Typography>
-                <Typography variant="body2">{selectedOrder?.price}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Total Quantity</Typography>
-                <Typography variant="body2">{selectedOrder?.totalQuantity}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Payment Status</Typography>
-                <Chip label={selectedOrder?.paymentStatus} color={selectedOrder?.paymentStatus === 'Paid' ? 'success' : 'error'} />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Payment Method</Typography>
-                <Typography variant="body2">{selectedOrder?.paymentMethod}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h6">Products</Typography>
-                {selectedOrder?.products.map((product, index) => (
-                  <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2">{product.name}</Typography>
-                    <Typography variant="body2">
-                      Quantity: {product.quantity}, Price: {product.price}
-                    </Typography>
-                  </Box>
-                ))}
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h6">Notes</Typography>
-                <Typography variant="body2">{selectedOrder?.notes}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <CardActions>
-                  <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-                    <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
-                      Close
-                    </Button>
-                  </Stack>
-                </CardActions>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <MainCard title="Order Details">
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} md={8}>
+                    <Stack spacing={1}>
+                      <InputLabel>Client</InputLabel>
+                      <TextField fullWidth name="client" value={selectedOrder?.client_id?.fullname || ''} readOnly />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Stack spacing={1}>
+                      <InputLabel>Order Date</InputLabel>
+                      <TextField
+                        fullWidth
+                        name="order_date"
+                        value={selectedOrder ? new Date(selectedOrder.date).toLocaleDateString() : ''}
+                        readOnly
+                      />
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      <InputLabel>Payment Status</InputLabel>
+                      <TextField fullWidth name="payment_status" value={selectedOrder?.paymentStatus || ''} readOnly />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      <InputLabel>Payment Method</InputLabel>
+                      <TextField fullWidth name="payment_method" value={selectedOrder?.paymentMethod || ''} readOnly />
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      <InputLabel>Total Price</InputLabel>
+                      <TextField fullWidth name="total_price" value={selectedOrder?.price || ''} readOnly />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      <InputLabel>Total Quantity</InputLabel>
+                      <TextField fullWidth name="total_quantity" value={selectedOrder?.totalQuantity || ''} readOnly />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="h6">Products</Typography>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>#</TableCell>
+                            <TableCell>Product</TableCell>
+                            <TableCell>Quantity</TableCell>
+                            <TableCell>Price</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {selectedOrder?.products.map((product, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{index + 1}</TableCell>
+                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product.quantity}</TableCell>
+                              <TableCell>{product.price}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel>Notes</InputLabel>
+                      <TextField fullWidth name="notes" value={selectedOrder?.notes || ''} readOnly />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <CardActions>
+                      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ mt: 2.5 }}>
+                        <Button variant="outlined" color="secondary" onClick={handleCloseViewDialog}>
+                          Cancel
+                        </Button>
+                      </Stack>
+                    </CardActions>
+                  </Grid>
+                </Grid>
+              </MainCard>
             </Grid>
-          </MainCard>
+          </Grid>
         </DialogContent>
       </Dialog>
     </MainCard>

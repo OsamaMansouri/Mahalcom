@@ -117,7 +117,7 @@ export default function LatestOrder() {
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 3 }}>ID</TableCell>
+              <TableCell sx={{ pl: 3 }}>#</TableCell>
               <TableCell>Category Name</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>

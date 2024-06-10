@@ -47,7 +47,6 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const Unauthorized = Loadable(lazy(() => import('pages/Unauthorized'))); // Import the Unauthorized component
-
 const MainRoutes = {
   path: '/',
   element: (
@@ -119,65 +118,81 @@ const MainRoutes = {
     {
       path: 'clients',
       element: (
-        <ClientProvider>
-          <Clients />
-        </ClientProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <ClientProvider>
+            <Clients />
+          </ClientProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-client',
       element: (
-        <ClientProvider>
-          <AddClient />
-        </ClientProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <ClientProvider>
+            <AddClient />
+          </ClientProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-supplier',
       element: (
-        <SupplierProvider>
-          <AddSupplier />
-        </SupplierProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <SupplierProvider>
+            <AddSupplier />
+          </SupplierProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'suppliers',
       element: (
-        <SupplierProvider>
-          <Suppliers />
-        </SupplierProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <SupplierProvider>
+            <Suppliers />
+          </SupplierProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'categories',
       element: (
-        <CategoryProvider>
-          <Categories />
-        </CategoryProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <CategoryProvider>
+            <Categories />
+          </CategoryProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-category',
       element: (
-        <CategoryProvider>
-          <AddCategory />
-        </CategoryProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <CategoryProvider>
+            <AddCategory />
+          </CategoryProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'products',
       element: (
-        <ProductProvider>
-          <Products />
-        </ProductProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <ProductProvider>
+            <Products />
+          </ProductProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-product',
       element: (
-        <ProductProvider>
-          <AddProduct />
-        </ProductProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <ProductProvider>
+            <AddProduct />
+          </ProductProvider>
+        </AuthGuard>
       )
     },
     {
@@ -203,23 +218,27 @@ const MainRoutes = {
     {
       path: 'livreurs',
       element: (
-        <LivreurProvider>
-          <Livreurs />
-        </LivreurProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <LivreurProvider>
+            <Livreurs />
+          </LivreurProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-livreur',
       element: (
-        <LivreurProvider>
-          <AddLivreur />
-        </LivreurProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <LivreurProvider>
+            <AddLivreur />
+          </LivreurProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'orders',
       element: (
-        <AuthGuard allowedRoles={['Admin']}>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
           <ClientProvider>
             <OrderProvider>
               <Orders />
@@ -231,7 +250,7 @@ const MainRoutes = {
     {
       path: 'add-order',
       element: (
-        <AuthGuard allowedRoles={['Admin']}>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
           <ProductProvider>
             <ClientProvider>
               <OrderProvider>
@@ -245,33 +264,39 @@ const MainRoutes = {
     {
       path: 'deliveries',
       element: (
-        <LivreurProvider>
-          <LivraisonProvider>
-            <Livraisons />
-          </LivraisonProvider>
-        </LivreurProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager', 'Livreur']}>
+          <LivreurProvider>
+            <LivraisonProvider>
+              <Livraisons />
+            </LivraisonProvider>
+          </LivreurProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'add-delivery',
       element: (
-        <LivreurProvider>
-          <OrderProvider>
-            <LivraisonProvider>
-              <AddLivraison />
-            </LivraisonProvider>
-          </OrderProvider>
-        </LivreurProvider>
+        <AuthGuard allowedRoles={['Admin', 'Manager']}>
+          <LivreurProvider>
+            <OrderProvider>
+              <LivraisonProvider>
+                <AddLivraison />
+              </LivraisonProvider>
+            </OrderProvider>
+          </LivreurProvider>
+        </AuthGuard>
       )
     },
     {
       path: 'deliveries_m',
       element: (
-        <LivreurProvider>
-          <LivraisonProvider>
-            <LivraisonsManagement />
-          </LivraisonProvider>
-        </LivreurProvider>
+        <AuthGuard allowedRoles={['Livreur']}>
+          <LivreurProvider>
+            <LivraisonProvider>
+              <LivraisonsManagement />
+            </LivraisonProvider>
+          </LivreurProvider>
+        </AuthGuard>
       )
     },
     {
