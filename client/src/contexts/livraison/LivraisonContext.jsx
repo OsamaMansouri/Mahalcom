@@ -10,17 +10,28 @@ export const useLivraison = () => {
 
 export const LivraisonProvider = ({ children }) => {
   const [livraisons, setLivraisons] = useState([]);
+  const [livraisonsUndelivered, setLivraisonsUndelivered] = useState([]);
   const [livreurs, setLivreurs] = useState([]);
 
   useEffect(() => {
     fetchLivraisons();
+    fetchLivraisonsUndelivered();
     fetchLivreurs();
   }, []);
 
   const fetchLivraisons = async () => {
     try {
-      const response = await api.get('/api/livraison/getUndelivered');
+      const response = await api.get('/api/livraison/getall');
       setLivraisons(response.data);
+    } catch (error) {
+      console.error('Error fetching livraisons:', error);
+    }
+  };
+
+  const fetchLivraisonsUndelivered = async () => {
+    try {
+      const response = await api.get('/api/livraison/getUndelivered');
+      setLivraisonsUndelivered(response.data);
     } catch (error) {
       console.error('Error fetching livraisons:', error);
     }
@@ -69,7 +80,7 @@ export const LivraisonProvider = ({ children }) => {
   };
 
   return (
-    <LivraisonContext.Provider value={{ livraisons, livreurs, addLivraison, deleteLivraison, updateLivraison }}>
+    <LivraisonContext.Provider value={{ livraisons, livraisonsUndelivered, livreurs, addLivraison, deleteLivraison, updateLivraison }}>
       {children}
     </LivraisonContext.Provider>
   );

@@ -41,7 +41,7 @@ const PopupTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function LivraisonList() {
-  const { livraisons, deleteLivraison, updateLivraison } = useLivraison();
+  const { livraisonsUndelivered, deleteLivraison, updateLivraison } = useLivraison();
   const { livreurs } = useLivreur();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -129,7 +129,7 @@ export default function LivraisonList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {livraisons.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+            {livraisonsUndelivered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow hover key={row._id}>
                 <TableCell sx={{ pl: 3 }}>{index + 1}</TableCell>
                 <TableCell>{row.id_user?.fname || '-'}</TableCell>
@@ -169,7 +169,7 @@ export default function LivraisonList() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={livraisons.length}
+        count={livraisonsUndelivered.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
